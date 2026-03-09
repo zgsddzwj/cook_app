@@ -66,8 +66,6 @@ class ProfilePage extends StatelessWidget {
                   title: l10n.settings,
                   items: [
                     _ListItem(icon: Icons.notifications, title: l10n.notifications, route: '/profile/settings/notifications'),
-                    _ListItem(icon: Icons.straighten, title: l10n.units, route: '/profile/settings/units'),
-                    _ListItem(icon: Icons.language, title: l10n.language, route: '/profile/settings/language'),
                     _ListItem(icon: Icons.privacy_tip, title: l10n.privacyPolicy, route: '/profile/settings/privacy'),
                     _ListItem(icon: Icons.info, title: l10n.about, route: '/profile/settings/about'),
                     _ListItem(icon: Icons.logout, title: l10n.logout, action: 'logout', isDestructive: true),
@@ -263,10 +261,6 @@ class ProfilePage extends StatelessWidget {
                         Navigator.push(context, MaterialPageRoute(builder: (_) => const ScanHistoryPage()));
                       } else if (item.route == '/profile/settings/notifications') {
                         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('打开通知设置')));
-                      } else if (item.route == '/profile/settings/units') {
-                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('打开单位设置')));
-                      } else if (item.route == '/profile/settings/language') {
-                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('打开语言设置')));
                       } else if (item.route == '/profile/settings/privacy') {
                         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('查看隐私政策')));
                       } else if (item.route == '/profile/settings/about') {
