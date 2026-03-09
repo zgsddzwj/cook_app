@@ -7,18 +7,34 @@ class Ingredient {
   final String name;
   final String amount;
   final String category;
+  final DateTime? expiryDate;
+  final double quantity; // Numeric quantity for sorting
 
   Ingredient({
     required this.name,
     required this.amount,
     required this.category,
+    this.expiryDate,
+    this.quantity = 1.0,
   });
 
   factory Ingredient.fromJson(Map<String, dynamic> json) {
+    // Try to parse numeric quantity from amount string if possible
+    double parsedQuantity = 1.0;
+    try {
+      final amountStr = json['amount'] ?? '1';
+      final match = RegExp(r'(\d+(\.\d+)?)').firstMatch(amountStr);
+      if (match != null) {
+        parsedQuantity = double.parse(match.group(1)!);
+      }
+    } catch (_) {}
+
     return Ingredient(
       name: json['name'] ?? '',
       amount: json['amount'] ?? '',
       category: json['category'] ?? '',
+      expiryDate: json['expiryDate'] != null ? DateTime.parse(json['expiryDate']) : null,
+      quantity: parsedQuantity,
     );
   }
 }
@@ -101,6 +117,74 @@ class LLMService {
     } catch (e) {
       print('Error recognizing ingredients: $e');
       rethrow; // Rethrow to let the UI handle the error
+    }
+  }
+
+  // Generate recipe based on ingredients and preferences
+  static Future<Map<String, dynamic>> generateRecipe(List<Ingredient> ingredients, Map<String, dynamic> prefs) async {
+    final apiKey = dotenv.env['ALIBABA_CLOUD_API_KEY'];
+    if (apiKey == null || apiKey.isEmpty) {
+      throw Exception('Alibaba Cloud API Key not found in .env file');
+    }
+
+    final ingredientsList = ingredients.map((i) => i.name).join(', ');
+    final timePref = prefs['time'] ?? '不限';
+    final flavorPref = prefs['flavor'] ?? '清淡';
+    final equipmentPref = prefs['equipment'] ?? '不限';
+
+    try {
+      final response = await _dio.post(
+        'https://dashscope.aliyuncs.com/api/v1/services/aigc/text-generation/generation',
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $apiKey',
+            'Content-Type': 'application/json',
+          },
+        ),
+        data: {
+          'model': 'qwen-max',
+          'input': {
+            'messages': [
+              {
+                'role': 'system',
+                'content': '你是一个专业的厨师。请根据用户提供的食材和偏好生成一个详细的食谱。必须以JSON格式返回，结构如下：{"title": "食谱名称", "description": "简短描述", "time": "预计时间(分钟)", "calories": "预计热量(kcal)", "tags": ["标签1", "标签2"], "ingredients": [{"name": "食材名", "amount": "数量"}], "steps": ["步骤1", "步骤2"]}。只返回JSON，不要有其他文字。'
+              },
+              {
+                'role': 'user',
+                'content': '食材：$ingredientsList。偏好：烹饪时间 $timePref，口味 $flavorPref，厨具 $equipmentPref。'
+              }
+            ]
+          },
+          'parameters': {
+            'result_format': 'message'
+          }
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final String content = response.data['output']['choices'][0]['message']['content'];
+        print('Raw content from LLM (Recipe): $content');
+
+        String jsonStr = content;
+        if (content.contains('```json')) {
+          jsonStr = content.split('```json')[1].split('```')[0].trim();
+        } else if (content.contains('```')) {
+          jsonStr = content.split('```')[1].split('```')[0].trim();
+        }
+
+        final jsonStart = jsonStr.indexOf('{');
+        final jsonEnd = jsonStr.lastIndexOf('}');
+        if (jsonStart != -1 && jsonEnd != -1) {
+          jsonStr = jsonStr.substring(jsonStart, jsonEnd + 1);
+        }
+
+        return jsonDecode(jsonStr);
+      } else {
+        throw Exception('Failed to call Alibaba API: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error generating recipe: $e');
+      rethrow;
     }
   }
 }

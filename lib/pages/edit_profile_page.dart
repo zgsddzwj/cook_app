@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:cook_app/l10n/generated/app_localizations.dart';
+import 'package:snap_cook/l10n/generated/app_localizations.dart';
 import '../core/app_colors.dart';
 
 class EditProfilePage extends StatefulWidget {

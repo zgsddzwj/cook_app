@@ -9,7 +9,7 @@ class AppLocalizationsZh extends AppLocalizations {
   AppLocalizationsZh([String locale = 'zh']) : super(locale);
 
   @override
-  String get appTitle => 'CookApp';
+  String get appTitle => 'SnapCook';
 
   @override
   String get home => '首页';
@@ -277,4 +277,67 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get pantryLife => '常温建议';
+
+  @override
+  String get confirmIngredients => '确认食材';
+
+  @override
+  String get recognizedIngredients => '识别出的食材';
+
+  @override
+  String get addManually => '手动添加';
+
+  @override
+  String get generateRecipe => '✨ 生成食谱';
+
+  @override
+  String get addIngredient => '添加食材';
+
+  @override
+  String get ingredientNameHint => '输入食材名称';
+
+  @override
+  String get cancel => '取消';
+
+  @override
+  String get confirm => '确定';
+
+  @override
+  String get preferences => '偏好设置';
+
+  @override
+  String get cookingTimePref => '烹饪时间';
+
+  @override
+  String get flavorPref => '口味偏好';
+
+  @override
+  String get equipmentPref => '厨具限制';
+
+  @override
+  String get startAICreation => '开始 AI 创作';
+
+  @override
+  String get noRecipesFound => '没有找到相关食谱';
+
+  @override
+  String get noScanHistory => '暂无识别记录';
+
+  @override
+  String get save => '保存';
+
+  @override
+  String get comingSoon => '即将上线...';
+
+  @override
+  String get error => '选择或识别图片失败';
+
+  @override
+  String get sortByCategory => '按品类排序';
+
+  @override
+  String get sortByExpiryDate => '按过期时间排序';
+
+  @override
+  String get sortByQuantity => '按数量排序';
 }

@@ -29,6 +29,26 @@ class AppTheme {
       ),
       splashColor: Colors.transparent,
       highlightColor: Colors.transparent,
+      splashFactory: NoSplash.splashFactory,
+      hoverColor: Colors.transparent,
+      focusColor: Colors.transparent,
+      elevatedButtonTheme: ElevatedButtonThemeData(
+        style: ElevatedButton.styleFrom(
+          splashFactory: NoSplash.splashFactory,
+          elevation: 0,
+          shadowColor: Colors.transparent,
+        ),
+      ),
+      textButtonTheme: TextButtonThemeData(
+        style: TextButton.styleFrom(
+          splashFactory: NoSplash.splashFactory,
+        ),
+      ),
+      outlinedButtonTheme: OutlinedButtonThemeData(
+        style: OutlinedButton.styleFrom(
+          splashFactory: NoSplash.splashFactory,
+        ),
+      ),
       bottomNavigationBarTheme: const BottomNavigationBarThemeData(
         selectedItemColor: AppColors.primary,
         unselectedItemColor: AppColors.textSecondary,

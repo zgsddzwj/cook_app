@@ -62,8 +62,7 @@ import 'app_localizations_zh.dart';
 /// be consistent with the languages listed in the AppLocalizations.supportedLocales
 /// property.
 abstract class AppLocalizations {
-  AppLocalizations(String locale)
-      : localeName = intl.Intl.canonicalizedLocale(locale.toString());
+  AppLocalizations(String locale) : localeName = intl.Intl.canonicalizedLocale(locale.toString());
 
   final String localeName;
 
@@ -71,8 +70,7 @@ abstract class AppLocalizations {
     return Localizations.of<AppLocalizations>(context, AppLocalizations);
   }
 
-  static const LocalizationsDelegate<AppLocalizations> delegate =
-      _AppLocalizationsDelegate();
+  static const LocalizationsDelegate<AppLocalizations> delegate = _AppLocalizationsDelegate();
 
   /// A list of this localizations delegate along with the default localizations
   /// delegates.
@@ -84,8 +82,7 @@ abstract class AppLocalizations {
   /// Additional delegates can be added by appending to this list in
   /// MaterialApp. This list does not have to be used at all if a custom list
   /// of delegates is preferred or required.
-  static const List<LocalizationsDelegate<dynamic>> localizationsDelegates =
-      <LocalizationsDelegate<dynamic>>[
+  static const List<LocalizationsDelegate<dynamic>> localizationsDelegates = <LocalizationsDelegate<dynamic>>[
     delegate,
     GlobalMaterialLocalizations.delegate,
     GlobalCupertinoLocalizations.delegate,
@@ -101,7 +98,7 @@ abstract class AppLocalizations {
   /// No description provided for @appTitle.
   ///
   /// In zh, this message translates to:
-  /// **'CookApp'**
+  /// **'SnapCook'**
   String get appTitle;
 
   /// No description provided for @home.
@@ -613,10 +610,135 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'常温建议'**
   String get pantryLife;
+
+  /// No description provided for @confirmIngredients.
+  ///
+  /// In zh, this message translates to:
+  /// **'确认食材'**
+  String get confirmIngredients;
+
+  /// No description provided for @recognizedIngredients.
+  ///
+  /// In zh, this message translates to:
+  /// **'识别出的食材'**
+  String get recognizedIngredients;
+
+  /// No description provided for @addManually.
+  ///
+  /// In zh, this message translates to:
+  /// **'手动添加'**
+  String get addManually;
+
+  /// No description provided for @generateRecipe.
+  ///
+  /// In zh, this message translates to:
+  /// **'✨ 生成食谱'**
+  String get generateRecipe;
+
+  /// No description provided for @addIngredient.
+  ///
+  /// In zh, this message translates to:
+  /// **'添加食材'**
+  String get addIngredient;
+
+  /// No description provided for @ingredientNameHint.
+  ///
+  /// In zh, this message translates to:
+  /// **'输入食材名称'**
+  String get ingredientNameHint;
+
+  /// No description provided for @cancel.
+  ///
+  /// In zh, this message translates to:
+  /// **'取消'**
+  String get cancel;
+
+  /// No description provided for @confirm.
+  ///
+  /// In zh, this message translates to:
+  /// **'确定'**
+  String get confirm;
+
+  /// No description provided for @preferences.
+  ///
+  /// In zh, this message translates to:
+  /// **'偏好设置'**
+  String get preferences;
+
+  /// No description provided for @cookingTimePref.
+  ///
+  /// In zh, this message translates to:
+  /// **'烹饪时间'**
+  String get cookingTimePref;
+
+  /// No description provided for @flavorPref.
+  ///
+  /// In zh, this message translates to:
+  /// **'口味偏好'**
+  String get flavorPref;
+
+  /// No description provided for @equipmentPref.
+  ///
+  /// In zh, this message translates to:
+  /// **'厨具限制'**
+  String get equipmentPref;
+
+  /// No description provided for @startAICreation.
+  ///
+  /// In zh, this message translates to:
+  /// **'开始 AI 创作'**
+  String get startAICreation;
+
+  /// No description provided for @noRecipesFound.
+  ///
+  /// In zh, this message translates to:
+  /// **'没有找到相关食谱'**
+  String get noRecipesFound;
+
+  /// No description provided for @noScanHistory.
+  ///
+  /// In zh, this message translates to:
+  /// **'暂无识别记录'**
+  String get noScanHistory;
+
+  /// No description provided for @save.
+  ///
+  /// In zh, this message translates to:
+  /// **'保存'**
+  String get save;
+
+  /// No description provided for @comingSoon.
+  ///
+  /// In zh, this message translates to:
+  /// **'即将上线...'**
+  String get comingSoon;
+
+  /// No description provided for @error.
+  ///
+  /// In zh, this message translates to:
+  /// **'选择或识别图片失败'**
+  String get error;
+
+  /// No description provided for @sortByCategory.
+  ///
+  /// In zh, this message translates to:
+  /// **'按品类排序'**
+  String get sortByCategory;
+
+  /// No description provided for @sortByExpiryDate.
+  ///
+  /// In zh, this message translates to:
+  /// **'按过期时间排序'**
+  String get sortByExpiryDate;
+
+  /// No description provided for @sortByQuantity.
+  ///
+  /// In zh, this message translates to:
+  /// **'按数量排序'**
+  String get sortByQuantity;
 }
 
-class _AppLocalizationsDelegate
-    extends LocalizationsDelegate<AppLocalizations> {
+class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
   const _AppLocalizationsDelegate();
 
   @override
@@ -625,25 +747,25 @@ class _AppLocalizationsDelegate
   }
 
   @override
-  bool isSupported(Locale locale) =>
-      <String>['en', 'zh'].contains(locale.languageCode);
+  bool isSupported(Locale locale) => <String>['en', 'zh'].contains(locale.languageCode);
 
   @override
   bool shouldReload(_AppLocalizationsDelegate old) => false;
 }
 
 AppLocalizations lookupAppLocalizations(Locale locale) {
+
+
   // Lookup logic when only language code is specified.
   switch (locale.languageCode) {
-    case 'en':
-      return AppLocalizationsEn();
-    case 'zh':
-      return AppLocalizationsZh();
+    case 'en': return AppLocalizationsEn();
+    case 'zh': return AppLocalizationsZh();
   }
 
   throw FlutterError(
-      'AppLocalizations.delegate failed to load unsupported locale "$locale". This is likely '
-      'an issue with the localizations generation tool. Please file an issue '
-      'on GitHub with a reproducible sample app and the gen-l10n configuration '
-      'that was used.');
+    'AppLocalizations.delegate failed to load unsupported locale "$locale". This is likely '
+    'an issue with the localizations generation tool. Please file an issue '
+    'on GitHub with a reproducible sample app and the gen-l10n configuration '
+    'that was used.'
+  );
 }

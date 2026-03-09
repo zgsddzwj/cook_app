@@ -1,3 +1,4 @@
+import 'package:snap_cook/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../core/app_colors.dart';
@@ -10,27 +11,49 @@ class PantryPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          '库存列表',
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
+        title: Text(
+          l10n.inventoryList,
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
         ),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.sort_outlined),
-            onPressed: () {},
+          Consumer<PantryProvider>(
+            builder: (context, pantry, child) {
+              return PopupMenuButton<PantrySortType>(
+                icon: const Icon(Icons.sort_outlined),
+                onSelected: (PantrySortType type) {
+                  pantry.setSortType(type);
+                },
+                itemBuilder: (BuildContext context) => <PopupMenuEntry<PantrySortType>>[
+                  PopupMenuItem<PantrySortType>(
+                    value: PantrySortType.category,
+                    child: Text(l10n.sortByCategory),
+                  ),
+                  PopupMenuItem<PantrySortType>(
+                    value: PantrySortType.expiryDate,
+                    child: Text(l10n.sortByExpiryDate),
+                  ),
+                  PopupMenuItem<PantrySortType>(
+                    value: PantrySortType.quantity,
+                    child: Text(l10n.sortByQuantity),
+                  ),
+                ],
+              );
+            },
           ),
-          const Padding(
-            padding: EdgeInsets.only(right: 16),
-            child: Center(child: Text('排序', style: TextStyle(color: AppColors.textSecondary))),
+          Padding(
+            padding: const EdgeInsets.only(right: 16),
+            child: Center(child: Text(l10n.sort, style: const TextStyle(color: AppColors.textSecondary))),
           ),
         ],
       ),
       body: Consumer<PantryProvider>(
         builder: (context, pantry, child) {
           if (pantry.ingredients.isEmpty) {
-            return const Center(child: Text('冰箱空空如也'));
+            return Center(child: Text(l10n.pantryEmpty));
           }
           return ListView.builder(
             padding: const EdgeInsets.all(16),
@@ -46,14 +69,26 @@ class PantryPage extends StatelessWidget {
   }
 
   Widget _buildInventoryItem(BuildContext context, Ingredient item, int index) {
-    // Determine color based on index or category for visual interest
-    final Color itemColor = index % 2 == 0 ? Colors.orange : Colors.green;
-    final time = index % 2 == 0 ? '仅剩 2 天' : '10 天后过期';
+    final l10n = AppLocalizations.of(context)!;
+    
+    // Calculate days until expiry
+    String expiryText = '';
+    Color itemColor = Colors.green;
+    
+    if (item.expiryDate != null) {
+      final daysLeft = item.expiryDate!.difference(DateTime.now()).inDays;
+      if (daysLeft <= 3) {
+        itemColor = Colors.orange;
+        expiryText = l10n.remainingDays(daysLeft.toString());
+      } else {
+        expiryText = l10n.expiresInDays(daysLeft.toString());
+      }
+    }
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
       child: Dismissible(
-        key: Key('${item.name}_$index'),
+        key: Key('${item.name}_${item.expiryDate?.millisecondsSinceEpoch}_$index'),
         direction: DismissDirection.endToStart,
         background: Container(
           alignment: Alignment.centerRight,
@@ -65,7 +100,7 @@ class PantryPage extends StatelessWidget {
           child: const Icon(Icons.delete, color: Colors.white),
         ),
         onDismissed: (direction) {
-          Provider.of<PantryProvider>(context, listen: false).removeIngredient(index);
+          Provider.of<PantryProvider>(context, listen: false).removeIngredient(item);
         },
         child: GestureDetector(
           onTap: () {
@@ -108,17 +143,19 @@ class PantryPage extends StatelessWidget {
                         '${item.amount} | ${item.category}',
                         style: const TextStyle(color: AppColors.textSecondary, fontSize: 14),
                       ),
-                      const SizedBox(height: 4),
-                      Row(
-                        children: [
-                          Icon(Icons.access_time, color: itemColor, size: 14),
-                          const SizedBox(width: 4),
-                          Text(
-                            time,
-                            style: TextStyle(color: itemColor, fontSize: 12, fontWeight: FontWeight.bold),
-                          ),
-                        ],
-                      ),
+                      if (expiryText.isNotEmpty) ...[
+                        const SizedBox(height: 4),
+                        Row(
+                          children: [
+                            Icon(Icons.access_time, color: itemColor, size: 14),
+                            const SizedBox(width: 4),
+                            Text(
+                              expiryText,
+                              style: TextStyle(color: itemColor, fontSize: 12, fontWeight: FontWeight.bold),
+                            ),
+                          ],
+                        ),
+                      ],
                     ],
                   ),
                 ),

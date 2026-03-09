@@ -1,4 +1,4 @@
-# cook_app
+# snap_cook
 
 A new Flutter project.
 

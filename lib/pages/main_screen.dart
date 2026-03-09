@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:cook_app/l10n/generated/app_localizations.dart';
+import 'package:snap_cook/l10n/generated/app_localizations.dart';
 import 'package:provider/provider.dart';
 import 'home_page.dart';
 import 'pantry_page.dart';

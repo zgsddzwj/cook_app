@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:cook_app/l10n/generated/app_localizations.dart';
+import 'package:snap_cook/l10n/generated/app_localizations.dart';
 import 'core/app_theme.dart';
 import 'pages/main_screen.dart';
 import 'core/pantry_provider.dart';
@@ -31,7 +31,7 @@ class CookApp extends StatelessWidget {
       title: 'CookApp',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,
-      localizationsDelegates: [
+      localizationsDelegates: const [
         AppLocalizations.delegate,
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,

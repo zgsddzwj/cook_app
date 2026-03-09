@@ -9,7 +9,7 @@ class AppLocalizationsEn extends AppLocalizations {
   AppLocalizationsEn([String locale = 'en']) : super(locale);
 
   @override
-  String get appTitle => 'CookApp';
+  String get appTitle => 'SnapCook';
 
   @override
   String get home => 'Home';
@@ -30,8 +30,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get whatToEatToday => 'Don\'t know what to eat?';
 
   @override
-  String get aiIntro =>
-      'Take a photo of your fridge, let CookApp recommend the perfect recipe, reduce waste, and enjoy cooking.';
+  String get aiIntro => 'Take a photo of your fridge, let CookApp recommend the perfect recipe, reduce waste, and enjoy cooking.';
 
   @override
   String get startIdentifying => 'Start Identifying';
@@ -105,8 +104,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get smartIdentification => 'Smart Identification';
 
   @override
-  String get cameraIntro =>
-      'Take a photo or upload, AI will automatically identify ingredients.';
+  String get cameraIntro => 'Take a photo or upload, AI will automatically identify ingredients.';
 
   @override
   String get clickToUpload => 'Click to take photo or upload';
@@ -279,4 +277,67 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get pantryLife => 'Pantry Life';
+
+  @override
+  String get confirmIngredients => 'Confirm Ingredients';
+
+  @override
+  String get recognizedIngredients => 'Recognized Ingredients';
+
+  @override
+  String get addManually => 'Add Manually';
+
+  @override
+  String get generateRecipe => '✨ Generate Recipe';
+
+  @override
+  String get addIngredient => 'Add Ingredient';
+
+  @override
+  String get ingredientNameHint => 'Enter ingredient name';
+
+  @override
+  String get cancel => 'Cancel';
+
+  @override
+  String get confirm => 'Confirm';
+
+  @override
+  String get preferences => 'Preferences';
+
+  @override
+  String get cookingTimePref => 'Cooking Time';
+
+  @override
+  String get flavorPref => 'Flavor Profile';
+
+  @override
+  String get equipmentPref => 'Kitchenware';
+
+  @override
+  String get startAICreation => 'Start AI Creation';
+
+  @override
+  String get noRecipesFound => 'No relevant recipes found';
+
+  @override
+  String get noScanHistory => 'No scan history yet';
+
+  @override
+  String get save => 'Save';
+
+  @override
+  String get comingSoon => 'Coming Soon...';
+
+  @override
+  String get error => 'Failed to pick or recognize image';
+
+  @override
+  String get sortByCategory => 'Sort by Category';
+
+  @override
+  String get sortByExpiryDate => 'Sort by Expiry Date';
+
+  @override
+  String get sortByQuantity => 'Sort by Quantity';
 }

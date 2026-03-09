@@ -1,3 +1,4 @@
+import '../l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:dotted_border/dotted_border.dart';
@@ -9,6 +10,7 @@ import '../models/ingredient.dart';
 import '../core/pantry_provider.dart';
 import '../core/navigation_provider.dart';
 import 'ingredient_detail_page.dart';
+import 'ingredient_confirmation_page.dart';
 
 class CameraPage extends StatefulWidget {
   const CameraPage({super.key});
@@ -46,8 +48,19 @@ class _CameraPageState extends State<CameraPage> {
             _isRecognizing = false;
             _recognizedIngredients = results;
           });
+          
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => IngredientConfirmationPage(
+                imagePath: pickedFile.path,
+                initialIngredients: results,
+              ),
+            ),
+          );
+
           Fluttertoast.showToast(
-            msg: '识别成功！',
+            msg: AppLocalizations.of(context)!.addedToPantrySuccess,
             toastLength: Toast.LENGTH_SHORT,
             gravity: ToastGravity.BOTTOM,
             backgroundColor: Colors.green,
@@ -60,7 +73,7 @@ class _CameraPageState extends State<CameraPage> {
         setState(() {
           _isRecognizing = false;
         });
-        _showErrorDialog('选择或识别图片失败', e.toString());
+        _showErrorDialog(AppLocalizations.of(context)!.error, e.toString());
       }
     }
   }
@@ -74,7 +87,7 @@ class _CameraPageState extends State<CameraPage> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('确定'),
+            child: Text(AppLocalizations.of(context)!.confirm),
           ),
         ],
       ),
@@ -83,15 +96,16 @@ class _CameraPageState extends State<CameraPage> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       appBar: AppBar(
-        title: const Row(
+        title: Row(
           children: [
-            Icon(Icons.restaurant_outlined, color: AppColors.primary, size: 30),
-            SizedBox(width: 8),
+            const Icon(Icons.restaurant_outlined, color: AppColors.primary, size: 30),
+            const SizedBox(width: 8),
             Text(
-              'CookApp',
-              style: TextStyle(
+              l10n.appTitle,
+              style: const TextStyle(
                 color: AppColors.primary,
                 fontWeight: FontWeight.bold,
                 fontSize: 24,
@@ -116,19 +130,19 @@ class _CameraPageState extends State<CameraPage> {
           child: Column(
             children: [
               const SizedBox(height: 24),
-              const Text(
-                '智能食材识别',
-                style: TextStyle(
+              Text(
+                l10n.smartIdentification,
+                style: const TextStyle(
                   fontSize: 28,
                   fontWeight: FontWeight.bold,
                   color: AppColors.textPrimary,
                 ),
               ),
               const SizedBox(height: 12),
-              const Text(
-                '拍摄您的冰箱内部或上传照片，AI 将自动识别食材。',
+              Text(
+                l10n.cameraIntro,
                 textAlign: TextAlign.center,
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 16,
                   color: AppColors.textSecondary,
                   height: 1.5,
@@ -137,11 +151,11 @@ class _CameraPageState extends State<CameraPage> {
               const SizedBox(height: 32),
 
               if (_image == null)
-                _buildUploadPlaceholder()
+                _buildUploadPlaceholder(l10n)
               else if (_isRecognizing)
-                _buildLoadingState()
+                _buildLoadingState(l10n)
               else
-                _buildResultsList(),
+                _buildResultsList(l10n),
 
               const SizedBox(height: 24),
             ],
@@ -151,7 +165,7 @@ class _CameraPageState extends State<CameraPage> {
     );
   }
 
-  Widget _buildUploadPlaceholder() {
+  Widget _buildUploadPlaceholder(AppLocalizations l10n) {
     return Column(
       children: [
         GestureDetector(
@@ -185,18 +199,18 @@ class _CameraPageState extends State<CameraPage> {
                     ),
                   ),
                   const SizedBox(height: 24),
-                  const Text(
-                    '点击拍摄或上传照片',
-                    style: TextStyle(
+                  Text(
+                    l10n.clickToUpload,
+                    style: const TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
                       color: AppColors.textPrimary,
                     ),
                   ),
                   const SizedBox(height: 8),
-                  const Text(
-                    '支持 JPG, PNG 格式',
-                    style: TextStyle(
+                  Text(
+                    l10n.supportFormats,
+                    style: const TextStyle(
                       fontSize: 14,
                       color: AppColors.textSecondary,
                     ),
@@ -218,14 +232,14 @@ class _CameraPageState extends State<CameraPage> {
               borderRadius: BorderRadius.circular(30),
             ),
           ),
-          child: const Row(
+          child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(Icons.photo_library_outlined, size: 20),
-              SizedBox(width: 8),
+              const Icon(Icons.photo_library_outlined, size: 20),
+              const SizedBox(width: 8),
               Text(
-                '从相册选择',
-                style: TextStyle(
+                l10n.chooseFromAlbum,
+                style: const TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w500,
                 ),
@@ -237,7 +251,7 @@ class _CameraPageState extends State<CameraPage> {
     );
   }
 
-  Widget _buildLoadingState() {
+  Widget _buildLoadingState(AppLocalizations l10n) {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.symmetric(vertical: 60),
@@ -245,18 +259,18 @@ class _CameraPageState extends State<CameraPage> {
         children: [
           const CircularProgressIndicator(color: AppColors.primary),
           const SizedBox(height: 24),
-          const Text(
-            '大模型正在深度识别中...',
-            style: TextStyle(
+          Text(
+            l10n.recognizing,
+            style: const TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
               color: AppColors.primary,
             ),
           ),
           const SizedBox(height: 8),
-          const Text(
-            '正在为您清点每一份食材',
-            style: TextStyle(color: AppColors.textSecondary),
+          Text(
+            l10n.countingIngredients,
+            style: const TextStyle(color: AppColors.textSecondary),
           ),
           const SizedBox(height: 32),
           ClipRRect(
@@ -273,16 +287,16 @@ class _CameraPageState extends State<CameraPage> {
     );
   }
 
-  Widget _buildResultsList() {
+  Widget _buildResultsList(AppLocalizations l10n) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const Text(
-              '识别结果',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            Text(
+              l10n.identificationResult,
+              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             TextButton(
               onPressed: () => setState(() => _image = null),
