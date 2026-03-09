@@ -24,7 +24,7 @@ class _RecipesPageState extends State<RecipesPage> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    
+
     // Define recipes data
     final allRecipes = [
       {
@@ -32,7 +32,8 @@ class _RecipesPageState extends State<RecipesPage> {
         'description': '利用冰箱里剩下的菠菜和奶油，做一道健康又美味的低碳水晚餐。',
         'time': '25',
         'calories': '320',
-        'imageUrl': 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=500&auto=format&fit=crop&q=60',
+        'imageUrl':
+            'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=500&auto=format&fit=crop&q=60',
         'tags': ['生酮', '高蛋白', '低碳水'],
         'isFavorite': true,
         'ingredients': [
@@ -58,7 +59,8 @@ class _RecipesPageState extends State<RecipesPage> {
         'description': '清爽解腻，只需简单的油醋汁调味即可。',
         'time': '10',
         'calories': '180',
-        'imageUrl': 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=500&auto=format&fit=crop&q=60',
+        'imageUrl':
+            'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=500&auto=format&fit=crop&q=60',
         'tags': ['素食', '低卡', '快速简餐'],
         'isFavorite': false,
         'ingredients': [
@@ -79,7 +81,8 @@ class _RecipesPageState extends State<RecipesPage> {
         'description': '富含优质蛋白和Omega-3，简单煎制即可美味。',
         'time': '15',
         'calories': '450',
-        'imageUrl': 'https://images.unsplash.com/photo-1485921325833-c519f76c4927?w=500&auto=format&fit=crop&q=60',
+        'imageUrl':
+            'https://images.unsplash.com/photo-1485921325833-c519f76c4927?w=500&auto=format&fit=crop&q=60',
         'tags': ['生酮', '高蛋白', '低碳水'],
         'isFavorite': false,
         'ingredients': [
@@ -100,7 +103,8 @@ class _RecipesPageState extends State<RecipesPage> {
         'description': '完美的早餐选择，营养均衡，开启活力一天。',
         'time': '5',
         'calories': '280',
-        'imageUrl': 'https://images.unsplash.com/photo-1588137372308-15f75323ca8d?w=500&auto=format&fit=crop&q=60',
+        'imageUrl':
+            'https://images.unsplash.com/photo-1588137372308-15f75323ca8d?w=500&auto=format&fit=crop&q=60',
         'tags': ['素食', '快速简餐'],
         'isFavorite': true,
         'ingredients': [
@@ -120,19 +124,22 @@ class _RecipesPageState extends State<RecipesPage> {
 
     // Filter logic
     final filteredRecipes = allRecipes.where((recipe) {
-      final matchesSearch = _searchQuery.isEmpty || 
+      final matchesSearch = _searchQuery.isEmpty ||
           (recipe['title'] as String).contains(_searchQuery) ||
           (recipe['description'] as String).contains(_searchQuery);
-          
+
       if (!matchesSearch) return false;
 
       if (_selectedFilter == 'All') return true;
-      
+
       // Map localized filter names to tags or logic
-      if (_selectedFilter == l10n.filterKeto) return (recipe['tags'] as List).contains('生酮');
-      if (_selectedFilter == l10n.filterVeggie) return (recipe['tags'] as List).contains('素食');
-      if (_selectedFilter == l10n.filterLowCal) return (recipe['tags'] as List).contains('低卡');
-      
+      if (_selectedFilter == l10n.filterKeto)
+        return (recipe['tags'] as List).contains('生酮');
+      if (_selectedFilter == l10n.filterVeggie)
+        return (recipe['tags'] as List).contains('素食');
+      if (_selectedFilter == l10n.filterLowCal)
+        return (recipe['tags'] as List).contains('低卡');
+
       // Direct tag matching for others
       return (recipe['tags'] as List).contains(_selectedFilter);
     }).toList();
@@ -148,7 +155,8 @@ class _RecipesPageState extends State<RecipesPage> {
             ),
             Text(
               l10n.recommendBasedOnPantry,
-              style: const TextStyle(color: AppColors.textSecondary, fontSize: 14),
+              style:
+                  const TextStyle(color: AppColors.textSecondary, fontSize: 14),
             ),
           ],
         ),
@@ -176,7 +184,6 @@ class _RecipesPageState extends State<RecipesPage> {
               ),
             ),
           ),
-          
           SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -192,29 +199,31 @@ class _RecipesPageState extends State<RecipesPage> {
               ],
             ),
           ),
-          
           Expanded(
-            child: filteredRecipes.isEmpty 
-              ? Center(child: Text('没有找到相关食谱', style: TextStyle(color: Colors.grey[600])))
-              : ListView.builder(
-                  padding: const EdgeInsets.all(16),
-                  itemCount: filteredRecipes.length,
-                  itemBuilder: (context, index) {
-                    final recipe = filteredRecipes[index];
-                    return _buildRecipeCard(
-                      context,
-                      recipe['title'] as String,
-                      recipe['description'] as String,
-                      recipe['time'] as String,
-                      recipe['calories'] as String,
-                      recipe['imageUrl'] as String,
-                      recipe['tags'] as List<String>,
-                      isFavorite: recipe['isFavorite'] as bool,
-                      ingredients: recipe['ingredients'] as List<Map<String, String>>,
-                      steps: recipe['steps'] as List<String>,
-                    );
-                  },
-                ),
+            child: filteredRecipes.isEmpty
+                ? Center(
+                    child: Text('没有找到相关食谱',
+                        style: TextStyle(color: Colors.grey[600])))
+                : ListView.builder(
+                    padding: const EdgeInsets.all(16),
+                    itemCount: filteredRecipes.length,
+                    itemBuilder: (context, index) {
+                      final recipe = filteredRecipes[index];
+                      return _buildRecipeCard(
+                        context,
+                        recipe['title'] as String,
+                        recipe['description'] as String,
+                        recipe['time'] as String,
+                        recipe['calories'] as String,
+                        recipe['imageUrl'] as String,
+                        recipe['tags'] as List<String>,
+                        isFavorite: recipe['isFavorite'] as bool,
+                        ingredients:
+                            recipe['ingredients'] as List<Map<String, String>>,
+                        steps: recipe['steps'] as List<String>,
+                      );
+                    },
+                  ),
           ),
         ],
       ),
@@ -222,7 +231,9 @@ class _RecipesPageState extends State<RecipesPage> {
   }
 
   Widget _buildFilterChip(String label) {
-    final isSelected = _selectedFilter == label || (_selectedFilter == 'All' && label == AppLocalizations.of(context)!.filterAll);
+    final isSelected = _selectedFilter == label ||
+        (_selectedFilter == 'All' &&
+            label == AppLocalizations.of(context)!.filterAll);
     return Padding(
       padding: const EdgeInsets.only(right: 8),
       child: FilterChip(
@@ -308,7 +319,8 @@ class _RecipesPageState extends State<RecipesPage> {
               Stack(
                 children: [
                   ClipRRect(
-                    borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+                    borderRadius:
+                        const BorderRadius.vertical(top: Radius.circular(24)),
                     child: Image.network(
                       imageUrl,
                       height: 180,
@@ -336,17 +348,22 @@ class _RecipesPageState extends State<RecipesPage> {
                     left: 12,
                     bottom: 12,
                     child: Row(
-                      children: tags.map((tag) => Padding(
-                        padding: const EdgeInsets.only(right: 8),
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                          decoration: BoxDecoration(
-                            color: Colors.black45,
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: Text(tag, style: const TextStyle(color: Colors.white, fontSize: 10)),
-                        ),
-                      )).toList(),
+                      children: tags
+                          .map((tag) => Padding(
+                                padding: const EdgeInsets.only(right: 8),
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 10, vertical: 4),
+                                  decoration: BoxDecoration(
+                                    color: Colors.black45,
+                                    borderRadius: BorderRadius.circular(20),
+                                  ),
+                                  child: Text(tag,
+                                      style: const TextStyle(
+                                          color: Colors.white, fontSize: 10)),
+                                ),
+                              ))
+                          .toList(),
                     ),
                   ),
                 ],
@@ -358,25 +375,34 @@ class _RecipesPageState extends State<RecipesPage> {
                   children: [
                     Text(
                       title,
-                      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                      style: const TextStyle(
+                          fontWeight: FontWeight.bold, fontSize: 18),
                     ),
                     const SizedBox(height: 8),
                     Text(
                       description,
-                      style: const TextStyle(color: AppColors.textSecondary, fontSize: 14),
+                      style: const TextStyle(
+                          color: AppColors.textSecondary, fontSize: 14),
                     ),
                     const SizedBox(height: 12),
                     Row(
                       children: [
-                        const Icon(Icons.access_time_outlined, color: AppColors.primary, size: 16),
+                        const Icon(Icons.access_time_outlined,
+                            color: AppColors.primary, size: 16),
                         const SizedBox(width: 4),
-                        Text(l10n.cookingTime(time), style: const TextStyle(color: AppColors.textSecondary, fontSize: 12)),
+                        Text(l10n.cookingTime(time),
+                            style: const TextStyle(
+                                color: AppColors.textSecondary, fontSize: 12)),
                         const SizedBox(width: 16),
-                        const Icon(Icons.local_fire_department_outlined, color: Colors.orange, size: 16),
+                        const Icon(Icons.local_fire_department_outlined,
+                            color: Colors.orange, size: 16),
                         const SizedBox(width: 4),
-                        Text(l10n.calories(calories), style: const TextStyle(color: AppColors.textSecondary, fontSize: 12)),
+                        Text(l10n.calories(calories),
+                            style: const TextStyle(
+                                color: AppColors.textSecondary, fontSize: 12)),
                         const Spacer(),
-                        const Icon(Icons.chevron_right, color: Colors.grey, size: 20),
+                        const Icon(Icons.chevron_right,
+                            color: Colors.grey, size: 20),
                       ],
                     ),
                   ],
