@@ -3,6 +3,9 @@ import 'package:cook_app/l10n/generated/app_localizations.dart';
 import 'package:provider/provider.dart';
 import '../core/app_colors.dart';
 import '../core/navigation_provider.dart';
+import 'edit_profile_page.dart';
+import 'favorites_page.dart';
+import 'scan_history_page.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
@@ -40,7 +43,7 @@ class ProfilePage extends StatelessWidget {
                   context,
                   title: l10n.myActivity,
                   items: [
-                    _ListItem(icon: Icons.favorite, title: l10n.savedRecipes, index: 3),
+                    _ListItem(icon: Icons.favorite, title: l10n.savedRecipes, route: '/profile/favorites'),
                     _ListItem(icon: Icons.history, title: l10n.scanHistory, route: '/profile/scan-history'),
                     _ListItem(icon: Icons.inventory_2, title: l10n.myIngredients, index: 1),
                   ],
@@ -134,7 +137,12 @@ class ProfilePage extends StatelessWidget {
             SizedBox(
               width: double.infinity,
               child: OutlinedButton(
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const EditProfilePage()),
+                  );
+                },
                 style: OutlinedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 12),
                   side: BorderSide(color: Colors.grey.shade200),
@@ -248,6 +256,24 @@ class ProfilePage extends StatelessWidget {
                   onTap: () {
                     if (item.index != null) {
                       navProvider.setSelectedIndex(item.index!);
+                    } else if (item.route != null) {
+                      if (item.route == '/profile/favorites') {
+                        Navigator.push(context, MaterialPageRoute(builder: (_) => const FavoritesPage()));
+                      } else if (item.route == '/profile/scan-history') {
+                        Navigator.push(context, MaterialPageRoute(builder: (_) => const ScanHistoryPage()));
+                      } else if (item.route == '/profile/settings/notifications') {
+                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('打开通知设置')));
+                      } else if (item.route == '/profile/settings/units') {
+                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('打开单位设置')));
+                      } else if (item.route == '/profile/settings/language') {
+                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('打开语言设置')));
+                      } else if (item.route == '/profile/settings/privacy') {
+                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('查看隐私政策')));
+                      } else if (item.route == '/profile/settings/about') {
+                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('关于')));
+                      }
+                    } else if (item.action == 'logout') {
+                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('已退出登录')));
                     }
                   },
                 );
