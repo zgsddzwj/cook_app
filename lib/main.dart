@@ -7,6 +7,7 @@ import 'core/app_theme.dart';
 import 'pages/main_screen.dart';
 import 'core/pantry_provider.dart';
 import 'core/navigation_provider.dart';
+import 'core/recipes_provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -16,6 +17,7 @@ void main() async {
       providers: [
         ChangeNotifierProvider(create: (_) => PantryProvider()),
         ChangeNotifierProvider(create: (_) => NavigationProvider()),
+        ChangeNotifierProvider(create: (_) => RecipesProvider()),
       ],
       child: const CookApp(),
     ),

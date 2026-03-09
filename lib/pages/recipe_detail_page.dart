@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:snap_cook/l10n/generated/app_localizations.dart';
 import '../core/app_colors.dart';
+import '../core/recipes_provider.dart';
 
 class RecipeDetailPage extends StatelessWidget {
+  final String id;
   final String title;
   final String imageUrl;
   final List<String> tags;
@@ -14,6 +17,7 @@ class RecipeDetailPage extends StatelessWidget {
 
   const RecipeDetailPage({
     super.key,
+    required this.id,
     required this.title,
     required this.imageUrl,
     required this.tags,
@@ -27,6 +31,8 @@ class RecipeDetailPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final recipesProvider = Provider.of<RecipesProvider>(context);
+    final isFavorite = recipesProvider.isFavorite(id);
     
     return Scaffold(
       body: CustomScrollView(
@@ -42,8 +48,13 @@ class RecipeDetailPage extends StatelessWidget {
             ),
             actions: [
               IconButton(
-                icon: const Icon(Icons.favorite_border, color: Colors.white),
-                onPressed: () {},
+                icon: Icon(
+                  isFavorite ? Icons.favorite : Icons.favorite_border,
+                  color: isFavorite ? Colors.red : Colors.white,
+                ),
+                onPressed: () {
+                  recipesProvider.toggleFavorite(id);
+                },
               ),
               IconButton(
                 icon: const Icon(Icons.share, color: Colors.white),

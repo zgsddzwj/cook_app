@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:snap_cook/l10n/generated/app_localizations.dart';
 import '../core/app_colors.dart';
+import '../core/recipes_provider.dart';
+import '../models/recipe.dart';
 import 'recipe_detail_page.dart';
 
 class RecipesPage extends StatefulWidget {
@@ -14,215 +17,227 @@ class _RecipesPageState extends State<RecipesPage> {
   String _selectedFilter = 'All';
   String _searchQuery = '';
   final TextEditingController _searchController = TextEditingController();
+  final ScrollController _scrollController = ScrollController();
+  bool _showTitle = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(() {
+      // 随着 expandedHeight 减小，滚动阈值也相应调小
+      if (_scrollController.offset > 40 && !_showTitle) {
+        setState(() => _showTitle = true);
+      } else if (_scrollController.offset <= 40 && _showTitle) {
+        setState(() => _showTitle = false);
+      }
+    });
+  }
 
   @override
   void dispose() {
     _searchController.dispose();
+    _scrollController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-
-    // Define recipes data
-    final allRecipes = [
-      {
-        'title': '奶油菠菜鸡胸肉',
-        'description': '利用冰箱里剩下的菠菜和奶油，做一道健康又美味的低碳水晚餐。',
-        'time': '25',
-        'calories': '320',
-        'imageUrl':
-            'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=500&auto=format&fit=crop&q=60',
-        'tags': ['生酮', '高蛋白', '低碳水'],
-        'isFavorite': true,
-        'ingredients': [
-          {'name': '鸡胸肉', 'amount': '500g'},
-          {'name': '橄榄油', 'amount': '2 汤匙'},
-          {'name': '大蒜', 'amount': '2 瓣'},
-          {'name': '菠菜', 'amount': '200g'},
-          {'name': '淡奶油', 'amount': '100ml'},
-        ],
-        'steps': [
-          '用盐和黑胡椒腌制鸡胸肉。',
-          '平底锅中热油，中火加热。',
-          '加入鸡胸肉，煎至两面金黄且熟透，每面约 6-7 分钟。',
-          '将鸡胸肉盛出备用。',
-          '在同一个锅中，炒香大蒜。',
-          '加入菠菜炒至变软。',
-          '倒入淡奶油，小火煮 2-3 分钟。',
-          '将鸡胸肉放回锅中，即可享用。',
-        ],
-      },
-      {
-        'title': '田园蔬菜沙拉',
-        'description': '清爽解腻，只需简单的油醋汁调味即可。',
-        'time': '10',
-        'calories': '180',
-        'imageUrl':
-            'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=500&auto=format&fit=crop&q=60',
-        'tags': ['素食', '低卡', '快速简餐'],
-        'isFavorite': false,
-        'ingredients': [
-          {'name': '生菜', 'amount': '200g'},
-          {'name': '小番茄', 'amount': '10个'},
-          {'name': '黄瓜', 'amount': '1根'},
-          {'name': '橄榄油', 'amount': '1勺'},
-          {'name': '醋', 'amount': '1勺'},
-        ],
-        'steps': [
-          '将蔬菜洗净切好。',
-          '混合橄榄油和醋制成油醋汁。',
-          '将所有材料混合均匀即可。',
-        ],
-      },
-      {
-        'title': '香煎三文鱼',
-        'description': '富含优质蛋白和Omega-3，简单煎制即可美味。',
-        'time': '15',
-        'calories': '450',
-        'imageUrl':
-            'https://images.unsplash.com/photo-1485921325833-c519f76c4927?w=500&auto=format&fit=crop&q=60',
-        'tags': ['生酮', '高蛋白', '低碳水'],
-        'isFavorite': false,
-        'ingredients': [
-          {'name': '三文鱼', 'amount': '200g'},
-          {'name': '柠檬', 'amount': '半个'},
-          {'name': '迷迭香', 'amount': '1枝'},
-          {'name': '黑胡椒', 'amount': '适量'},
-        ],
-        'steps': [
-          '三文鱼洗净擦干，撒上海盐和黑胡椒腌制10分钟。',
-          '平底锅烧热放少许油，放入三文鱼皮朝下煎3分钟。',
-          '翻面继续煎2-3分钟至熟。',
-          '挤上柠檬汁，放入迷迭香装饰。',
-        ],
-      },
-      {
-        'title': '牛油果全麦吐司',
-        'description': '完美的早餐选择，营养均衡，开启活力一天。',
-        'time': '5',
-        'calories': '280',
-        'imageUrl':
-            'https://images.unsplash.com/photo-1588137372308-15f75323ca8d?w=500&auto=format&fit=crop&q=60',
-        'tags': ['素食', '快速简餐'],
-        'isFavorite': true,
-        'ingredients': [
-          {'name': '全麦吐司', 'amount': '2片'},
-          {'name': '牛油果', 'amount': '1个'},
-          {'name': '鸡蛋', 'amount': '1个'},
-          {'name': '黑胡椒', 'amount': '适量'},
-        ],
-        'steps': [
-          '全麦吐司烤至酥脆。',
-          '牛油果捣成泥，涂抹在吐司上。',
-          '煎一个太阳蛋放在上面。',
-          '撒上黑胡椒调味。',
-        ],
-      },
-    ];
+    final recipesProvider = Provider.of<RecipesProvider>(context);
+    final allRecipes = recipesProvider.recipes;
 
     // Filter logic
     final filteredRecipes = allRecipes.where((recipe) {
       final matchesSearch = _searchQuery.isEmpty ||
-          (recipe['title'] as String).contains(_searchQuery) ||
-          (recipe['description'] as String).contains(_searchQuery);
+          recipe.title.contains(_searchQuery) ||
+          recipe.description.contains(_searchQuery);
 
       if (!matchesSearch) return false;
 
       if (_selectedFilter == 'All') return true;
 
       // Map localized filter names to tags or logic
-      if (_selectedFilter == l10n.filterKeto)
-        return (recipe['tags'] as List).contains('生酮');
-      if (_selectedFilter == l10n.filterVeggie)
-        return (recipe['tags'] as List).contains('素食');
-      if (_selectedFilter == l10n.filterLowCal)
-        return (recipe['tags'] as List).contains('低卡');
+      if (_selectedFilter == l10n.filterKeto) {
+        return recipe.tags.contains('生酮');
+      }
+      if (_selectedFilter == l10n.filterVeggie) {
+        return recipe.tags.contains('素食');
+      }
+      if (_selectedFilter == l10n.filterLowCal) {
+        return recipe.tags.contains('低卡');
+      }
 
       // Direct tag matching for others
-      return (recipe['tags'] as List).contains(_selectedFilter);
+      return recipe.tags.contains(_selectedFilter);
     }).toList();
 
     return Scaffold(
-      appBar: AppBar(
-        title: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              l10n.recommendForYou,
-              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
+      backgroundColor: AppColors.background,
+      body: CustomScrollView(
+        controller: _scrollController,
+        slivers: [
+          SliverAppBar(
+            expandedHeight: 110.0,
+            floating: false,
+            pinned: true,
+            elevation: 0,
+            centerTitle: true,
+            backgroundColor: AppColors.background,
+            // 当折叠到一定程度时，通过 AnimatedOpacity 渐显标题
+            title: AnimatedOpacity(
+              opacity: _showTitle ? 1.0 : 0.0,
+              duration: const Duration(milliseconds: 200),
+              child: Text(
+                l10n.recommendForYou,
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18,
+                  color: AppColors.textPrimary,
+                ),
+              ),
             ),
-            Text(
-              l10n.recommendBasedOnPantry,
-              style:
-                  const TextStyle(color: AppColors.textSecondary, fontSize: 14),
+            flexibleSpace: FlexibleSpaceBar(
+              expandedTitleScale: 1.2,
+              titlePadding: const EdgeInsets.fromLTRB(16, 0, 16, 5),
+              centerTitle: false,
+              title: AnimatedOpacity(
+                opacity: _showTitle ? 0.0 : 1.0,
+                duration: const Duration(milliseconds: 150),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      l10n.recommendForYou,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 22,
+                        color: AppColors.textPrimary,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      l10n.recommendBasedOnPantry,
+                      style: const TextStyle(
+                        color: AppColors.textSecondary,
+                        fontSize: 10,
+                        fontWeight: FontWeight.normal,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              background: Container(color: AppColors.background),
             ),
-          ],
-        ),
-      ),
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(16),
-            child: TextField(
-              controller: _searchController,
-              onChanged: (value) {
-                setState(() {
-                  _searchQuery = value;
-                });
-              },
-              decoration: InputDecoration(
-                hintText: l10n.searchRecipes,
-                prefixIcon: const Icon(Icons.search, color: Colors.grey),
-                filled: true,
-                fillColor: Colors.grey[100],
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(30),
-                  borderSide: BorderSide.none,
+          ),
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(12),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.05),
+                      blurRadius: 10,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: TextField(
+                  controller: _searchController,
+                  onChanged: (value) {
+                    setState(() {
+                      _searchQuery = value;
+                    });
+                  },
+                  decoration: InputDecoration(
+                    hintText: l10n.searchRecipes,
+                    hintStyle: const TextStyle(color: Colors.grey, fontSize: 14),
+                    prefixIcon: const Icon(Icons.search, color: AppColors.primary),
+                    suffixIcon: _searchQuery.isNotEmpty
+                        ? IconButton(
+                            icon: const Icon(Icons.clear, size: 18),
+                            onPressed: () {
+                              _searchController.clear();
+                              setState(() {
+                                _searchQuery = '';
+                              });
+                            },
+                          )
+                        : null,
+                    filled: true,
+                    fillColor: Colors.white,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide.none,
+                    ),
+                    contentPadding: const EdgeInsets.symmetric(vertical: 12),
+                  ),
                 ),
               ),
             ),
           ),
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Row(
-              children: [
-                _buildFilterChip(l10n.filterAll),
-                _buildFilterChip(l10n.filterKeto),
-                _buildFilterChip(l10n.filterVeggie),
-                _buildFilterChip(l10n.filterLowCal),
-                _buildFilterChip('高蛋白'),
-                _buildFilterChip('快速简餐'),
-                _buildFilterChip('低碳水'),
-              ],
+          SliverToBoxAdapter(
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Row(
+                children: [
+                  _buildFilterChip(l10n.filterAll),
+                  _buildFilterChip(l10n.filterKeto),
+                  _buildFilterChip(l10n.filterVeggie),
+                  _buildFilterChip(l10n.filterLowCal),
+                  _buildFilterChip('高蛋白'),
+                  _buildFilterChip('快速简餐'),
+                  _buildFilterChip('低碳水'),
+                ],
+              ),
             ),
           ),
-          Expanded(
-            child: filteredRecipes.isEmpty
-                ? Center(
-                    child: Text('没有找到相关食谱',
-                        style: TextStyle(color: Colors.grey[600])))
-                : ListView.builder(
-                    padding: const EdgeInsets.all(16),
-                    itemCount: filteredRecipes.length,
-                    itemBuilder: (context, index) {
-                      final recipe = filteredRecipes[index];
-                      return _buildRecipeCard(
-                        context,
-                        recipe['title'] as String,
-                        recipe['description'] as String,
-                        recipe['time'] as String,
-                        recipe['calories'] as String,
-                        recipe['imageUrl'] as String,
-                        recipe['tags'] as List<String>,
-                        isFavorite: recipe['isFavorite'] as bool,
-                        ingredients:
-                            recipe['ingredients'] as List<Map<String, String>>,
-                        steps: recipe['steps'] as List<String>,
-                      );
-                    },
+          SliverPadding(
+            padding: const EdgeInsets.all(16),
+            sliver: filteredRecipes.isEmpty
+                ? SliverFillRemaining(
+                    child: Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.search_off, size: 64, color: Colors.grey[300]),
+                          const SizedBox(height: 16),
+                          Text(
+                            '没有找到相关食谱',
+                            style: TextStyle(color: Colors.grey[600], fontSize: 16),
+                          ),
+                        ],
+                      ),
+                    ),
+                  )
+                : SliverList(
+                    delegate: SliverChildBuilderDelegate(
+                      (context, index) {
+                        final recipe = filteredRecipes[index];
+                        return Padding(
+                          padding: const EdgeInsets.only(bottom: 16),
+                          child: _buildRecipeCard(
+                            context,
+                            recipe.id,
+                            recipe.title,
+                            recipe.description,
+                            recipe.time,
+                            recipe.calories,
+                            recipe.imageUrl,
+                            recipe.tags,
+                            isFavorite: recipe.isFavorite,
+                            ingredients: recipe.ingredients,
+                            steps: recipe.steps,
+                          ),
+                        );
+                      },
+                      childCount: filteredRecipes.length,
+                    ),
                   ),
           ),
         ],
@@ -231,21 +246,19 @@ class _RecipesPageState extends State<RecipesPage> {
   }
 
   Widget _buildFilterChip(String label) {
+    final l10n = AppLocalizations.of(context)!;
     final isSelected = _selectedFilter == label ||
-        (_selectedFilter == 'All' &&
-            label == AppLocalizations.of(context)!.filterAll);
+        (_selectedFilter == 'All' && label == l10n.filterAll);
+    
     return Padding(
       padding: const EdgeInsets.only(right: 8),
-      child: FilterChip(
-        label: Container(
-          constraints: const BoxConstraints(minWidth: 48), // 给定最小宽度
-          alignment: Alignment.center,
-          child: Text(
-            label,
-            style: TextStyle(
-              color: isSelected ? Colors.white : AppColors.textPrimary,
-              fontWeight: FontWeight.bold,
-            ),
+      child: ChoiceChip(
+        label: Text(
+          label,
+          style: TextStyle(
+            color: isSelected ? Colors.white : AppColors.textPrimary,
+            fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+            fontSize: 13,
           ),
         ),
         selected: isSelected,
@@ -254,21 +267,26 @@ class _RecipesPageState extends State<RecipesPage> {
             _selectedFilter = label;
           });
         },
-        backgroundColor: Colors.grey[100],
         selectedColor: AppColors.primary,
-        checkmarkColor: Colors.white,
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        backgroundColor: Colors.white,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20),
-          side: BorderSide.none,
+          side: BorderSide(
+            color: isSelected ? AppColors.primary : Colors.grey[200]!,
+            width: 1,
+          ),
         ),
         showCheckmark: false,
+        elevation: isSelected ? 2 : 0,
+        pressElevation: 4,
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       ),
     );
   }
 
   Widget _buildRecipeCard(
     BuildContext context,
+    String id,
     String title,
     String description,
     String time,
@@ -280,12 +298,15 @@ class _RecipesPageState extends State<RecipesPage> {
     required List<String> steps,
   }) {
     final l10n = AppLocalizations.of(context)!;
+    final recipesProvider = Provider.of<RecipesProvider>(context, listen: false);
+
     return GestureDetector(
       onTap: () {
         Navigator.push(
           context,
           MaterialPageRoute(
             builder: (context) => RecipeDetailPage(
+              id: id,
               title: title,
               imageUrl: imageUrl,
               tags: tags,
@@ -331,16 +352,21 @@ class _RecipesPageState extends State<RecipesPage> {
                   Positioned(
                     top: 12,
                     right: 12,
-                    child: Container(
-                      padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.8),
-                        shape: BoxShape.circle,
-                      ),
-                      child: Icon(
-                        isFavorite ? Icons.favorite : Icons.favorite_border,
-                        color: isFavorite ? Colors.red : Colors.grey,
-                        size: 20,
+                    child: GestureDetector(
+                      onTap: () {
+                        recipesProvider.toggleFavorite(id);
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(0.8),
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          isFavorite ? Icons.favorite : Icons.favorite_border,
+                          color: isFavorite ? Colors.red : Colors.grey,
+                          size: 20,
+                        ),
                       ),
                     ),
                   ),
