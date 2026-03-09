@@ -85,6 +85,7 @@ class _IngredientConfirmationPageState extends State<IngredientConfirmationPage>
           context,
           MaterialPageRoute(
             builder: (context) => RecipeDetailPage(
+              id: recipe['id'] ?? DateTime.now().millisecondsSinceEpoch.toString(),
               title: recipe['title'],
               imageUrl: recipe['imageUrl'] ?? 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=500&auto=format&fit=crop&q=60',
               tags: List<String>.from(recipe['tags']),

@@ -10,7 +10,7 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final navProvider = Provider.of<NavigationProvider>(context, listen: false);
-    
+
     return Scaffold(
       appBar: AppBar(
         title: const Row(
@@ -33,7 +33,8 @@ class HomePage extends StatelessWidget {
             child: CircleAvatar(
               radius: 16,
               backgroundColor: Colors.orange[100],
-              child: const Text('A', style: TextStyle(color: Colors.orange, fontSize: 14)),
+              child: const Text('A',
+                  style: TextStyle(color: Colors.orange, fontSize: 14)),
             ),
           ),
         ],
@@ -56,7 +57,8 @@ class HomePage extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 12, vertical: 6),
                       decoration: BoxDecoration(
                         color: Colors.white.withOpacity(0.2),
                         borderRadius: BorderRadius.circular(20),
@@ -64,9 +66,12 @@ class HomePage extends StatelessWidget {
                       child: const Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Icon(Icons.auto_awesome, color: Colors.white, size: 14),
+                          Icon(Icons.auto_awesome,
+                              color: Colors.white, size: 14),
                           SizedBox(width: 4),
-                          Text('AI 智能助手', style: TextStyle(color: Colors.white, fontSize: 12)),
+                          Text('AI 智能助手',
+                              style:
+                                  TextStyle(color: Colors.white, fontSize: 12)),
                         ],
                       ),
                     ),
@@ -94,13 +99,16 @@ class HomePage extends StatelessWidget {
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.white,
                         foregroundColor: AppColors.primary,
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
-                        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30)),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 24, vertical: 12),
                       ),
                       child: const Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Text('开始识别食材', style: TextStyle(fontWeight: FontWeight.bold)),
+                          Text('开始识别食材',
+                              style: TextStyle(fontWeight: FontWeight.bold)),
                           SizedBox(width: 8),
                           Icon(Icons.arrow_forward),
                         ],
@@ -123,12 +131,13 @@ class HomePage extends StatelessWidget {
                   ),
                   TextButton(
                     onPressed: () => navProvider.setSelectedIndex(3),
-                    child: const Text('查看全部', style: TextStyle(color: AppColors.primary)),
+                    child: const Text('查看全部',
+                        style: TextStyle(color: AppColors.primary)),
                   ),
                 ],
               ),
             ),
-            
+
             // Recipe Card
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -138,8 +147,10 @@ class HomePage extends StatelessWidget {
                     context,
                     MaterialPageRoute(
                       builder: (context) => const RecipeDetailPage(
+                        id: '1',
                         title: '奶油菠菜鸡胸肉',
-                        imageUrl: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=500&auto=format&fit=crop&q=60',
+                        imageUrl:
+                            'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=500&auto=format&fit=crop&q=60',
                         tags: ['生酮', '高蛋白'],
                         time: '25',
                         calories: '320',
@@ -183,7 +194,8 @@ class HomePage extends StatelessWidget {
                       Stack(
                         children: [
                           ClipRRect(
-                            borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+                            borderRadius: const BorderRadius.vertical(
+                                top: Radius.circular(20)),
                             child: Image.network(
                               'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=500&auto=format&fit=crop&q=60',
                               height: 200,
@@ -211,12 +223,14 @@ class HomePage extends StatelessWidget {
                           children: [
                             Text(
                               '奶油菠菜鸡胸肉',
-                              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                              style: TextStyle(
+                                  fontSize: 18, fontWeight: FontWeight.bold),
                             ),
                             SizedBox(height: 8),
                             Text(
                               '利用冰箱里剩下的菠菜和奶油，做一道健康又美味的低碳水晚餐。',
-                              style: TextStyle(color: AppColors.textSecondary, fontSize: 14),
+                              style: TextStyle(
+                                  color: AppColors.textSecondary, fontSize: 14),
                             ),
                           ],
                         ),
@@ -241,13 +255,15 @@ class HomePage extends StatelessWidget {
                       SizedBox(width: 8),
                       Text(
                         '即将过期',
-                        style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                            fontSize: 20, fontWeight: FontWeight.bold),
                       ),
                     ],
                   ),
                   TextButton(
                     onPressed: () => navProvider.setSelectedIndex(1),
-                    child: const Text('管理冰箱', style: TextStyle(color: AppColors.textSecondary)),
+                    child: const Text('管理冰箱',
+                        style: TextStyle(color: AppColors.textSecondary)),
                   ),
                 ],
               ),
@@ -273,9 +289,11 @@ class HomePage extends StatelessWidget {
                         onPressed: () => navProvider.setSelectedIndex(1),
                         style: OutlinedButton.styleFrom(
                           side: const BorderSide(color: AppColors.primary),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10)),
                         ),
-                        child: const Text('查看全部库存', style: TextStyle(color: AppColors.primary)),
+                        child: const Text('查看全部库存',
+                            style: TextStyle(color: AppColors.primary)),
                       ),
                     ),
                   ],
@@ -296,11 +314,13 @@ class HomePage extends StatelessWidget {
         color: Colors.black26,
         borderRadius: BorderRadius.circular(20),
       ),
-      child: Text(text, style: const TextStyle(color: Colors.white, fontSize: 12)),
+      child:
+          Text(text, style: const TextStyle(color: Colors.white, fontSize: 12)),
     );
   }
 
-  Widget _buildExpiringItem(String title, String subtitle, String time, Color color) {
+  Widget _buildExpiringItem(
+      String title, String subtitle, String time, Color color) {
     return Row(
       children: [
         Container(
@@ -317,8 +337,12 @@ class HomePage extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-              Text(subtitle, style: const TextStyle(color: AppColors.textSecondary, fontSize: 14)),
+              Text(title,
+                  style: const TextStyle(
+                      fontWeight: FontWeight.bold, fontSize: 16)),
+              Text(subtitle,
+                  style: const TextStyle(
+                      color: AppColors.textSecondary, fontSize: 14)),
               const SizedBox(height: 4),
               Row(
                 children: [
