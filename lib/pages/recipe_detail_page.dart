@@ -56,10 +56,6 @@ class RecipeDetailPage extends StatelessWidget {
                   recipesProvider.toggleFavorite(id);
                 },
               ),
-              IconButton(
-                icon: const Icon(Icons.share, color: Colors.white),
-                onPressed: () {},
-              ),
             ],
           ),
           SliverPadding(

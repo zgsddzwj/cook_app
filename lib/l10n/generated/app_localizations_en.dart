@@ -30,7 +30,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get whatToEatToday => 'Don\'t know what to eat?';
 
   @override
-  String get aiIntro => 'Take a photo of your fridge, let CookApp recommend the perfect recipe, reduce waste, and enjoy cooking.';
+  String get aiIntro =>
+      'Take a photo of your fridge, let CookApp recommend the perfect recipe, reduce waste, and enjoy cooking.';
 
   @override
   String get startIdentifying => 'Start Identifying';
@@ -104,7 +105,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get smartIdentification => 'Smart Identification';
 
   @override
-  String get cameraIntro => 'Take a photo or upload, AI will automatically identify ingredients.';
+  String get cameraIntro =>
+      'Take a photo or upload, AI will automatically identify ingredients.';
 
   @override
   String get clickToUpload => 'Click to take photo or upload';

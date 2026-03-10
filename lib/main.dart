@@ -8,6 +8,8 @@ import 'pages/main_screen.dart';
 import 'core/pantry_provider.dart';
 import 'core/navigation_provider.dart';
 import 'core/recipes_provider.dart';
+import 'core/diet_preferences_provider.dart';
+import 'core/scan_history_provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -18,6 +20,8 @@ void main() async {
         ChangeNotifierProvider(create: (_) => PantryProvider()),
         ChangeNotifierProvider(create: (_) => NavigationProvider()),
         ChangeNotifierProvider(create: (_) => RecipesProvider()),
+        ChangeNotifierProvider(create: (_) => DietPreferencesProvider()),
+        ChangeNotifierProvider(create: (_) => ScanHistoryProvider()),
       ],
       child: const CookApp(),
     ),

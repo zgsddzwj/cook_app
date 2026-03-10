@@ -1,13 +1,102 @@
 import 'package:snap_cook/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import '../core/app_colors.dart';
+import '../core/ingredient_images.dart';
 import '../core/pantry_provider.dart';
 import '../models/ingredient.dart';
 import 'ingredient_detail_page.dart';
 
 class PantryPage extends StatelessWidget {
   const PantryPage({super.key});
+
+  void _showSortSheet(BuildContext context, PantryProvider pantry, AppLocalizations l10n) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (sheetContext) {
+        Widget buildOption({
+          required PantrySortType type,
+          required IconData icon,
+          required String title,
+        }) {
+          final selected = pantry.currentSortType == type;
+          return ListTile(
+            leading: Container(
+              width: 40,
+              height: 40,
+              decoration: BoxDecoration(
+                color: selected ? AppColors.primary.withOpacity(0.12) : Colors.grey.shade100,
+                borderRadius: BorderRadius.circular(14),
+              ),
+              child: Icon(icon, color: selected ? AppColors.primary : AppColors.textSecondary, size: 20),
+            ),
+            title: Text(
+              title,
+              style: TextStyle(
+                fontWeight: FontWeight.w600,
+                color: selected ? AppColors.textPrimary : AppColors.textPrimary,
+              ),
+            ),
+            trailing: selected ? const Icon(Icons.check, color: AppColors.primary) : null,
+            onTap: () {
+              pantry.setSortType(type);
+              Navigator.pop(sheetContext);
+            },
+          );
+        }
+
+        return SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(24),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.08),
+                    blurRadius: 18,
+                    offset: const Offset(0, 8),
+                  ),
+                ],
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const SizedBox(height: 12),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: Row(
+                      children: [
+                        Text(
+                          l10n.sort,
+                          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                        ),
+                        const Spacer(),
+                        IconButton(
+                          onPressed: () => Navigator.pop(sheetContext),
+                          icon: const Icon(Icons.close),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Divider(height: 1, color: Colors.grey.shade100),
+                  buildOption(type: PantrySortType.category, icon: Icons.category_outlined, title: l10n.sortByCategory),
+                  Divider(height: 1, color: Colors.grey.shade100),
+                  buildOption(type: PantrySortType.expiryDate, icon: Icons.event_outlined, title: l10n.sortByExpiryDate),
+                  Divider(height: 1, color: Colors.grey.shade100),
+                  buildOption(type: PantrySortType.quantity, icon: Icons.format_list_numbered_outlined, title: l10n.sortByQuantity),
+                  const SizedBox(height: 8),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -22,31 +111,24 @@ class PantryPage extends StatelessWidget {
         actions: [
           Consumer<PantryProvider>(
             builder: (context, pantry, child) {
-              return PopupMenuButton<PantrySortType>(
-                icon: const Icon(Icons.sort_outlined),
-                onSelected: (PantrySortType type) {
-                  pantry.setSortType(type);
-                },
-                itemBuilder: (BuildContext context) => <PopupMenuEntry<PantrySortType>>[
-                  PopupMenuItem<PantrySortType>(
-                    value: PantrySortType.category,
-                    child: Text(l10n.sortByCategory),
+              return Padding(
+                padding: const EdgeInsets.only(right: 12),
+                child: TextButton.icon(
+                  onPressed: () => _showSortSheet(context, pantry, l10n),
+                  icon: const Icon(Icons.sort_outlined, size: 20),
+                  label: Text(
+                    l10n.sort,
+                    style: const TextStyle(fontWeight: FontWeight.w600),
                   ),
-                  PopupMenuItem<PantrySortType>(
-                    value: PantrySortType.expiryDate,
-                    child: Text(l10n.sortByExpiryDate),
+                  style: TextButton.styleFrom(
+                    foregroundColor: AppColors.textSecondary,
+                    backgroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
                   ),
-                  PopupMenuItem<PantrySortType>(
-                    value: PantrySortType.quantity,
-                    child: Text(l10n.sortByQuantity),
-                  ),
-                ],
+                ),
               );
             },
-          ),
-          Padding(
-            padding: const EdgeInsets.only(right: 16),
-            child: Center(child: Text(l10n.sort, style: const TextStyle(color: AppColors.textSecondary))),
           ),
         ],
       ),
@@ -127,7 +209,13 @@ class PantryPage extends StatelessWidget {
                     color: Colors.grey[100],
                     borderRadius: BorderRadius.circular(16),
                   ),
-                  child: const Icon(Icons.shopping_bag_outlined, color: Colors.grey, size: 30),
+                  child: Padding(
+                    padding: const EdgeInsets.all(14),
+                    child: SvgPicture.asset(
+                      resolveIngredientAsset(item),
+                      fit: BoxFit.contain,
+                    ),
+                  ),
                 ),
                 const SizedBox(width: 16),
                 Expanded(

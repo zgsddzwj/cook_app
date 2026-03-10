@@ -1,5 +1,3 @@
-import 'package:flutter/foundation.dart';
-
 class Recipe {
   final String id;
   final String title;

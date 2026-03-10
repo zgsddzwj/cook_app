@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 import 'package:snap_cook/l10n/generated/app_localizations.dart';
 import '../core/app_colors.dart';
 import '../core/recipes_provider.dart';
-import '../models/recipe.dart';
 import 'recipe_detail_page.dart';
 
 class RecipesPage extends StatefulWidget {
@@ -155,8 +154,10 @@ class _RecipesPageState extends State<RecipesPage> {
                   },
                   decoration: InputDecoration(
                     hintText: l10n.searchRecipes,
-                    hintStyle: const TextStyle(color: Colors.grey, fontSize: 14),
-                    prefixIcon: const Icon(Icons.search, color: AppColors.primary),
+                    hintStyle:
+                        const TextStyle(color: Colors.grey, fontSize: 14),
+                    prefixIcon:
+                        const Icon(Icons.search, color: AppColors.primary),
                     suffixIcon: _searchQuery.isNotEmpty
                         ? IconButton(
                             icon: const Icon(Icons.clear, size: 18),
@@ -205,11 +206,13 @@ class _RecipesPageState extends State<RecipesPage> {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(Icons.search_off, size: 64, color: Colors.grey[300]),
+                          Icon(Icons.search_off,
+                              size: 64, color: Colors.grey[300]),
                           const SizedBox(height: 16),
                           Text(
                             '没有找到相关食谱',
-                            style: TextStyle(color: Colors.grey[600], fontSize: 16),
+                            style: TextStyle(
+                                color: Colors.grey[600], fontSize: 16),
                           ),
                         ],
                       ),
@@ -249,7 +252,7 @@ class _RecipesPageState extends State<RecipesPage> {
     final l10n = AppLocalizations.of(context)!;
     final isSelected = _selectedFilter == label ||
         (_selectedFilter == 'All' && label == l10n.filterAll);
-    
+
     return Padding(
       padding: const EdgeInsets.only(right: 8),
       child: ChoiceChip(
@@ -298,7 +301,8 @@ class _RecipesPageState extends State<RecipesPage> {
     required List<String> steps,
   }) {
     final l10n = AppLocalizations.of(context)!;
-    final recipesProvider = Provider.of<RecipesProvider>(context, listen: false);
+    final recipesProvider =
+        Provider.of<RecipesProvider>(context, listen: false);
 
     return GestureDetector(
       onTap: () {
@@ -347,6 +351,19 @@ class _RecipesPageState extends State<RecipesPage> {
                       height: 180,
                       width: double.infinity,
                       fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) {
+                        return Container(
+                          height: 180,
+                          width: double.infinity,
+                          color: Colors.grey[200],
+                          alignment: Alignment.center,
+                          child: Icon(
+                            Icons.image_outlined,
+                            size: 48,
+                            color: Colors.grey[400],
+                          ),
+                        );
+                      },
                     ),
                   ),
                   Positioned(

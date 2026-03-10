@@ -2,10 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:snap_cook/l10n/generated/app_localizations.dart';
 import 'package:provider/provider.dart';
 import '../core/app_colors.dart';
+import '../core/diet_preferences_provider.dart';
 import '../core/navigation_provider.dart';
 import 'edit_profile_page.dart';
 import 'favorites_page.dart';
 import 'scan_history_page.dart';
+import 'diet_preferences_page.dart';
+import 'privacy_policy_page.dart';
+import 'about_page.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
@@ -43,32 +47,61 @@ class ProfilePage extends StatelessWidget {
                   context,
                   title: l10n.myActivity,
                   items: [
-                    _ListItem(icon: Icons.favorite, title: l10n.savedRecipes, route: '/profile/favorites'),
-                    _ListItem(icon: Icons.history, title: l10n.scanHistory, route: '/profile/scan-history'),
-                    _ListItem(icon: Icons.inventory_2, title: l10n.myIngredients, index: 1),
+                    _ListItem(
+                        icon: Icons.favorite,
+                        title: l10n.savedRecipes,
+                        route: '/profile/favorites'),
+                    _ListItem(
+                        icon: Icons.history,
+                        title: l10n.scanHistory,
+                        route: '/profile/scan-history'),
+                    _ListItem(
+                        icon: Icons.inventory_2,
+                        title: l10n.myIngredients,
+                        index: 1),
                   ],
                   navProvider: navProvider,
                 ),
                 const SizedBox(height: 24),
-                _buildSection(
-                  context,
-                  title: l10n.features,
-                  items: [
-                    _ListItem(icon: Icons.calendar_today, title: l10n.weeklyMealPlan, route: '/meal-plan'),
-                    _ListItem(icon: Icons.shopping_cart, title: l10n.shoppingList, route: '/shopping-list'),
-                    _ListItem(icon: Icons.smart_toy, title: l10n.aiChef, index: 2),
-                  ],
-                  navProvider: navProvider,
-                ),
+                // _buildSection(
+                //   context,
+                //   title: l10n.features,
+                //   items: [
+                //     _ListItem(
+                //         icon: Icons.calendar_today,
+                //         title: l10n.weeklyMealPlan,
+                //         route: '/meal-plan'),
+                //     _ListItem(
+                //         icon: Icons.shopping_cart,
+                //         title: l10n.shoppingList,
+                //         route: '/shopping-list'),
+                //     _ListItem(
+                //         icon: Icons.smart_toy, title: l10n.aiChef, index: 2),
+                //   ],
+                //   navProvider: navProvider,
+                // ),
                 const SizedBox(height: 24),
                 _buildSection(
                   context,
                   title: l10n.settings,
                   items: [
-                    _ListItem(icon: Icons.notifications, title: l10n.notifications, route: '/profile/settings/notifications'),
-                    _ListItem(icon: Icons.privacy_tip, title: l10n.privacyPolicy, route: '/profile/settings/privacy'),
-                    _ListItem(icon: Icons.info, title: l10n.about, route: '/profile/settings/about'),
-                    _ListItem(icon: Icons.logout, title: l10n.logout, action: 'logout', isDestructive: true),
+                    // _ListItem(
+                    //     icon: Icons.notifications,
+                    //     title: l10n.notifications,
+                    //     route: '/profile/settings/notifications'),
+                    _ListItem(
+                        icon: Icons.privacy_tip,
+                        title: l10n.privacyPolicy,
+                        route: '/profile/settings/privacy'),
+                    _ListItem(
+                        icon: Icons.info,
+                        title: l10n.about,
+                        route: '/profile/settings/about'),
+                    _ListItem(
+                        icon: Icons.logout,
+                        title: l10n.logout,
+                        action: 'logout',
+                        isDestructive: true),
                   ],
                   navProvider: navProvider,
                 ),
@@ -103,7 +136,8 @@ class ProfilePage extends StatelessWidget {
               children: [
                 const CircleAvatar(
                   radius: 36,
-                  backgroundImage: NetworkImage('https://api.dicebear.com/7.x/avataaars/png?seed=CookApp'),
+                  backgroundImage: NetworkImage(
+                      'https://api.dicebear.com/7.x/avataaars/png?seed=CookApp'),
                 ),
                 const SizedBox(width: 20),
                 Expanded(
@@ -144,11 +178,14 @@ class ProfilePage extends StatelessWidget {
                 style: OutlinedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 12),
                   side: BorderSide(color: Colors.grey.shade200),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12)),
                 ),
                 child: Text(
                   l10n.editProfile,
-                  style: const TextStyle(color: AppColors.textPrimary, fontWeight: FontWeight.w600),
+                  style: const TextStyle(
+                      color: AppColors.textPrimary,
+                      fontWeight: FontWeight.w600),
                 ),
               ),
             ),
@@ -168,6 +205,10 @@ class ProfilePage extends StatelessWidget {
       {'label': l10n.dairyFree, 'key': 'dairy_free'},
     ];
 
+    final dietProvider = Provider.of<DietPreferencesProvider>(context);
+    final selectedPrefs =
+        preferences.where((p) => dietProvider.isSelected(p['key']!)).toList();
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24),
       child: Column(
@@ -178,38 +219,60 @@ class ProfilePage extends StatelessWidget {
             children: [
               Text(
                 l10n.dietPreferences,
-                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppColors.textPrimary),
+                style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.textPrimary),
               ),
               TextButton(
-                onPressed: () {},
-                child: Text(l10n.editPreferences, style: const TextStyle(color: AppColors.primary)),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (_) => const DietPreferencesPage()),
+                  );
+                },
+                child: Text(l10n.editPreferences,
+                    style: const TextStyle(color: AppColors.primary)),
               ),
             ],
           ),
           const SizedBox(height: 12),
-          Wrap(
-            spacing: 8,
-            runSpacing: 8,
-            children: preferences.map((pref) {
-              return Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                decoration: BoxDecoration(
-                  color: AppColors.primary.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(20),
+          selectedPrefs.isEmpty
+              ? Text(l10n.comingSoon,
+                  style: const TextStyle(
+                      color: AppColors.textSecondary, fontSize: 14))
+              : Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: selectedPrefs.map((pref) {
+                    return Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 8),
+                      decoration: BoxDecoration(
+                        color: AppColors.primary.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Text(
+                        pref['label']!,
+                        style: const TextStyle(
+                          color: AppColors.primary,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 14,
+                        ),
+                      ),
+                    );
+                  }).toList(),
                 ),
-                child: Text(
-                  pref['label']!,
-                  style: const TextStyle(color: AppColors.primary, fontWeight: FontWeight.w500, fontSize: 14),
-                ),
-              );
-            }).toList(),
-          ),
         ],
       ),
     );
   }
 
-  Widget _buildSection(BuildContext context, {required String title, required List<_ListItem> items, required NavigationProvider navProvider}) {
+  Widget _buildSection(BuildContext context,
+      {required String title,
+      required List<_ListItem> items,
+      required NavigationProvider navProvider}) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24),
       child: Column(
@@ -217,7 +280,10 @@ class ProfilePage extends StatelessWidget {
         children: [
           Text(
             title,
-            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppColors.textPrimary),
+            style: const TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: AppColors.textPrimary),
           ),
           const SizedBox(height: 12),
           Container(
@@ -237,37 +303,60 @@ class ProfilePage extends StatelessWidget {
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
               itemCount: items.length,
-              separatorBuilder: (context, index) => Divider(height: 1, color: Colors.grey.shade50),
+              separatorBuilder: (context, index) =>
+                  Divider(height: 1, color: Colors.grey.shade50),
               itemBuilder: (context, index) {
                 final item = items[index];
                 return ListTile(
-                  leading: Icon(item.icon, color: item.isDestructive ? Colors.redAccent : AppColors.primary, size: 22),
+                  leading: Icon(item.icon,
+                      color: item.isDestructive
+                          ? Colors.redAccent
+                          : AppColors.primary,
+                      size: 22),
                   title: Text(
                     item.title,
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w500,
-                      color: item.isDestructive ? Colors.redAccent : AppColors.textPrimary,
+                      color: item.isDestructive
+                          ? Colors.redAccent
+                          : AppColors.textPrimary,
                     ),
                   ),
-                  trailing: const Icon(Icons.chevron_right, size: 20, color: Colors.grey),
+                  trailing: const Icon(Icons.chevron_right,
+                      size: 20, color: Colors.grey),
                   onTap: () {
                     if (item.index != null) {
                       navProvider.setSelectedIndex(item.index!);
                     } else if (item.route != null) {
                       if (item.route == '/profile/favorites') {
-                        Navigator.push(context, MaterialPageRoute(builder: (_) => const FavoritesPage()));
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (_) => const FavoritesPage()));
                       } else if (item.route == '/profile/scan-history') {
-                        Navigator.push(context, MaterialPageRoute(builder: (_) => const ScanHistoryPage()));
-                      } else if (item.route == '/profile/settings/notifications') {
-                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('打开通知设置')));
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (_) => const ScanHistoryPage()));
+                      // } else if (item.route ==
+                      //     '/profile/settings/notifications') {
+                      //   ScaffoldMessenger.of(context).showSnackBar(
+                      //       const SnackBar(content: Text('打开通知设置')));
                       } else if (item.route == '/profile/settings/privacy') {
-                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('查看隐私政策')));
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (_) => const PrivacyPolicyPage()));
                       } else if (item.route == '/profile/settings/about') {
-                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('关于')));
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (_) => const AboutPage()));
                       }
                     } else if (item.action == 'logout') {
-                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('已退出登录')));
+                      ScaffoldMessenger.of(context)
+                          .showSnackBar(const SnackBar(content: Text('已退出登录')));
                     }
                   },
                 );

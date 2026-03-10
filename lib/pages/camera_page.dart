@@ -9,6 +9,7 @@ import '../core/app_colors.dart';
 import '../models/ingredient.dart';
 import '../core/pantry_provider.dart';
 import '../core/navigation_provider.dart';
+import '../core/scan_history_provider.dart';
 import 'ingredient_detail_page.dart';
 import 'ingredient_confirmation_page.dart';
 
@@ -34,6 +35,7 @@ class _CameraPageState extends State<CameraPage> {
         imageQuality: 85,
       );
       if (pickedFile != null) {
+        final thumbnailBytes = await pickedFile.readAsBytes();
         setState(() {
           _image = pickedFile;
           _isRecognizing = true;
@@ -44,6 +46,12 @@ class _CameraPageState extends State<CameraPage> {
         final results = await LLMService.recognizeIngredients(pickedFile.path);
 
         if (mounted) {
+          Provider.of<ScanHistoryProvider>(context, listen: false).addEntry(
+            imagePath: pickedFile.path,
+            thumbnailBytes: thumbnailBytes,
+            ingredients: results,
+          );
+
           setState(() {
             _isRecognizing = false;
             _recognizedIngredients = results;
