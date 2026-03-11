@@ -29,7 +29,7 @@ class _MainScreenState extends State<MainScreen> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final navProvider = Provider.of<NavigationProvider>(context);
-    
+
     return Scaffold(
       body: IndexedStack(
         index: navProvider.selectedIndex,
@@ -67,12 +67,25 @@ class _MainScreenState extends State<MainScreen> {
         ],
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => navProvider.setSelectedIndex(2),
-        backgroundColor: AppColors.primary,
-        shape: const CircleBorder(),
-        elevation: 4,
-        child: const Icon(Icons.camera_alt, color: Colors.white, size: 28),
+      floatingActionButton: Container(
+        margin: const EdgeInsets.only(top: 20),
+        width: 72,
+        height: 72,
+        child: FloatingActionButton(
+          onPressed: () => navProvider.setSelectedIndex(2),
+          backgroundColor: AppColors.primary,
+          shape: const CircleBorder(),
+          elevation: navProvider.selectedIndex == 2 ? 12 : 4,
+          child: AnimatedScale(
+            scale: navProvider.selectedIndex == 2 ? 1.2 : 1.0,
+            duration: const Duration(milliseconds: 200),
+            child: const Icon(
+              Icons.camera_alt,
+              color: Colors.white,
+              size: 32,
+            ),
+          ),
+        ),
       ),
     );
   }
