@@ -33,7 +33,7 @@ class RecipeDetailPage extends StatelessWidget {
     final l10n = AppLocalizations.of(context)!;
     final recipesProvider = Provider.of<RecipesProvider>(context);
     final isFavorite = recipesProvider.isFavorite(id);
-    
+
     return Scaffold(
       body: CustomScrollView(
         slivers: [
@@ -44,6 +44,13 @@ class RecipeDetailPage extends StatelessWidget {
               background: Image.network(
                 imageUrl,
                 fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) {
+                  return Container(
+                    color: Colors.grey[200],
+                    child: const Icon(Icons.broken_image,
+                        size: 64, color: Colors.grey),
+                  );
+                },
               ),
             ),
             actions: [
@@ -62,19 +69,24 @@ class RecipeDetailPage extends StatelessWidget {
             padding: const EdgeInsets.all(20),
             sliver: SliverList(
               delegate: SliverChildListDelegate([
-                Row(
-                  children: tags.map((tag) => Container(
-                    margin: const EdgeInsets.only(right: 8),
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                    decoration: BoxDecoration(
-                      color: AppColors.primary.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Text(
-                      tag,
-                      style: const TextStyle(color: AppColors.primary, fontSize: 12),
-                    ),
-                  )).toList(),
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: tags
+                      .map((tag) => Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 12, vertical: 4),
+                            decoration: BoxDecoration(
+                              color: AppColors.primary.withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: Text(
+                              tag,
+                              style: const TextStyle(
+                                  color: AppColors.primary, fontSize: 12),
+                            ),
+                          ))
+                      .toList(),
                 ),
                 const SizedBox(height: 16),
                 Text(
@@ -90,7 +102,8 @@ class RecipeDetailPage extends StatelessWidget {
                   children: [
                     _buildInfoItem(Icons.access_time, l10n.cookingTime(time)),
                     const SizedBox(width: 24),
-                    _buildInfoItem(Icons.local_fire_department, l10n.calories(calories)),
+                    _buildInfoItem(
+                        Icons.local_fire_department, l10n.calories(calories)),
                   ],
                 ),
                 const SizedBox(height: 24),
@@ -105,19 +118,23 @@ class RecipeDetailPage extends StatelessWidget {
                 const SizedBox(height: 32),
                 Text(
                   l10n.ingredients,
-                  style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  style: const TextStyle(
+                      fontSize: 20, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 16),
-                ...ingredients.map((item) => _buildIngredientItem(item['name']!, item['amount']!)),
-
+                ...ingredients.map((item) =>
+                    _buildIngredientItem(item['name']!, item['amount']!)),
                 const SizedBox(height: 32),
                 Text(
                   l10n.instructions,
-                  style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  style: const TextStyle(
+                      fontSize: 20, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 16),
-                ...steps.asMap().entries.map((entry) => _buildStepItem(entry.key + 1, entry.value)),
-                
+                ...steps
+                    .asMap()
+                    .entries
+                    .map((entry) => _buildStepItem(entry.key + 1, entry.value)),
                 const SizedBox(height: 40),
               ]),
             ),
@@ -173,7 +190,10 @@ class RecipeDetailPage extends StatelessWidget {
             ),
             child: Text(
               '$index',
-              style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 12),
+              style: const TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 12),
             ),
           ),
           const SizedBox(width: 16),

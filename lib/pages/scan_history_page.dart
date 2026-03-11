@@ -112,7 +112,7 @@ class ScanHistoryPage extends StatelessWidget {
                         context,
                         MaterialPageRoute(
                           builder: (_) => IngredientConfirmationPage(
-                            imagePath: entry.imagePath,
+                            imagePaths: [entry.imagePath],
                             initialIngredients: entry.ingredients,
                           ),
                         ),

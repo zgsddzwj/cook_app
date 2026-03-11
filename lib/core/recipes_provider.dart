@@ -9,7 +9,8 @@ class RecipesProvider extends ChangeNotifier {
       description: '利用冰箱里剩下的菠菜和奶油，做一道健康又美味的低碳水晚餐。',
       time: '25',
       calories: '320',
-      imageUrl: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=500&auto=format&fit=crop&q=60',
+      imageUrl:
+          'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=500&auto=format&fit=crop&q=60',
       tags: ['生酮', '高蛋白', '低碳水'],
       isFavorite: true,
       ingredients: [
@@ -36,7 +37,8 @@ class RecipesProvider extends ChangeNotifier {
       description: '清爽解腻，只需简单的油醋汁调味即可。',
       time: '10',
       calories: '180',
-      imageUrl: 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=500&auto=format&fit=crop&q=60',
+      imageUrl:
+          'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=500&auto=format&fit=crop&q=60',
       tags: ['素食', '低卡', '快速简餐'],
       isFavorite: false,
       ingredients: [
@@ -58,7 +60,8 @@ class RecipesProvider extends ChangeNotifier {
       description: '富含优质蛋白和Omega-3，简单煎制即可美味。',
       time: '15',
       calories: '450',
-      imageUrl: 'https://images.unsplash.com/photo-1485921325833-c519f76c4927?w=500&auto=format&fit=crop&q=60',
+      imageUrl:
+          'https://images.unsplash.com/photo-1485921325833-c519f76c4927?w=500&auto=format&fit=crop&q=60',
       tags: ['生酮', '高蛋白', '低碳水'],
       isFavorite: false,
       ingredients: [
@@ -80,7 +83,8 @@ class RecipesProvider extends ChangeNotifier {
       description: '完美的早餐选择，营养均衡，开启活力一天。',
       time: '5',
       calories: '280',
-      imageUrl: 'https://images.unsplash.com/photo-1588137372308-15f75323ca8d?w=500&auto=format&fit=crop&q=60',
+      imageUrl:
+          'https://images.unsplash.com/photo-1588137372308-15f75323ca8d?w=500&auto=format&fit=crop&q=60',
       tags: ['素食', '快速简餐'],
       isFavorite: true,
       ingredients: [
@@ -99,7 +103,8 @@ class RecipesProvider extends ChangeNotifier {
   ];
 
   List<Recipe> get recipes => _recipes;
-  List<Recipe> get favoriteRecipes => _recipes.where((r) => r.isFavorite).toList();
+  List<Recipe> get favoriteRecipes =>
+      _recipes.where((r) => r.isFavorite).toList();
 
   void toggleFavorite(String id) {
     final index = _recipes.indexWhere((r) => r.id == id);
@@ -111,5 +116,13 @@ class RecipesProvider extends ChangeNotifier {
 
   bool isFavorite(String id) {
     return _recipes.any((r) => r.id == id && r.isFavorite);
+  }
+
+  void addRecipe(Recipe recipe) {
+    // 检查是否已经存在
+    if (!_recipes.any((r) => r.id == recipe.id)) {
+      _recipes.insert(0, recipe);
+      notifyListeners();
+    }
   }
 }

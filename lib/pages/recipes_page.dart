@@ -389,22 +389,22 @@ class _RecipesPageState extends State<RecipesPage> {
                   ),
                   Positioned(
                     left: 12,
+                    right: 12,
                     bottom: 12,
-                    child: Row(
+                    child: Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
                       children: tags
-                          .map((tag) => Padding(
-                                padding: const EdgeInsets.only(right: 8),
-                                child: Container(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 10, vertical: 4),
-                                  decoration: BoxDecoration(
-                                    color: Colors.black45,
-                                    borderRadius: BorderRadius.circular(20),
-                                  ),
-                                  child: Text(tag,
-                                      style: const TextStyle(
-                                          color: Colors.white, fontSize: 10)),
+                          .map((tag) => Container(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 10, vertical: 4),
+                                decoration: BoxDecoration(
+                                  color: Colors.black45,
+                                  borderRadius: BorderRadius.circular(20),
                                 ),
+                                child: Text(tag,
+                                    style: const TextStyle(
+                                        color: Colors.white, fontSize: 10)),
                               ))
                           .toList(),
                     ),

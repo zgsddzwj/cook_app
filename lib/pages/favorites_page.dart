@@ -81,6 +81,33 @@ class FavoritesPage extends StatelessWidget {
                             width: 120,
                             height: 90,
                             fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) {
+                              return Container(
+                                width: 120,
+                                height: 90,
+                                color: Colors.grey[200],
+                                child: const Icon(Icons.broken_image,
+                                    color: Colors.grey),
+                              );
+                            },
+                            loadingBuilder: (context, child, loadingProgress) {
+                              if (loadingProgress == null) return child;
+                              return Container(
+                                width: 120,
+                                height: 90,
+                                color: Colors.grey[100],
+                                child: const Center(
+                                  child: SizedBox(
+                                    width: 20,
+                                    height: 20,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                      color: AppColors.primary,
+                                    ),
+                                  ),
+                                ),
+                              );
+                            },
                           ),
                         ),
                         const SizedBox(width: 12),
@@ -96,21 +123,32 @@ class FavoritesPage extends StatelessWidget {
                                     fontWeight: FontWeight.bold),
                               ),
                               const SizedBox(height: 6),
-                              Row(
+                              Wrap(
+                                spacing: 12,
+                                runSpacing: 4,
                                 children: [
-                                  const Icon(Icons.access_time_outlined,
-                                      color: AppColors.primary, size: 16),
-                                  const SizedBox(width: 4),
-                                  Text(l10n.cookingTime(r.time),
-                                      style: const TextStyle(fontSize: 12)),
-                                  const SizedBox(width: 12),
-                                  const Icon(
-                                      Icons.local_fire_department_outlined,
-                                      color: Colors.orange,
-                                      size: 16),
-                                  const SizedBox(width: 4),
-                                  Text(l10n.calories(r.calories),
-                                      style: const TextStyle(fontSize: 12)),
+                                  Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      const Icon(Icons.access_time_outlined,
+                                          color: AppColors.primary, size: 16),
+                                      const SizedBox(width: 4),
+                                      Text(l10n.cookingTime(r.time),
+                                          style: const TextStyle(fontSize: 12)),
+                                    ],
+                                  ),
+                                  Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      const Icon(
+                                          Icons.local_fire_department_outlined,
+                                          color: Colors.orange,
+                                          size: 16),
+                                      const SizedBox(width: 4),
+                                      Text(l10n.calories(r.calories),
+                                          style: const TextStyle(fontSize: 12)),
+                                    ],
+                                  ),
                                 ],
                               ),
                             ],

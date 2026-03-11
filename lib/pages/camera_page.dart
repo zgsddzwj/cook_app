@@ -1,17 +1,14 @@
-import '../l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:dotted_border/dotted_border.dart';
 import 'package:provider/provider.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:dotted_border/dotted_border.dart';
 import 'dart:io';
 import '../core/app_colors.dart';
 import '../models/ingredient.dart';
-import '../core/pantry_provider.dart';
-import '../core/navigation_provider.dart';
 import '../core/scan_history_provider.dart';
-import 'ingredient_detail_page.dart';
-import 'ingredient_confirmation_page.dart';
+import '../l10n/generated/app_localizations.dart';
+import 'recognition_result_page.dart';
 
 class CameraPage extends StatefulWidget {
   const CameraPage({super.key});
@@ -22,59 +19,86 @@ class CameraPage extends StatefulWidget {
 
 class _CameraPageState extends State<CameraPage> {
   final ImagePicker _picker = ImagePicker();
-  XFile? _image;
+  List<XFile> _images = [];
   bool _isRecognizing = false;
-  List<Ingredient> _recognizedIngredients = [];
 
   Future<void> _pickImage(ImageSource source) async {
+    if (_images.length >= 9) {
+      Fluttertoast.showToast(msg: '最多支持9张图片');
+      return;
+    }
+
     try {
-      final XFile? pickedFile = await _picker.pickImage(
-        source: source,
-        maxWidth: 1000,
-        maxHeight: 1000,
-        imageQuality: 85,
-      );
-      if (pickedFile != null) {
-        final thumbnailBytes = await pickedFile.readAsBytes();
+      if (source == ImageSource.gallery) {
+        final List<XFile>? pickedFiles = await _picker.pickMultiImage(
+          maxWidth: 1000,
+          maxHeight: 1000,
+          imageQuality: 85,
+          limit: 9 - _images.length,
+        );
+        if (pickedFiles != null && pickedFiles.isNotEmpty) {
+          setState(() {
+            _images.addAll(pickedFiles.take(9 - _images.length));
+          });
+        }
+      } else {
+        final XFile? pickedFile = await _picker.pickImage(
+          source: source,
+          maxWidth: 1000,
+          maxHeight: 1000,
+          imageQuality: 85,
+        );
+        if (pickedFile != null) {
+          setState(() {
+            _images.add(pickedFile);
+          });
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        _showErrorDialog(AppLocalizations.of(context)!.error, e.toString());
+      }
+    }
+  }
+
+  Future<void> _startRecognition() async {
+    if (_images.isEmpty) return;
+
+    setState(() {
+      _isRecognizing = true;
+    });
+
+    try {
+      final imagePaths = _images.map((img) => img.path).toList();
+      final results = await LLMService.recognizeIngredients(imagePaths);
+
+      if (mounted) {
+        // Use the first image for the scan history thumbnail
+        final thumbnailBytes = await _images[0].readAsBytes();
+
+        Provider.of<ScanHistoryProvider>(context, listen: false).addEntry(
+          imagePath: _images[0].path,
+          thumbnailBytes: thumbnailBytes,
+          ingredients: results,
+        );
+
         setState(() {
-          _image = pickedFile;
-          _isRecognizing = true;
-          _recognizedIngredients = []; // Reset previous results
+          _isRecognizing = false;
         });
 
-        // Calling LLM Service to recognize ingredients
-        final results = await LLMService.recognizeIngredients(pickedFile.path);
-
-        if (mounted) {
-          Provider.of<ScanHistoryProvider>(context, listen: false).addEntry(
-            imagePath: pickedFile.path,
-            thumbnailBytes: thumbnailBytes,
-            ingredients: results,
-          );
-
-          setState(() {
-            _isRecognizing = false;
-            _recognizedIngredients = results;
-          });
-          
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => IngredientConfirmationPage(
-                imagePath: pickedFile.path,
-                initialIngredients: results,
-              ),
+        // Navigate to the new Result Page
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => RecognitionResultPage(
+              ingredients: results,
+              imagePaths: imagePaths,
             ),
-          );
-
-          Fluttertoast.showToast(
-            msg: AppLocalizations.of(context)!.addedToPantrySuccess,
-            toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.BOTTOM,
-            backgroundColor: Colors.green,
-            textColor: Colors.white,
-          );
-        }
+          ),
+        ).then((_) {
+          // Optional: clear images when returning if needed
+          // setState(() => _images = []);
+        });
       }
     } catch (e) {
       if (mounted) {
@@ -109,7 +133,8 @@ class _CameraPageState extends State<CameraPage> {
       appBar: AppBar(
         title: Row(
           children: [
-            const Icon(Icons.restaurant_outlined, color: AppColors.primary, size: 30),
+            const Icon(Icons.restaurant_outlined,
+                color: AppColors.primary, size: 30),
             const SizedBox(width: 8),
             Text(
               l10n.appTitle,
@@ -127,7 +152,8 @@ class _CameraPageState extends State<CameraPage> {
             child: CircleAvatar(
               radius: 16,
               backgroundColor: Colors.orange[100],
-              child: const Text('A', style: TextStyle(color: Colors.orange, fontSize: 14)),
+              child: const Text('A',
+                  style: TextStyle(color: Colors.orange, fontSize: 14)),
             ),
           ),
         ],
@@ -157,14 +183,10 @@ class _CameraPageState extends State<CameraPage> {
                 ),
               ),
               const SizedBox(height: 32),
-
-              if (_image == null)
-                _buildUploadPlaceholder(l10n)
-              else if (_isRecognizing)
+              if (_isRecognizing)
                 _buildLoadingState(l10n)
               else
-                _buildResultsList(l10n),
-
+                _buildUploadPlaceholder(l10n),
               const SizedBox(height: 24),
             ],
           ),
@@ -174,6 +196,113 @@ class _CameraPageState extends State<CameraPage> {
   }
 
   Widget _buildUploadPlaceholder(AppLocalizations l10n) {
+    if (_images.isNotEmpty) {
+      return Column(
+        children: [
+          SizedBox(
+            height: 200,
+            child: ListView.separated(
+              scrollDirection: Axis.horizontal,
+              itemCount: _images.length + (_images.length < 9 ? 1 : 0),
+              separatorBuilder: (context, index) => const SizedBox(width: 12),
+              itemBuilder: (context, index) {
+                if (index == _images.length) {
+                  return GestureDetector(
+                    onTap: () => _showPickerOptions(context),
+                    child: DottedBorder(
+                      borderType: BorderType.RRect,
+                      radius: const Radius.circular(16),
+                      dashPattern: const [6, 3],
+                      color: Colors.grey.shade400,
+                      child: Container(
+                        width: 150,
+                        height: 200,
+                        decoration: BoxDecoration(
+                          color: Colors.grey[50],
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        child: const Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.add_a_photo_outlined,
+                                color: AppColors.primary, size: 32),
+                            SizedBox(height: 8),
+                            Text('继续添加',
+                                style: TextStyle(
+                                    color: AppColors.textSecondary,
+                                    fontSize: 14)),
+                          ],
+                        ),
+                      ),
+                    ),
+                  );
+                }
+
+                return Stack(
+                  children: [
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(16),
+                      child: Image.file(
+                        File(_images[index].path),
+                        width: 150,
+                        height: 200,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                    Positioned(
+                      top: 8,
+                      right: 8,
+                      child: GestureDetector(
+                        onTap: () => setState(() => _images.removeAt(index)),
+                        child: Container(
+                          padding: const EdgeInsets.all(4),
+                          decoration: const BoxDecoration(
+                            color: Colors.black54,
+                            shape: BoxShape.circle,
+                          ),
+                          child: const Icon(Icons.close,
+                              color: Colors.white, size: 16),
+                        ),
+                      ),
+                    ),
+                  ],
+                );
+              },
+            ),
+          ),
+          const SizedBox(height: 32),
+          SizedBox(
+            width: double.infinity,
+            height: 56,
+            child: ElevatedButton(
+              onPressed: _startRecognition,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.primary,
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                elevation: 0,
+              ),
+              child: Text(
+                '开始智能识别 (${_images.length}/9)',
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(height: 16),
+          TextButton(
+            onPressed: () => setState(() => _images = []),
+            child: const Text('清空重拍',
+                style: TextStyle(color: AppColors.textSecondary)),
+          ),
+        ],
+      );
+    }
+
     return Column(
       children: [
         GestureDetector(
@@ -217,7 +346,7 @@ class _CameraPageState extends State<CameraPage> {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    l10n.supportFormats,
+                    '支持多次拍照或多图识别（最多9张）',
                     style: const TextStyle(
                       fontSize: 14,
                       color: AppColors.textSecondary,
@@ -259,6 +388,38 @@ class _CameraPageState extends State<CameraPage> {
     );
   }
 
+  void _showPickerOptions(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              leading: const Icon(Icons.camera_alt_outlined),
+              title: const Text('拍照'),
+              onTap: () {
+                Navigator.pop(context);
+                _pickImage(ImageSource.camera);
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.photo_library_outlined),
+              title: const Text('从相册选择'),
+              onTap: () {
+                Navigator.pop(context);
+                _pickImage(ImageSource.gallery);
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   Widget _buildLoadingState(AppLocalizations l10n) {
     return Container(
       width: double.infinity,
@@ -281,138 +442,28 @@ class _CameraPageState extends State<CameraPage> {
             style: const TextStyle(color: AppColors.textSecondary),
           ),
           const SizedBox(height: 32),
-          ClipRRect(
-            borderRadius: BorderRadius.circular(16),
-            child: Image.file(
-              File(_image!.path),
-              height: 200,
-              width: 200,
-              fit: BoxFit.cover,
+          SizedBox(
+            height: 120,
+            child: ListView.separated(
+              scrollDirection: Axis.horizontal,
+              padding: const EdgeInsets.symmetric(horizontal: 24),
+              itemCount: _images.length,
+              separatorBuilder: (context, index) => const SizedBox(width: 12),
+              itemBuilder: (context, index) {
+                return ClipRRect(
+                  borderRadius: BorderRadius.circular(12),
+                  child: Image.file(
+                    File(_images[index].path),
+                    width: 120,
+                    height: 120,
+                    fit: BoxFit.cover,
+                  ),
+                );
+              },
             ),
           ),
         ],
       ),
-    );
-  }
-
-  Widget _buildResultsList(AppLocalizations l10n) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              l10n.identificationResult,
-              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-            TextButton(
-              onPressed: () => setState(() => _image = null),
-              child: const Text('重新上传', style: TextStyle(color: AppColors.primary)),
-            ),
-          ],
-        ),
-        const SizedBox(height: 16),
-        Container(
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(20),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.05),
-                blurRadius: 10,
-                offset: const Offset(0, 5),
-              ),
-            ],
-          ),
-          child: ListView.separated(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemCount: _recognizedIngredients.length,
-            separatorBuilder: (context, index) => const Divider(height: 1),
-            itemBuilder: (context, index) {
-              final item = _recognizedIngredients[index];
-              return ListTile(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => IngredientDetailPage(ingredient: item),
-                    ),
-                  );
-                },
-                leading: Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: AppColors.primary.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: const Icon(Icons.shopping_basket_outlined, color: AppColors.primary, size: 20),
-                ),
-                title: Text(item.name, style: const TextStyle(fontWeight: FontWeight.w600)),
-                subtitle: Text(item.category, style: const TextStyle(fontSize: 12)),
-                trailing: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(item.amount, style: const TextStyle(fontWeight: FontWeight.bold, color: AppColors.primary)),
-                    const SizedBox(width: 8),
-                    IconButton(
-                      icon: const Icon(Icons.remove_circle_outline, color: Colors.redAccent, size: 20),
-                      onPressed: () {
-                        setState(() {
-                          _recognizedIngredients.removeAt(index);
-                        });
-                      },
-                    ),
-                  ],
-                ),
-              );
-            },
-          ),
-        ),
-        const SizedBox(height: 32),
-        SizedBox(
-          width: double.infinity,
-          height: 56,
-          child: ElevatedButton(
-            onPressed: () async {
-              if (_recognizedIngredients.isNotEmpty) {
-                Provider.of<PantryProvider>(context, listen: false)
-                    .addIngredients(List.from(_recognizedIngredients));
-                
-                Fluttertoast.showToast(
-                  msg: '已成功存入冰箱！',
-                  toastLength: Toast.LENGTH_SHORT,
-                  gravity: ToastGravity.BOTTOM,
-                  backgroundColor: AppColors.primary,
-                  textColor: Colors.white,
-                );
-                
-                // Switch to Pantry tab after a short delay
-                if (mounted) {
-                  setState(() {
-                    _image = null;
-                    _recognizedIngredients = [];
-                  });
-                  
-                  // Optional: delay slightly to let the toast be seen
-                  await Future.delayed(const Duration(milliseconds: 500));
-                  if (mounted) {
-                    Provider.of<NavigationProvider>(context, listen: false).setSelectedIndex(1);
-                  }
-                }
-              }
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.primary,
-              foregroundColor: Colors.white,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-              elevation: 0,
-            ),
-            child: const Text('一键存入冰箱', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-          ),
-        ),
-      ],
     );
   }
 }

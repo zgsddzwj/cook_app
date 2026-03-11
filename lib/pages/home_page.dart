@@ -201,15 +201,26 @@ class HomePage extends StatelessWidget {
                               height: 200,
                               width: double.infinity,
                               fit: BoxFit.cover,
+                              errorBuilder: (context, error, stackTrace) {
+                                return Container(
+                                  height: 200,
+                                  width: double.infinity,
+                                  color: Colors.grey[200],
+                                  child: const Icon(Icons.broken_image,
+                                      size: 48, color: Colors.grey),
+                                );
+                              },
                             ),
                           ),
                           Positioned(
                             left: 12,
+                            right: 12,
                             bottom: 12,
-                            child: Row(
+                            child: Wrap(
+                              spacing: 8,
+                              runSpacing: 8,
                               children: [
                                 _buildTag('生酮'),
-                                const SizedBox(width: 8),
                                 _buildTag('高蛋白'),
                               ],
                             ),
