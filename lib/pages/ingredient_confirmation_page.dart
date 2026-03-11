@@ -11,6 +11,7 @@ import '../models/recipe.dart';
 import '../core/recipes_provider.dart';
 import '../core/scan_history_provider.dart';
 import 'recipe_detail_page.dart';
+import 'generated_recipes_page.dart';
 
 class IngredientConfirmationPage extends StatefulWidget {
   final List<String> imagePaths;
@@ -152,14 +153,19 @@ class _IngredientConfirmationPageState
             ),
           );
         } else {
-          // 多道菜，回到列表展示，并提示
-          Provider.of<NavigationProvider>(context, listen: false)
-              .setSelectedIndex(0);
-          Navigator.of(context).popUntil((route) => route.isFirst);
+          // 多道菜，跳转到新的识别食谱列表页
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) =>
+                  GeneratedRecipesPage(recipes: generatedRecipes),
+            ),
+          );
           Fluttertoast.showToast(
             msg: '已为您生成 ${generatedRecipes.length} 道精选食谱！',
             toastLength: Toast.LENGTH_LONG,
             backgroundColor: AppColors.primary,
+            gravity: ToastGravity.TOP,
           );
         }
       }
