@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:snap_cook/l10n/generated/app_localizations.dart';
 import 'package:provider/provider.dart';
+import 'dart:io';
 import '../core/app_colors.dart';
 import '../core/diet_preferences_provider.dart';
 import '../core/navigation_provider.dart';
+import '../core/user_provider.dart';
 import 'edit_profile_page.dart';
 import 'favorites_page.dart';
 import 'scan_history_page.dart';
@@ -97,11 +99,11 @@ class ProfilePage extends StatelessWidget {
                         icon: Icons.info,
                         title: l10n.about,
                         route: '/profile/settings/about'),
-                    _ListItem(
-                        icon: Icons.logout,
-                        title: l10n.logout,
-                        action: 'logout',
-                        isDestructive: true),
+                    // _ListItem(
+                    //     icon: Icons.logout,
+                    //     title: l10n.logout,
+                    //     action: 'logout',
+                    //     isDestructive: true),
                   ],
                   navProvider: navProvider,
                 ),
@@ -115,6 +117,8 @@ class ProfilePage extends StatelessWidget {
   }
 
   Widget _buildProfileHeader(BuildContext context, AppLocalizations l10n) {
+    final userProvider = Provider.of<UserProvider>(context);
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24),
       child: Container(
@@ -134,19 +138,21 @@ class ProfilePage extends StatelessWidget {
           children: [
             Row(
               children: [
-                const CircleAvatar(
+                CircleAvatar(
                   radius: 36,
-                  backgroundImage: NetworkImage(
-                      'https://api.dicebear.com/7.x/avataaars/png?seed=CookApp'),
+                  backgroundImage: userProvider.avatarPath != null
+                      ? FileImage(File(userProvider.avatarPath!))
+                      : NetworkImage(userProvider.defaultAvatarUrl)
+                          as ImageProvider,
                 ),
                 const SizedBox(width: 20),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
-                        'Adward',
-                        style: TextStyle(
+                      Text(
+                        userProvider.nickname,
+                        style: const TextStyle(
                           fontSize: 22,
                           fontWeight: FontWeight.bold,
                           color: AppColors.textPrimary,
@@ -154,7 +160,7 @@ class ProfilePage extends StatelessWidget {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        'adward@example.com',
+                        userProvider.email,
                         style: TextStyle(
                           fontSize: 14,
                           color: AppColors.textSecondary.withOpacity(0.7),
@@ -339,10 +345,10 @@ class ProfilePage extends StatelessWidget {
                             context,
                             MaterialPageRoute(
                                 builder: (_) => const ScanHistoryPage()));
-                      // } else if (item.route ==
-                      //     '/profile/settings/notifications') {
-                      //   ScaffoldMessenger.of(context).showSnackBar(
-                      //       const SnackBar(content: Text('打开通知设置')));
+                        // } else if (item.route ==
+                        //     '/profile/settings/notifications') {
+                        //   ScaffoldMessenger.of(context).showSnackBar(
+                        //       const SnackBar(content: Text('打开通知设置')));
                       } else if (item.route == '/profile/settings/privacy') {
                         Navigator.push(
                             context,
@@ -354,9 +360,9 @@ class ProfilePage extends StatelessWidget {
                             MaterialPageRoute(
                                 builder: (_) => const AboutPage()));
                       }
-                    } else if (item.action == 'logout') {
-                      ScaffoldMessenger.of(context)
-                          .showSnackBar(const SnackBar(content: Text('已退出登录')));
+                      // } else if (item.action == 'logout') {
+                      //   ScaffoldMessenger.of(context)
+                      //       .showSnackBar(const SnackBar(content: Text('已退出登录')));
                     }
                   },
                 );

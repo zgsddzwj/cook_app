@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:convert';
 import '../models/recipe.dart';
 
 class RecipesProvider extends ChangeNotifier {
-  final List<Recipe> _recipes = [
+  final List<Recipe> _builtinRecipes = [
     Recipe(
       id: '1',
       title: '奶油菠菜鸡胸肉',
@@ -72,8 +74,8 @@ class RecipesProvider extends ChangeNotifier {
       ],
       steps: [
         '三文鱼洗净擦干，撒上海盐和黑胡椒腌制10分钟。',
-        '平底锅烧热放少许油，放入三文鱼皮朝下煎3分钟。',
-        '翻面继续煎2-3分钟至熟。',
+        '平底锅烧热放少许油，放入三文鱼皮朝下煎 3 分钟。',
+        '翻面继续煎 2-3 分钟至熟。',
         '挤上柠檬汁，放入迷迭香装饰。',
       ],
     ),
@@ -102,26 +104,71 @@ class RecipesProvider extends ChangeNotifier {
     ),
   ];
 
-  List<Recipe> get recipes => _recipes;
+  final List<Recipe> _customRecipes = [];
+  static const String _storageKey = 'custom_recipes';
+
+  RecipesProvider() {
+    _loadCustomRecipes();
+  }
+
+  List<Recipe> get recipes => [..._customRecipes, ..._builtinRecipes];
   List<Recipe> get favoriteRecipes =>
-      _recipes.where((r) => r.isFavorite).toList();
+      recipes.where((r) => r.isFavorite).toList();
+
+  Future<void> _loadCustomRecipes() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final String? recipesJson = prefs.getString(_storageKey);
+      if (recipesJson != null) {
+        final List<dynamic> decoded = jsonDecode(recipesJson);
+        _customRecipes.clear();
+        _customRecipes.addAll(decoded.map((item) => Recipe.fromJson(item)));
+        notifyListeners();
+      }
+    } catch (e) {
+      debugPrint('Error loading custom recipes: $e');
+    }
+  }
+
+  Future<void> _saveCustomRecipes() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final String encoded =
+          jsonEncode(_customRecipes.map((r) => r.toJson()).toList());
+      await prefs.setString(_storageKey, encoded);
+    } catch (e) {
+      debugPrint('Error saving custom recipes: $e');
+    }
+  }
 
   void toggleFavorite(String id) {
-    final index = _recipes.indexWhere((r) => r.id == id);
+    // 检查是否是自定义食谱
+    final customIndex = _customRecipes.indexWhere((r) => r.id == id);
+    if (customIndex != -1) {
+      _customRecipes[customIndex].isFavorite =
+          !_customRecipes[customIndex].isFavorite;
+      _saveCustomRecipes();
+      notifyListeners();
+      return;
+    }
+
+    // 检查是否是内置食谱
+    final index = _builtinRecipes.indexWhere((r) => r.id == id);
     if (index != -1) {
-      _recipes[index].isFavorite = !_recipes[index].isFavorite;
+      _builtinRecipes[index].isFavorite = !_builtinRecipes[index].isFavorite;
       notifyListeners();
     }
   }
 
   bool isFavorite(String id) {
-    return _recipes.any((r) => r.id == id && r.isFavorite);
+    return recipes.any((r) => r.id == id && r.isFavorite);
   }
 
   void addRecipe(Recipe recipe) {
     // 检查是否已经存在
-    if (!_recipes.any((r) => r.id == recipe.id)) {
-      _recipes.insert(0, recipe);
+    if (!recipes.any((r) => r.id == recipe.id)) {
+      _customRecipes.insert(0, recipe);
+      _saveCustomRecipes();
       notifyListeners();
     }
   }

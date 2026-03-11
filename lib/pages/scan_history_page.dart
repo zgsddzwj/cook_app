@@ -4,6 +4,7 @@ import 'package:snap_cook/l10n/generated/app_localizations.dart';
 import '../core/app_colors.dart';
 import '../core/scan_history_provider.dart';
 import 'ingredient_confirmation_page.dart';
+import 'recipe_detail_page.dart';
 
 class ScanHistoryPage extends StatelessWidget {
   const ScanHistoryPage({super.key});
@@ -43,7 +44,8 @@ class ScanHistoryPage extends StatelessWidget {
                 children: [
                   Icon(Icons.history, size: 64, color: Colors.grey[400]),
                   const SizedBox(height: 12),
-                  Text(l10n.noScanHistory, style: TextStyle(color: Colors.grey[600])),
+                  Text(l10n.noScanHistory,
+                      style: TextStyle(color: Colors.grey[600])),
                 ],
               ),
             )
@@ -51,7 +53,8 @@ class ScanHistoryPage extends StatelessWidget {
               padding: const EdgeInsets.all(16),
               itemBuilder: (context, index) {
                 final entry = entries[index];
-                final ingredientNames = entry.ingredients.map((e) => e.name).toList();
+                final ingredientNames =
+                    entry.ingredients.map((e) => e.name).toList();
                 return Container(
                   decoration: BoxDecoration(
                     color: Colors.white,
@@ -65,7 +68,8 @@ class ScanHistoryPage extends StatelessWidget {
                     ],
                   ),
                   child: ListTile(
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                    contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 14, vertical: 10),
                     leading: ClipRRect(
                       borderRadius: BorderRadius.circular(12),
                       child: Image.memory(
@@ -79,7 +83,8 @@ class ScanHistoryPage extends StatelessWidget {
                             height: 56,
                             color: Colors.grey[200],
                             alignment: Alignment.center,
-                            child: Icon(Icons.image_outlined, color: Colors.grey[400]),
+                            child: Icon(Icons.image_outlined,
+                                color: Colors.grey[400]),
                           );
                         },
                       ),
@@ -96,30 +101,78 @@ class ScanHistoryPage extends StatelessWidget {
                           if (ingredientNames.isNotEmpty)
                             Text(
                               _formatIngredients(ingredientNames),
-                              style: const TextStyle(color: AppColors.textSecondary, fontSize: 12),
+                              style: const TextStyle(
+                                  color: AppColors.textSecondary, fontSize: 12),
                             ),
                           const SizedBox(height: 2),
-                          Text(
-                            _formatDateTime(entry.createdAt),
-                            style: const TextStyle(color: AppColors.textSecondary, fontSize: 12),
+                          Row(
+                            children: [
+                              Text(
+                                _formatDateTime(entry.createdAt),
+                                style: const TextStyle(
+                                    color: AppColors.textSecondary,
+                                    fontSize: 12),
+                              ),
+                              if (entry.linkedRecipe != null) ...[
+                                const SizedBox(width: 8),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 6, vertical: 2),
+                                  decoration: BoxDecoration(
+                                    color: AppColors.primary.withOpacity(0.1),
+                                    borderRadius: BorderRadius.circular(4),
+                                  ),
+                                  child: const Text(
+                                    '已生成食谱',
+                                    style: TextStyle(
+                                      color: AppColors.primary,
+                                      fontSize: 10,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ],
                           ),
                         ],
                       ),
                     ),
                     trailing: const Icon(Icons.chevron_right),
                     onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => IngredientConfirmationPage(
-                            imagePaths: [entry.imagePath],
-                            initialIngredients: entry.ingredients,
+                      if (entry.linkedRecipe != null) {
+                        final r = entry.linkedRecipe!;
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => RecipeDetailPage(
+                              id: r.id,
+                              title: r.title,
+                              imageUrl: r.imageUrl,
+                              tags: r.tags,
+                              time: r.time,
+                              calories: r.calories,
+                              description: r.description,
+                              ingredients: r.ingredients,
+                              steps: r.steps,
+                            ),
                           ),
-                        ),
-                      );
+                        );
+                      } else {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => IngredientConfirmationPage(
+                              imagePaths: [entry.imagePath],
+                              initialIngredients: entry.ingredients,
+                              scanHistoryId: entry.id,
+                            ),
+                          ),
+                        );
+                      }
                     },
                     onLongPress: () {
-                      Provider.of<ScanHistoryProvider>(context, listen: false).removeById(entry.id);
+                      Provider.of<ScanHistoryProvider>(context, listen: false)
+                          .removeById(entry.id);
                     },
                   ),
                 );

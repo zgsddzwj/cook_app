@@ -13,11 +13,13 @@ import 'ingredient_confirmation_page.dart';
 class RecognitionResultPage extends StatefulWidget {
   final List<Ingredient> ingredients;
   final List<String> imagePaths;
+  final String? scanHistoryId;
 
   const RecognitionResultPage({
     super.key,
     required this.ingredients,
     required this.imagePaths,
+    this.scanHistoryId,
   });
 
   @override
@@ -256,6 +258,7 @@ class _RecognitionResultPageState extends State<RecognitionResultPage> {
                   builder: (context) => IngredientConfirmationPage(
                     imagePaths: widget.imagePaths,
                     initialIngredients: _recognizedIngredients,
+                    scanHistoryId: widget.scanHistoryId,
                   ),
                 ),
               );

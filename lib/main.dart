@@ -10,6 +10,7 @@ import 'core/navigation_provider.dart';
 import 'core/recipes_provider.dart';
 import 'core/diet_preferences_provider.dart';
 import 'core/scan_history_provider.dart';
+import 'core/user_provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -22,6 +23,7 @@ void main() async {
         ChangeNotifierProvider(create: (_) => RecipesProvider()),
         ChangeNotifierProvider(create: (_) => DietPreferencesProvider()),
         ChangeNotifierProvider(create: (_) => ScanHistoryProvider()),
+        ChangeNotifierProvider(create: (_) => UserProvider()),
       ],
       child: const CookApp(),
     ),

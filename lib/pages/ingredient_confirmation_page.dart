@@ -1,22 +1,27 @@
 import '../l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'dart:io';
 import 'dart:async';
 import '../core/app_colors.dart';
+import '../core/navigation_provider.dart';
 import '../models/ingredient.dart';
 import '../models/recipe.dart';
 import '../core/recipes_provider.dart';
+import '../core/scan_history_provider.dart';
 import 'recipe_detail_page.dart';
 
 class IngredientConfirmationPage extends StatefulWidget {
   final List<String> imagePaths;
   final List<Ingredient> initialIngredients;
+  final String? scanHistoryId; // 添加扫描历史ID
 
   const IngredientConfirmationPage({
     super.key,
     required this.imagePaths,
     required this.initialIngredients,
+    this.scanHistoryId,
   });
 
   @override
@@ -86,45 +91,77 @@ class _IngredientConfirmationPageState
       if (mounted) {
         final recipesProvider =
             Provider.of<RecipesProvider>(context, listen: false);
+        final historyProvider =
+            Provider.of<ScanHistoryProvider>(context, listen: false);
 
-        // 创建 Recipe 模型实例并默认设为收藏
-        final newRecipe = Recipe(
-          id: recipeData['id'] ??
-              DateTime.now().millisecondsSinceEpoch.toString(),
-          title: recipeData['title'],
-          imageUrl: recipeData['imageUrl'] ??
-              'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=500&auto=format&fit=crop&q=60',
-          tags: List<String>.from(recipeData['tags']),
-          time: recipeData['time'],
-          calories: recipeData['calories'],
-          description: recipeData['description'],
-          ingredients: List<Map<String, String>>.from(
-              (recipeData['ingredients'] as List)
-                  .map((i) => Map<String, String>.from(i))),
-          steps: List<String>.from(recipeData['steps']),
-          isFavorite: true, // 生成后默认收藏
-        );
+        final List<dynamic> recipesList = recipeData['recipes'] ?? [];
+        if (recipesList.isEmpty) {
+          throw RecipeGenerationException(
+            message: '未能生成有效食谱',
+            suggestion: '请尝试添加更多食材',
+          );
+        }
 
-        // 添加到全局 Provider
-        recipesProvider.addRecipe(newRecipe);
+        final List<Recipe> generatedRecipes = [];
+
+        for (var data in recipesList) {
+          final newRecipe = Recipe(
+            id: data['id'] ?? DateTime.now().millisecondsSinceEpoch.toString(),
+            title: data['title'],
+            imageUrl: data['imageUrl'] ??
+                'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=500&auto=format&fit=crop&q=60',
+            tags: List<String>.from(data['tags']),
+            time: data['time'],
+            calories: data['calories'],
+            description: data['description'],
+            ingredients: List<Map<String, String>>.from(
+                (data['ingredients'] as List)
+                    .map((i) => Map<String, String>.from(i))),
+            steps: List<String>.from(data['steps']),
+            isFavorite: true,
+          );
+          generatedRecipes.add(newRecipe);
+          recipesProvider.addRecipe(newRecipe);
+        }
+
+        // 如果有关联的扫描历史，更新它（由于可能生成多个，这里简单关联第一个，或者后续可以优化模型支持多关联）
+        if (widget.scanHistoryId != null && generatedRecipes.isNotEmpty) {
+          historyProvider.updateEntryRecipe(
+              widget.scanHistoryId!, generatedRecipes.first);
+        }
 
         Navigator.pop(context); // Close loading
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => RecipeDetailPage(
-              id: newRecipe.id,
-              title: newRecipe.title,
-              imageUrl: newRecipe.imageUrl,
-              tags: newRecipe.tags,
-              time: newRecipe.time,
-              calories: newRecipe.calories,
-              description: newRecipe.description,
-              ingredients: newRecipe.ingredients,
-              steps: newRecipe.steps,
+
+        if (generatedRecipes.length == 1) {
+          // 只有一道菜，直接去详情
+          final r = generatedRecipes.first;
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => RecipeDetailPage(
+                id: r.id,
+                title: r.title,
+                imageUrl: r.imageUrl,
+                tags: r.tags,
+                time: r.time,
+                calories: r.calories,
+                description: r.description,
+                ingredients: r.ingredients,
+                steps: r.steps,
+              ),
             ),
-          ),
-        );
+          );
+        } else {
+          // 多道菜，回到列表展示，并提示
+          Provider.of<NavigationProvider>(context, listen: false)
+              .setSelectedIndex(0);
+          Navigator.of(context).popUntil((route) => route.isFirst);
+          Fluttertoast.showToast(
+            msg: '已为您生成 ${generatedRecipes.length} 道精选食谱！',
+            toastLength: Toast.LENGTH_LONG,
+            backgroundColor: AppColors.primary,
+          );
+        }
       }
     } on RecipeGenerationException catch (e) {
       if (mounted) {

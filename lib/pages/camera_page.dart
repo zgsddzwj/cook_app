@@ -76,7 +76,13 @@ class _CameraPageState extends State<CameraPage> {
         // Use the first image for the scan history thumbnail
         final thumbnailBytes = await _images[0].readAsBytes();
 
-        Provider.of<ScanHistoryProvider>(context, listen: false).addEntry(
+        final historyProvider =
+            Provider.of<ScanHistoryProvider>(context, listen: false);
+        final String historyId =
+            DateTime.now().microsecondsSinceEpoch.toString();
+
+        historyProvider.addEntryWithId(
+          id: historyId,
           imagePath: _images[0].path,
           thumbnailBytes: thumbnailBytes,
           ingredients: results,
@@ -93,12 +99,10 @@ class _CameraPageState extends State<CameraPage> {
             builder: (context) => RecognitionResultPage(
               ingredients: results,
               imagePaths: imagePaths,
+              scanHistoryId: historyId,
             ),
           ),
-        ).then((_) {
-          // Optional: clear images when returning if needed
-          // setState(() => _images = []);
-        });
+        );
       }
     } catch (e) {
       if (mounted) {

@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:snap_cook/l10n/generated/app_localizations.dart';
+import 'package:provider/provider.dart';
+import 'package:image_picker/image_picker.dart';
+import 'dart:io';
 import '../core/app_colors.dart';
+import '../core/user_provider.dart';
 
 class EditProfilePage extends StatefulWidget {
   const EditProfilePage({super.key});
@@ -10,89 +13,102 @@ class EditProfilePage extends StatefulWidget {
 }
 
 class _EditProfilePageState extends State<EditProfilePage> {
-  final _formKey = GlobalKey<FormState>();
-  final _nameController = TextEditingController(text: 'Adward');
-  final _emailController = TextEditingController(text: 'adward@example.com');
+  late TextEditingController _nicknameController;
+  late TextEditingController _emailController;
+  String? _tempAvatarPath;
+  final ImagePicker _picker = ImagePicker();
+
+  @override
+  void initState() {
+    super.initState();
+    final userProvider = Provider.of<UserProvider>(context, listen: false);
+    _nicknameController = TextEditingController(text: userProvider.nickname);
+    _emailController = TextEditingController(text: userProvider.email);
+    _tempAvatarPath = userProvider.avatarPath;
+  }
 
   @override
   void dispose() {
-    _nameController.dispose();
+    _nicknameController.dispose();
     _emailController.dispose();
     super.dispose();
   }
 
+  Future<void> _pickImage() async {
+    final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+    if (image != null) {
+      setState(() {
+        _tempAvatarPath = image.path;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       appBar: AppBar(
-        title: Text(l10n.editProfile),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(l10n.username,
-                  style: const TextStyle(fontWeight: FontWeight.w600)),
-              const SizedBox(height: 8),
-              TextFormField(
-                controller: _nameController,
-                decoration: InputDecoration(
-                  filled: true,
-                  fillColor: Colors.grey[100],
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide.none,
-                  ),
-                ),
-                validator: (v) => v == null || v.isEmpty ? l10n.username : null,
-              ),
-              const SizedBox(height: 16),
-              Text(l10n.email,
-                  style: const TextStyle(fontWeight: FontWeight.w600)),
-              const SizedBox(height: 8),
-              TextFormField(
-                controller: _emailController,
-                keyboardType: TextInputType.emailAddress,
-                decoration: InputDecoration(
-                  filled: true,
-                  fillColor: Colors.grey[100],
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide.none,
-                  ),
-                ),
-              ),
-              const Spacer(),
-              SizedBox(
-                width: double.infinity,
-                height: 48,
-                child: ElevatedButton(
-                  onPressed: () {
-                    if (_formKey.currentState!.validate()) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text(l10n.editProfile),
-                          backgroundColor: AppColors.primary,
-                        ),
-                      );
-                      Navigator.pop(context);
-                    }
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.primary,
-                    foregroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12)),
-                  ),
-                  child: const Text('保存'),
-                ),
-              ),
-            ],
+        title: const Text('编辑个人资料'),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Provider.of<UserProvider>(context, listen: false).updateProfile(
+                nickname: _nicknameController.text,
+                email: _emailController.text,
+                avatarPath: _tempAvatarPath,
+              );
+              Navigator.pop(context);
+            },
+            child: const Text('保存', style: TextStyle(color: AppColors.primary, fontWeight: FontWeight.bold)),
           ),
+        ],
+      ),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          children: [
+            GestureDetector(
+              onTap: _pickImage,
+              child: Stack(
+                children: [
+                  CircleAvatar(
+                    radius: 50,
+                    backgroundImage: _tempAvatarPath != null
+                        ? FileImage(File(_tempAvatarPath!))
+                        : NetworkImage(Provider.of<UserProvider>(context).defaultAvatarUrl) as ImageProvider,
+                  ),
+                  Positioned(
+                    right: 0,
+                    bottom: 0,
+                    child: Container(
+                      padding: const EdgeInsets.all(4),
+                      decoration: const BoxDecoration(
+                        color: AppColors.primary,
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(Icons.camera_alt, color: Colors.white, size: 20),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 32),
+            TextField(
+              controller: _nicknameController,
+              decoration: const InputDecoration(
+                labelText: '昵称',
+                border: OutlineInputBorder(),
+              ),
+            ),
+            const SizedBox(height: 16),
+            TextField(
+              controller: _emailController,
+              decoration: const InputDecoration(
+                labelText: '邮箱',
+                border: OutlineInputBorder(),
+              ),
+              keyboardType: TextInputType.emailAddress,
+            ),
+          ],
         ),
       ),
     );

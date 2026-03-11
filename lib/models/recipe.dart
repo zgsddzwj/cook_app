@@ -37,4 +37,36 @@ class Recipe {
       isFavorite: isFavorite ?? this.isFavorite,
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'title': title,
+      'description': description,
+      'time': time,
+      'calories': calories,
+      'imageUrl': imageUrl,
+      'tags': tags,
+      'ingredients': ingredients,
+      'steps': steps,
+      'isFavorite': isFavorite,
+    };
+  }
+
+  factory Recipe.fromJson(Map<String, dynamic> json) {
+    return Recipe(
+      id: json['id'],
+      title: json['title'],
+      description: json['description'],
+      time: json['time'],
+      calories: json['calories'],
+      imageUrl: json['imageUrl'],
+      tags: List<String>.from(json['tags']),
+      ingredients: (json['ingredients'] as List)
+          .map((i) => Map<String, String>.from(i))
+          .toList(),
+      steps: List<String>.from(json['steps']),
+      isFavorite: json['isFavorite'] ?? false,
+    );
+  }
 }

@@ -39,6 +39,16 @@ class Ingredient {
       quantity: parsedQuantity,
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'name': name,
+      'amount': amount,
+      'category': category,
+      'expiryDate': expiryDate?.toIso8601String(),
+      'quantity': quantity,
+    };
+  }
 }
 
 class LLMService {
@@ -156,7 +166,7 @@ class LLMService {
               {
                 'role': 'system',
                 'content':
-                    '你是一个专业的厨师。请根据用户提供的食材和偏好生成一个详细的食谱。必须以JSON格式返回，结构如下：{"title": "食谱名称", "description": "简短描述", "time": "预计时间(分钟)", "calories": "预计热量(kcal)", "tags": ["标签1", "标签2"], "ingredients": [{"name": "食材名", "amount": "数量"}], "steps": ["步骤1", "步骤2"]}。如果提供的食材太少、不合理或无法组合成任何食谱，请务必返回以下JSON：{"error": "理由", "suggestion": "给用户的建议"}。只返回JSON，不要有其他解释文字。'
+                    '你是一个专业的厨师。请根据用户提供的食材和偏好生成食谱。灵活处理：如果食材种类丰富且适合分开，可以生成多道互补的菜肴；如果食材较少，生成一道精品菜即可。必须以JSON格式返回，结构如下：{"recipes": [{"title": "食谱名称", "description": "简短描述", "time": "预计时间(分钟)", "calories": "预计热量(kcal)", "tags": ["标签1", "标签2"], "ingredients": [{"name": "食材名", "amount": "数量"}], "steps": ["步骤1", "步骤2"]}]}。如果提供的食材太少、不合理或无法组合成任何食谱，请务必返回以下JSON：{"error": "理由", "suggestion": "给用户的建议"}。只返回JSON，不要有其他解释文字。'
               },
               {
                 'role': 'user',
