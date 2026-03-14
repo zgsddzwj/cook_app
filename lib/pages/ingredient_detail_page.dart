@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:snap_cook/l10n/generated/app_localizations.dart';
 import '../core/app_colors.dart';
+import '../core/ingredient_image_service.dart';
 import '../core/meal_db_service.dart';
 import '../core/recipes_provider.dart';
 import '../models/ingredient.dart';
@@ -183,24 +184,41 @@ class _IngredientDetailPageState extends State<IngredientDetailPage> {
             pinned: true,
             backgroundColor: AppColors.primary,
             flexibleSpace: FlexibleSpaceBar(
-              background: Container(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [
-                      AppColors.primary,
-                      AppColors.primary.withOpacity(0.7),
-                    ],
+              background: Stack(
+                fit: StackFit.expand,
+                children: [
+                  // Ingredient image
+                  Image.network(
+                    IngredientImageService.getIngredientDetailImage(widget.ingredient),
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) {
+                      return Container(
+                        color: AppColors.primary,
+                        child: Center(
+                          child: Icon(
+                            Icons.restaurant_outlined,
+                            size: 80,
+                            color: Colors.white.withOpacity(0.5),
+                          ),
+                        ),
+                      );
+                    },
                   ),
-                ),
-                child: Center(
-                  child: Icon(
-                    Icons.restaurant_outlined,
-                    size: 80,
-                    color: Colors.white.withOpacity(0.5),
+                  // Dark gradient overlay for better text readability
+                  Container(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [
+                          Colors.black.withOpacity(0.3),
+                          Colors.transparent,
+                          Colors.black.withOpacity(0.5),
+                        ],
+                      ),
+                    ),
                   ),
-                ),
+                ],
               ),
               title: Text(
                 widget.ingredient.name,

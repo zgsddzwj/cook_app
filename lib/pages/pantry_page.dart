@@ -1,9 +1,8 @@
 import 'package:snap_cook/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import '../core/app_colors.dart';
-import '../core/ingredient_images.dart';
+import '../core/ingredient_image_service.dart';
 import '../core/pantry_provider.dart';
 import '../models/ingredient.dart';
 import 'ingredient_detail_page.dart';
@@ -209,12 +208,16 @@ class PantryPage extends StatelessWidget {
                     color: Colors.grey[100],
                     borderRadius: BorderRadius.circular(16),
                   ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(14),
-                    child: SvgPicture.asset(
-                      resolveIngredientAsset(item),
-                      fit: BoxFit.contain,
-                    ),
+                  clipBehavior: Clip.antiAlias,
+                  child: Image.network(
+                    IngredientImageService.getIngredientThumbnail(item),
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) {
+                      return Container(
+                        color: Colors.grey[200],
+                        child: const Icon(Icons.image, color: Colors.grey),
+                      );
+                    },
                   ),
                 ),
                 const SizedBox(width: 16),
