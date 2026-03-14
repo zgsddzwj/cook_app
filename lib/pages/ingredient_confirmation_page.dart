@@ -552,6 +552,7 @@ class _PreferencesBottomSheetState extends State<_PreferencesBottomSheet> {
               labelStyle: TextStyle(
                 color: isSelected ? Colors.white : AppColors.textSecondary,
               ),
+              checkmarkColor: Colors.white,
               backgroundColor: Colors.grey[100],
               side: BorderSide.none,
               shape: RoundedRectangleBorder(
