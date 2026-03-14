@@ -36,36 +36,17 @@ class RecipesProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
-      // 分别获取数据，即使一个失败也不会影响其他
+      // Only use getRandomMeals which returns complete data
+      // filterByCategory/filterByArea return incomplete data (id, name, thumbnail only)
       List<Meal> randomMeals = [];
-      List<Meal> seafoodMeals = [];
-      List<Meal> vegetarianMeals = [];
       
       try {
-        randomMeals = await _mealDbService.getRandomMeals(8);
+        randomMeals = await _mealDbService.getRandomMeals(15);
       } catch (e) {
         debugPrint('Error loading random meals: $e');
       }
       
-      try {
-        seafoodMeals = await _mealDbService.filterByCategory('Seafood');
-      } catch (e) {
-        debugPrint('Error loading seafood meals: $e');
-      }
-      
-      try {
-        vegetarianMeals = await _mealDbService.filterByCategory('Vegetarian');
-      } catch (e) {
-        debugPrint('Error loading vegetarian meals: $e');
-      }
-      
-      // 合并并去重
-      final allMeals = <Meal>{};
-      allMeals.addAll(randomMeals);
-      allMeals.addAll(seafoodMeals.take(5));
-      allMeals.addAll(vegetarianMeals.take(5));
-      
-      if (allMeals.isEmpty) {
+      if (randomMeals.isEmpty) {
         error = 'No recipe data available. Please check your network connection and try again.';
         isLoading = false;
         notifyListeners();
@@ -77,7 +58,7 @@ class RecipesProvider extends ChangeNotifier {
       final favoriteIds = prefs.getStringList(_favoritesKey) ?? [];
       
       // 转换为 Recipe 模型
-      _apiRecipes = allMeals.map((meal) => _convertMealToRecipe(meal, favoriteIds)).toList();
+      _apiRecipes = randomMeals.map((meal) => _convertMealToRecipe(meal, favoriteIds)).toList();
       
       isLoading = false;
       notifyListeners();
@@ -180,18 +161,27 @@ class RecipesProvider extends ChangeNotifier {
         ? _splitInstructions(meal.instructions)
         : steps;
 
+    // Build description
+    String description = meal.shortDescription;
+    if (description.isEmpty && meal.category != 'Unknown') {
+      description = 'A delicious ${meal.category} recipe';
+      if (meal.area != 'Unknown') {
+        description += ' from ${meal.area}';
+      }
+    } else if (description.isEmpty) {
+      description = 'A delicious recipe with ${ingredients.length} ingredients';
+    }
+
     return Recipe(
       id: meal.id,
       title: meal.name,
-      description: meal.shortDescription.isNotEmpty 
-          ? meal.shortDescription 
-          : '${meal.category}食谱，来自${meal.area}',
+      description: description,
       time: meal.estimatedTime,
       calories: meal.estimatedCalories,
       imageUrl: meal.thumbnail ?? 'https://via.placeholder.com/500x300?text=No+Image',
-      tags: tags,
-      ingredients: ingredients,
-      steps: finalSteps,
+      tags: tags.isNotEmpty ? tags : ['Recipe'],
+      ingredients: ingredients.isNotEmpty ? ingredients : [],
+      steps: finalSteps.isNotEmpty ? finalSteps : ['No instructions available'],
       isFavorite: favoriteIds.contains(meal.id),
     );
   }

@@ -149,7 +149,7 @@ class _IngredientDetailPageState extends State<IngredientDetailPage> {
       title: meal.name,
       description: meal.shortDescription.isNotEmpty
           ? meal.shortDescription
-          : '${meal.category}食谱，来自${meal.area}',
+          : '${meal.category}Recipe， From${meal.area}',
       time: meal.estimatedTime,
       calories: meal.estimatedCalories,
       imageUrl: meal.thumbnail ?? 'https://via.placeholder.com/500x300?text=No+Image',
