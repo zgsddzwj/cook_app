@@ -11,8 +11,8 @@ class MealDbService {
   final Dio _dio = Dio(
     BaseOptions(
       baseUrl: 'https://www.themealdb.com/api/json/v1/1',
-      connectTimeout: const Duration(seconds: 10),
-      receiveTimeout: const Duration(seconds: 10),
+      connectTimeout: const Duration(seconds: 8),
+      receiveTimeout: const Duration(seconds: 8),
     ),
   );
 
@@ -59,6 +59,15 @@ class MealDbService {
       final response = await _dio.get('/random.php');
       final meals = _parseMeals(response.data);
       return meals.isNotEmpty ? meals.first : null;
+    } on DioException catch (e) {
+      // 超时或网络错误，返回 null
+      if (e.type == DioExceptionType.connectionTimeout ||
+          e.type == DioExceptionType.receiveTimeout) {
+        debugPrint('Random meal request timeout');
+      } else {
+        debugPrint('Error getting random meal: $e');
+      }
+      return null;
     } catch (e) {
       debugPrint('Error getting random meal: $e');
       return null;
@@ -141,14 +150,23 @@ class MealDbService {
   }
 
   /// 获取一批随机食谱（用于首页展示）
+  /// 使用并行请求提高效率
   Future<List<Meal>> getRandomMeals(int count) async {
     final List<Meal> meals = [];
-    for (int i = 0; i < count; i++) {
-      final meal = await getRandomMeal();
-      if (meal != null) {
-        meals.add(meal);
+    
+    // 创建请求列表，但限制并发数
+    for (int i = 0; i < count; i += 3) {
+      final batchSize = (count - i).clamp(0, 3);
+      final futures = List.generate(batchSize, (_) => getRandomMeal());
+      
+      try {
+        final results = await Future.wait(futures, eagerError: false);
+        meals.addAll(results.whereType<Meal>());
+      } catch (e) {
+        debugPrint('Error in random meals batch: $e');
       }
     }
+    
     return meals;
   }
 

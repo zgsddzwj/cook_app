@@ -36,18 +36,41 @@ class RecipesProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
-      // 获取多个随机食谱
-      final meals = await _mealDbService.getRandomMeals(20);
+      // 分别获取数据，即使一个失败也不会影响其他
+      List<Meal> randomMeals = [];
+      List<Meal> seafoodMeals = [];
+      List<Meal> vegetarianMeals = [];
       
-      // 同时获取一些按分类的食谱
-      final seafoodMeals = await _mealDbService.filterByCategory('Seafood');
-      final vegetarianMeals = await _mealDbService.filterByCategory('Vegetarian');
+      try {
+        randomMeals = await _mealDbService.getRandomMeals(8);
+      } catch (e) {
+        debugPrint('Error loading random meals: $e');
+      }
+      
+      try {
+        seafoodMeals = await _mealDbService.filterByCategory('Seafood');
+      } catch (e) {
+        debugPrint('Error loading seafood meals: $e');
+      }
+      
+      try {
+        vegetarianMeals = await _mealDbService.filterByCategory('Vegetarian');
+      } catch (e) {
+        debugPrint('Error loading vegetarian meals: $e');
+      }
       
       // 合并并去重
       final allMeals = <Meal>{};
-      allMeals.addAll(meals);
-      allMeals.addAll(seafoodMeals.take(10));
-      allMeals.addAll(vegetarianMeals.take(10));
+      allMeals.addAll(randomMeals);
+      allMeals.addAll(seafoodMeals.take(5));
+      allMeals.addAll(vegetarianMeals.take(5));
+      
+      if (allMeals.isEmpty) {
+        error = '暂无食谱数据，请检查网络连接后重试';
+        isLoading = false;
+        notifyListeners();
+        return;
+      }
       
       // 获取已收藏的食谱ID
       final prefs = await SharedPreferences.getInstance();
