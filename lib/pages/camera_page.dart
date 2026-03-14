@@ -7,6 +7,7 @@ import 'dart:io';
 import '../core/app_colors.dart';
 import '../models/ingredient.dart';
 import '../core/scan_history_provider.dart';
+import '../core/recognition_service.dart';
 import '../l10n/generated/app_localizations.dart';
 import 'recognition_result_page.dart';
 
@@ -70,7 +71,7 @@ class _CameraPageState extends State<CameraPage> {
 
     try {
       final imagePaths = _images.map((img) => img.path).toList();
-      final results = await LLMService.recognizeIngredients(imagePaths);
+      final results = await RecognitionService.recognize(imagePaths);
 
       if (mounted) {
         // Use the first image for the scan history thumbnail

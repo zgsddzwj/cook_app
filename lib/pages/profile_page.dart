@@ -12,6 +12,7 @@ import 'scan_history_page.dart';
 import 'diet_preferences_page.dart';
 import 'privacy_policy_page.dart';
 import 'about_page.dart';
+import 'recognition_settings_page.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
@@ -388,6 +389,11 @@ class ProfilePage extends StatelessWidget {
                             context,
                             MaterialPageRoute(
                                 builder: (_) => const AboutPage()));
+                      } else if (item.route == '/profile/settings/recognition') {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (_) => const RecognitionSettingsPage()));
                       }
                       // } else if (item.action == 'logout') {
                       //   ScaffoldMessenger.of(context)
