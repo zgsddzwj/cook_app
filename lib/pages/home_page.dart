@@ -77,7 +77,7 @@ class HomePage extends StatelessWidget {
                           Icon(Icons.auto_awesome,
                               color: Colors.white, size: 14),
                           SizedBox(width: 4),
-                          Text('AI 智能助手',
+                          Text('AI Assistant',
                               style:
                                   TextStyle(color: Colors.white, fontSize: 12)),
                         ],
@@ -85,7 +85,7 @@ class HomePage extends StatelessWidget {
                     ),
                     const SizedBox(height: 16),
                     const Text(
-                      '不知道今天吃什么？',
+                      'Not sure what to eat today?',
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 28,
@@ -94,7 +94,7 @@ class HomePage extends StatelessWidget {
                     ),
                     const SizedBox(height: 12),
                     const Text(
-                      '拍一张冰箱的照片，让 CookApp 为您推荐完美的食谱，减少浪费，享受烹饪。',
+                      'Take a photo of your fridge, let SnapCook recommend the perfect recipe for you, reduce waste, and enjoy cooking.',
                       style: TextStyle(
                         color: Colors.white70,
                         fontSize: 14,

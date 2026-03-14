@@ -46,8 +46,8 @@
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
 	<key>NSCameraUsageDescription</key>
-	<string>我们需要您的相机权限来拍摄食材照片，以便进行智能识别。</string>
+<string>We need your camera permission to take photos of ingredients for intelligent recognition.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>我们需要您的相册权限来选择食材照片，以便进行智能识别。</string>
+<string>We need your photo library permission to select ingredient photos for intelligent recognition.</string>
 </dict>
 </plist>

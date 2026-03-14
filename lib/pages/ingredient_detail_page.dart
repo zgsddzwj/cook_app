@@ -30,60 +30,13 @@ class _IngredientDetailPageState extends State<IngredientDetailPage> {
     _loadRelatedRecipes();
   }
 
-  /// 中文食材名称映射到英文（TheMealDB 使用英文）
-  static const Map<String, String> _ingredientMapping = {
-    '鸡肉': 'Chicken',
-    '鸡胸肉': 'Chicken',
-    '鸡腿': 'Chicken',
-    '牛肉': 'Beef',
-    '猪肉': 'Pork',
-    '羊肉': 'Lamb',
-    '鱼': 'Salmon',
-    '三文鱼': 'Salmon',
-    '虾': 'Shrimp',
-    '鸡蛋': 'Eggs',
-    '番茄': 'Tomato',
-    '西红柿': 'Tomato',
-    '土豆': 'Potato',
-    '马铃薯': 'Potato',
-    '胡萝卜': 'Carrots',
-    '洋葱': 'Onion',
-    '大蒜': 'Garlic',
-    '菠菜': 'Spinach',
-    '生菜': 'Lettuce',
-    '白菜': 'Cabbage',
-    '西兰花': 'Broccoli',
-    '花椰菜': 'Cauliflower',
-    '黄瓜': 'Cucumber',
-    '茄子': 'Eggplant',
-    '辣椒': 'Pepper',
-    '青椒': 'Pepper',
-    '蘑菇': 'Mushrooms',
-    '豆腐': 'Tofu',
-    '牛奶': 'Milk',
-    '黄油': 'Butter',
-    '奶酪': 'Cheese',
-    '奶油': 'Cream',
-    '酸奶': 'Yogurt',
-    '面粉': 'Flour',
-    '米饭': 'Rice',
-    '面条': 'Pasta',
-    '意大利面': 'Pasta',
-    '面包': 'Bread',
-    '柠檬': 'Lemon',
-    '橙子': 'Orange',
-    '苹果': 'Apple',
-    '香蕉': 'Banana',
-    '草莓': 'Strawberries',
-    '蓝莓': 'Blueberries',
-    '牛油果': 'Avocado',
-    '橄榄油': 'Olive Oil',
-    '油': 'Oil',
-    '盐': 'Salt',
-    '糖': 'Sugar',
-    '酱油': 'Soy Sauce',
-    '醋': 'Vinegar',
-    '蜂蜜': 'Honey',
+  /// Common ingredient name variations for TheMealDB API matching
+  static const Map<String, String> _ingredientAliases = {
+    // If ingredient name doesn't match API, try these aliases
+    'Whole Milk': 'Milk',
+    'Organic Spinach': 'Spinach',
+    'Grass-fed Steak': 'Beef',
+    'Red Apples': 'Apple',
   };
 
   Future<void> _loadRelatedRecipes() async {
@@ -95,44 +48,55 @@ class _IngredientDetailPageState extends State<IngredientDetailPage> {
     final List<Recipe> recipes = [];
 
     try {
-      // 1. 首先尝试从 API 获取（使用英文映射）
-      final englishName = _ingredientMapping[widget.ingredient.name];
-      if (englishName != null) {
-        try {
-          final meals = await _mealDbService.filterByIngredient(englishName);
-          debugPrint('API returned ${meals.length} meals for ${widget.ingredient.name} ($englishName)');
+      // 1. Try API with ingredient name (direct or alias)
+      String apiQueryName = widget.ingredient.name;
+      
+      // Check if there's an alias for better API matching
+      if (_ingredientAliases.containsKey(widget.ingredient.name)) {
+        apiQueryName = _ingredientAliases[widget.ingredient.name]!;
+      }
+      
+      debugPrint('Searching recipes for ingredient: ${widget.ingredient.name} (API query: $apiQueryName)');
+      
+      try {
+        final meals = await _mealDbService.filterByIngredient(apiQueryName);
+        debugPrint('API returned ${meals.length} meals for $apiQueryName');
 
-          // 获取详情（分批处理，避免过多请求）
-          for (final meal in meals.take(3)) {
-            try {
-              final detail = await _mealDbService.getMealById(meal.id);
-              if (detail != null) {
-                recipes.add(_convertMealToRecipe(detail));
-              }
-            } catch (e) {
-              debugPrint('Error getting meal detail: $e');
+        // Get meal details (limit to 3 to avoid too many requests)
+        for (final meal in meals.take(3)) {
+          try {
+            final detail = await _mealDbService.getMealById(meal.id);
+            if (detail != null) {
+              recipes.add(_convertMealToRecipe(detail));
+              debugPrint('Added recipe from API: ${detail.name}');
             }
+          } catch (e) {
+            debugPrint('Error getting meal detail: $e');
           }
-        } catch (e) {
-          debugPrint('Error filtering by ingredient: $e');
         }
-      } else {
-        debugPrint('No English mapping for ${widget.ingredient.name}, skipping API call');
+      } catch (e) {
+        debugPrint('Error filtering by ingredient: $e');
       }
 
-      // 2. 从本地食谱中匹配
+      // 2. Match from local recipes (always do this as fallback)
       final provider = Provider.of<RecipesProvider>(context, listen: false);
+      debugPrint('Total local recipes available: ${provider.recipes.length}');
+      
       final localRecipes = provider.recipes.where((recipe) {
         return recipe.ingredients.any((ing) {
           final recipeIngredientName = ing['name']?.toLowerCase() ?? '';
           final currentIngredientName = widget.ingredient.name.toLowerCase();
-          return recipeIngredientName.contains(currentIngredientName) ||
+          final match = recipeIngredientName.contains(currentIngredientName) ||
               currentIngredientName.contains(recipeIngredientName);
+          if (match) {
+            debugPrint('Matched ingredient: ${ing['name']} contains $currentIngredientName');
+          }
+          return match;
         });
       }).toList();
       debugPrint('Found ${localRecipes.length} local recipes containing ${widget.ingredient.name}');
 
-      // 合并结果，去重
+      // Merge results, deduplicate
       final existingIds = recipes.map((r) => r.id).toSet();
       for (final recipe in localRecipes) {
         if (!existingIds.contains(recipe.id)) {
@@ -152,7 +116,7 @@ class _IngredientDetailPageState extends State<IngredientDetailPage> {
       debugPrint('Error loading related recipes: $e');
       setState(() {
         _isLoading = false;
-        _error = '加载失败: $e';
+        _error = 'Loading Failed: $e';
       });
     }
   }
