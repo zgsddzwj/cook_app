@@ -8,7 +8,7 @@ class Ingredient {
   final String amount;
   final String category;
   final DateTime? expiryDate;
-  final double quantity; // Numeric quantity for sorting
+  final double quantity;
 
   Ingredient({
     required this.name,
@@ -19,7 +19,6 @@ class Ingredient {
   });
 
   factory Ingredient.fromJson(Map<String, dynamic> json) {
-    // Try to parse numeric quantity from amount string if possible
     double parsedQuantity = 1.0;
     try {
       final amountStr = json['amount'] ?? '1';
@@ -51,31 +50,50 @@ class Ingredient {
   }
 }
 
+/// LLM Service using CloseAI API (OpenAI compatible)
+/// CloseAI is an OpenAI API proxy with better availability in some regions
+/// Get API key from: https://console.closeai-asia.com/
 class LLMService {
   static final Dio _dio = Dio();
+  
+  // CloseAI API Configuration
+  static const String _baseUrl = 'https://api.closeai-asia.com/v1';
+  static String get _visionModel => dotenv.env['CLOSEAI_VISION_MODEL'] ?? 'gpt-4o-mini';
+  static String get _textModel => dotenv.env['CLOSEAI_TEXT_MODEL'] ?? 'gpt-4o-mini';
 
-  // Calling Alibaba Cloud (DashScope) API with Qwen-VL-Plus (Vision model)
+  /// Recognize ingredients from images using CloseAI Vision API
   static Future<List<Ingredient>> recognizeIngredients(
       List<String> imagePaths) async {
-    final apiKey = dotenv.env['ALIBABA_CLOUD_API_KEY'];
+    final apiKey = dotenv.env['CLOSEAI_API_KEY'];
     if (apiKey == null || apiKey.isEmpty) {
-      throw Exception('Alibaba Cloud API Key not found in .env file');
+      throw Exception('CloseAI API Key not found in .env file. Please add CLOSEAI_API_KEY to your .env file. Get it from https://console.closeai-asia.com/');
     }
 
     try {
-      final List<Map<String, dynamic>> contentItems = [
-        {'text': 'Identify all ingredients in these images. Return in English only.'}
-      ];
-
+      // Build content array with images and text
+      final List<Map<String, dynamic>> content = [];
+      
+      // Add images
       for (String imagePath in imagePaths) {
         final File imageFile = File(imagePath);
         final List<int> imageBytes = await imageFile.readAsBytes();
         final String base64Image = base64Encode(imageBytes);
-        contentItems.insert(0, {'image': 'data:image/png;base64,$base64Image'});
+        content.add({
+          'type': 'image_url',
+          'image_url': {
+            'url': 'data:image/jpeg;base64,$base64Image',
+          },
+        });
       }
+      
+      // Add text prompt
+      content.add({
+        'type': 'text',
+        'text': 'Identify all ingredients in these images. Return the result as a JSON object with this exact structure: {"ingredients": [{"name": "ingredient name in English", "amount": "quantity with unit", "category": "category"}]}. Categories allowed: Vegetables, Meat, Dairy, Fruits, Seasoning, Other. Return ONLY the JSON, no markdown, no explanation.',
+      });
 
       final response = await _dio.post(
-        'https://dashscope.aliyuncs.com/api/v1/services/aigc/multimodal-generation/generation',
+        '$_baseUrl/chat/completions',
         options: Options(
           headers: {
             'Authorization': 'Bearer $apiKey',
@@ -83,33 +101,24 @@ class LLMService {
           },
         ),
         data: {
-          'model': 'qwen-vl-plus',
-          'input': {
-            'messages': [
-              {
-                'role': 'system',
-                'content': [
-                  {
-                    'text':
-                        'You are a professional kitchen assistant. Identify ingredients in the images and return in JSON format. Structure must be: {"ingredients": [{"name": "ingredient name in English", "amount": "quantity/weight", "category": "category"}]}. Categories allowed: Vegetables, Meat, Dairy, Fruits, Seasoning, Other. Return JSON only, no explanation.'
-                  }
-                ]
-              },
-              {'role': 'user', 'content': contentItems}
-            ]
-          },
-          'parameters': {'result_format': 'message'}
+          'model': _visionModel,
+          'messages': [
+            {
+              'role': 'user',
+              'content': content,
+            }
+          ],
+          'temperature': 0.3,
+          'max_tokens': 2000,
         },
       );
 
       if (response.statusCode == 200) {
-        // print('API Response: ${response.data}'); // Debug logging
-        final String content = response.data['output']['choices'][0]['message']
-            ['content'][0]['text'];
-        print('Raw content from LLM: $content');
+        final String content = response.data['choices'][0]['message']['content'];
+        print('Raw content from CloseAI: $content');
 
         // Extract JSON from potential markdown blocks
-        String jsonStr = content;
+        String jsonStr = content.trim();
         if (content.contains('```json')) {
           jsonStr = content.split('```json')[1].split('```')[0].trim();
         } else if (content.contains('```')) {
@@ -119,7 +128,7 @@ class LLMService {
         // Clean up any potential leading/trailing non-JSON characters
         final jsonStart = jsonStr.indexOf('{');
         final jsonEnd = jsonStr.lastIndexOf('}');
-        if (jsonStart != -1 && jsonEnd != -1) {
+        if (jsonStart != -1 && jsonEnd != -1 && jsonEnd > jsonStart) {
           jsonStr = jsonStr.substring(jsonStart, jsonEnd + 1);
         }
 
@@ -129,30 +138,34 @@ class LLMService {
         return ingredientsJson.map((j) => Ingredient.fromJson(j)).toList();
       } else {
         throw Exception(
-            'Failed to call Alibaba API: ${response.statusCode} - ${response.statusMessage}');
+            'Failed to call CloseAI API: ${response.statusCode} - ${response.statusMessage}');
       }
+    } on DioException catch (e) {
+      final errorMsg = e.response?.data?['error']?['message'] ?? e.message;
+      print('CloseAI API Error: $errorMsg');
+      throw Exception('CloseAI API Error: $errorMsg');
     } catch (e) {
       print('Error recognizing ingredients: $e');
-      rethrow; // Rethrow to let the UI handle the error
+      rethrow;
     }
   }
 
-  // Generate recipe based on ingredients and preferences
+  /// Generate recipe based on ingredients and preferences using CloseAI
   static Future<Map<String, dynamic>> generateRecipe(
       List<Ingredient> ingredients, Map<String, dynamic> prefs) async {
-    final apiKey = dotenv.env['ALIBABA_CLOUD_API_KEY'];
+    final apiKey = dotenv.env['CLOSEAI_API_KEY'];
     if (apiKey == null || apiKey.isEmpty) {
-      throw Exception('Alibaba Cloud API Key not found in .env file');
+      throw Exception('CloseAI API Key not found in .env file. Please add CLOSEAI_API_KEY to your .env file.');
     }
 
-    final ingredientsList = ingredients.map((i) => i.name).join(', ');
+    final ingredientsList = ingredients.map((i) => '${i.name}(${i.amount})').join(', ');
     final timePref = prefs['time'] ?? 'Any';
     final flavorPref = prefs['flavor'] ?? 'Light';
     final equipmentPref = prefs['equipment'] ?? 'Any';
 
     try {
       final response = await _dio.post(
-        'https://dashscope.aliyuncs.com/api/v1/services/aigc/text-generation/generation',
+        '$_baseUrl/chat/completions',
         options: Options(
           headers: {
             'Authorization': 'Bearer $apiKey',
@@ -160,31 +173,50 @@ class LLMService {
           },
         ),
         data: {
-          'model': 'qwen-max',
-          'input': {
-            'messages': [
-              {
-                'role': 'system',
-                'content':
-                    'You are a professional chef. Generate recipes based on provided ingredients and preferences. Guidelines: 1. Do not force using all ingredients in one dish - prioritize pairing logic and taste. 2. If ingredients are abundant, generate multiple dishes (main + side) in a "recipes" array. 3. If few ingredients, create one quality dish. Must return JSON format: {"recipes": [{"title": "Recipe Name in English", "description": "Brief description in English", "time": "Estimated time (minutes)", "calories": "Estimated calories (kcal)", "tags": ["Tag1", "Tag2"], "ingredients": [{"name": "Ingredient name in English", "amount": "Quantity"}], "steps": ["Step 1 in English", "Step 2 in English"]}]}. If ingredients are too few or cannot form a reasonable dish, return: {"error": "Reason in English", "suggestion": "Suggestion in English"}. Return JSON only, no explanation. ALL CONTENT MUST BE IN ENGLISH.'
-              },
-              {
-                'role': 'user',
-                'content':
-                    'Ingredients: $ingredientsList. Preferences: Cooking time $timePref, Flavor $flavorPref, Equipment $equipmentPref.'
-              }
-            ]
-          },
-          'parameters': {'result_format': 'message'}
+          'model': _textModel,
+          'messages': [
+            {
+              'role': 'system',
+              'content': '''You are a professional chef. Generate recipes based on provided ingredients and preferences.
+
+Guidelines:
+1. Do not force using all ingredients - prioritize taste and pairing logic
+2. If ingredients are abundant, generate multiple dishes (main + side)
+3. If few ingredients, create one quality dish
+
+MUST return JSON in this exact format:
+{
+  "recipes": [{
+    "title": "Recipe Name",
+    "description": "Brief description",
+    "time": "Estimated minutes",
+    "calories": "Estimated kcal",
+    "tags": ["Tag1", "Tag2"],
+    "ingredients": [{"name": "ingredient", "amount": "quantity"}],
+    "steps": ["Step 1", "Step 2"]
+  }]
+}
+
+If ingredients cannot form a reasonable dish, return:
+{"error": "Reason", "suggestion": "Suggestion"}
+
+Return ONLY JSON, no markdown, no explanation. ALL CONTENT IN ENGLISH.'''
+            },
+            {
+              'role': 'user',
+              'content': 'Ingredients: $ingredientsList. Preferences: Time: $timePref, Flavor: $flavorPref, Equipment: $equipmentPref.'
+            }
+          ],
+          'temperature': 0.7,
+          'max_tokens': 2000,
         },
       );
 
       if (response.statusCode == 200) {
-        final String content =
-            response.data['output']['choices'][0]['message']['content'];
-        print('Raw content from LLM (Recipe): $content');
+        final String content = response.data['choices'][0]['message']['content'];
+        print('Raw content from CloseAI (Recipe): $content');
 
-        String jsonStr = content;
+        String jsonStr = content.trim();
         if (content.contains('```json')) {
           jsonStr = content.split('```json')[1].split('```')[0].trim();
         } else if (content.contains('```')) {
@@ -193,13 +225,13 @@ class LLMService {
 
         final jsonStart = jsonStr.indexOf('{');
         final jsonEnd = jsonStr.lastIndexOf('}');
-        if (jsonStart != -1 && jsonEnd != -1) {
+        if (jsonStart != -1 && jsonEnd != -1 && jsonEnd > jsonStart) {
           jsonStr = jsonStr.substring(jsonStart, jsonEnd + 1);
         }
 
         final Map<String, dynamic> result = jsonDecode(jsonStr);
 
-        // 检查是否有错误信息
+        // Check for error message from LLM
         if (result.containsKey('error')) {
           throw RecipeGenerationException(
             message: result['error'] ?? 'Failed to generate recipe',
@@ -209,8 +241,12 @@ class LLMService {
 
         return result;
       } else {
-        throw Exception('Failed to call Alibaba API: ${response.statusCode}');
+        throw Exception('Failed to call CloseAI API: ${response.statusCode}');
       }
+    } on DioException catch (e) {
+      final errorMsg = e.response?.data?['error']?['message'] ?? e.message;
+      print('CloseAI API Error: $errorMsg');
+      throw Exception('CloseAI API Error: $errorMsg');
     } on RecipeGenerationException {
       rethrow;
     } catch (e) {

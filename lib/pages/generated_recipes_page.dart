@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:snap_cook/l10n/generated/app_localizations.dart';
 import '../models/recipe.dart';
 import '../core/app_colors.dart';
@@ -62,12 +63,17 @@ class GeneratedRecipesPage extends StatelessWidget {
                   children: [
                     ClipRRect(
                       borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
-                      child: Image.network(
-                        recipe.imageUrl,
+                      child: CachedNetworkImage(
+                        imageUrl: recipe.imageUrl,
                         height: 180,
                         width: double.infinity,
                         fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) => Container(
+                        placeholder: (context, url) => Container(
+                          height: 180,
+                          color: Colors.grey[200],
+                          child: const Center(child: CircularProgressIndicator()),
+                        ),
+                        errorWidget: (context, url, error) => Container(
                           height: 180,
                           color: Colors.grey[200],
                           child: const Icon(Icons.broken_image, size: 48, color: Colors.grey),

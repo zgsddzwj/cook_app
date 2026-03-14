@@ -35,6 +35,21 @@ class SnapCook extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Set custom error widget to avoid red screen for image loading errors
+    ErrorWidget.builder = (FlutterErrorDetails details) {
+      // Check if it's an image loading error
+      if (details.exception is Exception &&
+          details.exception.toString().contains('image')) {
+        return const SizedBox.shrink(); // Hide image loading errors silently
+      }
+      // For other errors, show default error widget in debug mode
+      return Container(
+        alignment: Alignment.center,
+        padding: const EdgeInsets.all(16),
+        child: const Icon(Icons.error_outline, color: Colors.grey),
+      );
+    };
+
     return MaterialApp(
       title: 'SnapCook',
       debugShowCheckedModeBanner: false,

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:snap_cook/l10n/generated/app_localizations.dart';
 import '../core/app_colors.dart';
 import '../core/recipes_provider.dart';
@@ -45,17 +46,21 @@ class RecipeDetailPage extends StatelessWidget {
               background: Stack(
                 fit: StackFit.expand,
                 children: [
-                  // Recipe image
-                  Image.network(
-                    imageUrl,
+                  // Recipe image with caching
+                  CachedNetworkImage(
+                    imageUrl: imageUrl,
                     fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) {
-                      return Container(
-                        color: Colors.grey[200],
-                        child: const Icon(Icons.broken_image,
-                            size: 64, color: Colors.grey),
-                      );
-                    },
+                    placeholder: (context, url) => Container(
+                      color: Colors.grey[200],
+                      child: const Center(
+                        child: CircularProgressIndicator(),
+                      ),
+                    ),
+                    errorWidget: (context, url, error) => Container(
+                      color: Colors.grey[200],
+                      child: const Icon(Icons.broken_image,
+                          size: 64, color: Colors.grey),
+                    ),
                   ),
                   // Back button with background
                   Positioned(

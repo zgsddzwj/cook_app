@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:snap_cook/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -209,15 +210,17 @@ class PantryPage extends StatelessWidget {
                     borderRadius: BorderRadius.circular(16),
                   ),
                   clipBehavior: Clip.antiAlias,
-                  child: Image.network(
-                    IngredientImageService.getIngredientThumbnail(item),
+                  child: CachedNetworkImage(
+                    imageUrl: IngredientImageService.getIngredientThumbnail(item),
                     fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) {
-                      return Container(
-                        color: Colors.grey[200],
-                        child: const Icon(Icons.image, color: Colors.grey),
-                      );
-                    },
+                    placeholder: (context, url) => Container(
+                      color: Colors.grey[200],
+                      child: const Center(child: CircularProgressIndicator()),
+                    ),
+                    errorWidget: (context, url, error) => Container(
+                      color: Colors.grey[200],
+                      child: const Icon(Icons.broken_image, color: Colors.grey),
+                    ),
                   ),
                 ),
                 const SizedBox(width: 16),

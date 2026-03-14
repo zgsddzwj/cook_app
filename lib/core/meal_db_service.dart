@@ -1,26 +1,61 @@
 import 'package:dio/dio.dart';
+import 'package:dio_cache_interceptor/dio_cache_interceptor.dart';
 import 'package:flutter/foundation.dart';
 
-/// TheMealDB API Service
+/// TheMealDB API Service with caching
 /// 文档: https://www.themealdb.com/api.php
 class MealDbService {
   static final MealDbService _instance = MealDbService._internal();
   factory MealDbService() => _instance;
-  MealDbService._internal();
+  MealDbService._internal() {
+    _initCache();
+  }
 
-  final Dio _dio = Dio(
-    BaseOptions(
-      baseUrl: 'https://www.themealdb.com/api/json/v1/1',
-      connectTimeout: const Duration(seconds: 8),
-      receiveTimeout: const Duration(seconds: 8),
-    ),
-  );
+  late final Dio _dio;
+  late final CacheStore _cacheStore;
+  late final DioCacheInterceptor _cacheInterceptor;
+  bool _initialized = false;
+
+  Future<void> _initCache() async {
+    if (_initialized) return;
+    
+    // Initialize cache store
+    _cacheStore = MemCacheStore(maxSize: 10485760, maxEntrySize: 1048576);
+    
+    final cacheOptions = CacheOptions(
+      store: _cacheStore,
+      policy: CachePolicy.request,
+      hitCacheOnErrorExcept: [401, 403],
+      maxStale: const Duration(days: 7),
+      priority: CachePriority.normal,
+      cipher: null,
+      keyBuilder: CacheOptions.defaultCacheKeyBuilder,
+      allowPostMethod: false,
+    );
+    
+    _cacheInterceptor = DioCacheInterceptor(options: cacheOptions);
+    
+    _dio = Dio(
+      BaseOptions(
+        baseUrl: 'https://www.themealdb.com/api/json/v1/1',
+        connectTimeout: const Duration(seconds: 8),
+        receiveTimeout: const Duration(seconds: 8),
+      ),
+    );
+    
+    _dio.interceptors.add(_cacheInterceptor);
+    _initialized = true;
+  }
 
   /// 按名称搜索食谱
-  /// 示例: searchMeals("Arrabiata")
   Future<List<Meal>> searchMeals(String query) async {
+    await _initCache();
     try {
-      final response = await _dio.get('/search.php', queryParameters: {'s': query});
+      final response = await _dio.get(
+        '/search.php',
+        queryParameters: {'s': query},
+        options: Options(extra: {'cachePolicy': CachePolicy.forceCache}),
+      );
       return _parseMeals(response.data);
     } catch (e) {
       debugPrint('Error searching meals: $e');
@@ -29,10 +64,14 @@ class MealDbService {
   }
 
   /// 按首字母列出食谱
-  /// 示例: listMealsByFirstLetter("a")
   Future<List<Meal>> listMealsByFirstLetter(String letter) async {
+    await _initCache();
     try {
-      final response = await _dio.get('/search.php', queryParameters: {'f': letter});
+      final response = await _dio.get(
+        '/search.php',
+        queryParameters: {'f': letter},
+        options: Options(extra: {'cachePolicy': CachePolicy.forceCache}),
+      );
       return _parseMeals(response.data);
     } catch (e) {
       debugPrint('Error listing meals: $e');
@@ -41,10 +80,14 @@ class MealDbService {
   }
 
   /// 通过ID获取食谱详情
-  /// 示例: getMealById("52772")
   Future<Meal?> getMealById(String id) async {
+    await _initCache();
     try {
-      final response = await _dio.get('/lookup.php', queryParameters: {'i': id});
+      final response = await _dio.get(
+        '/lookup.php',
+        queryParameters: {'i': id},
+        options: Options(extra: {'cachePolicy': CachePolicy.forceCache}),
+      );
       final meals = _parseMeals(response.data);
       return meals.isNotEmpty ? meals.first : null;
     } catch (e) {
@@ -55,12 +98,15 @@ class MealDbService {
 
   /// 获取随机食谱
   Future<Meal?> getRandomMeal() async {
+    await _initCache();
     try {
-      final response = await _dio.get('/random.php');
+      final response = await _dio.get(
+        '/random.php',
+        options: Options(extra: {'cachePolicy': CachePolicy.noCache}), // Don't cache random
+      );
       final meals = _parseMeals(response.data);
       return meals.isNotEmpty ? meals.first : null;
     } on DioException catch (e) {
-      // 超时或网络错误，返回 null
       if (e.type == DioExceptionType.connectionTimeout ||
           e.type == DioExceptionType.receiveTimeout) {
         debugPrint('Random meal request timeout');
@@ -75,10 +121,14 @@ class MealDbService {
   }
 
   /// 按食材筛选食谱
-  /// 示例: filterByIngredient("chicken")
   Future<List<Meal>> filterByIngredient(String ingredient) async {
+    await _initCache();
     try {
-      final response = await _dio.get('/filter.php', queryParameters: {'i': ingredient});
+      final response = await _dio.get(
+        '/filter.php',
+        queryParameters: {'i': ingredient},
+        options: Options(extra: {'cachePolicy': CachePolicy.forceCache}),
+      );
       return _parseMeals(response.data);
     } catch (e) {
       debugPrint('Error filtering by ingredient: $e');
@@ -87,10 +137,14 @@ class MealDbService {
   }
 
   /// 按分类筛选食谱
-  /// 示例: filterByCategory("Seafood")
   Future<List<Meal>> filterByCategory(String category) async {
+    await _initCache();
     try {
-      final response = await _dio.get('/filter.php', queryParameters: {'c': category});
+      final response = await _dio.get(
+        '/filter.php',
+        queryParameters: {'c': category},
+        options: Options(extra: {'cachePolicy': CachePolicy.forceCache}),
+      );
       return _parseMeals(response.data);
     } catch (e) {
       debugPrint('Error filtering by category: $e');
@@ -99,10 +153,14 @@ class MealDbService {
   }
 
   /// 按地区筛选食谱
-  /// 示例: filterByArea("Canadian")
   Future<List<Meal>> filterByArea(String area) async {
+    await _initCache();
     try {
-      final response = await _dio.get('/filter.php', queryParameters: {'a': area});
+      final response = await _dio.get(
+        '/filter.php',
+        queryParameters: {'a': area},
+        options: Options(extra: {'cachePolicy': CachePolicy.forceCache}),
+      );
       return _parseMeals(response.data);
     } catch (e) {
       debugPrint('Error filtering by area: $e');
@@ -112,8 +170,12 @@ class MealDbService {
 
   /// 获取所有分类列表
   Future<List<Category>> getCategories() async {
+    await _initCache();
     try {
-      final response = await _dio.get('/categories.php');
+      final response = await _dio.get(
+        '/categories.php',
+        options: Options(extra: {'cachePolicy': CachePolicy.forceCache}),
+      );
       final categories = response.data['categories'] as List?;
       if (categories == null) return [];
       return categories.map((json) => Category.fromJson(json)).toList();
@@ -125,8 +187,13 @@ class MealDbService {
 
   /// 获取所有地区列表
   Future<List<String>> getAreas() async {
+    await _initCache();
     try {
-      final response = await _dio.get('/list.php', queryParameters: {'a': 'list'});
+      final response = await _dio.get(
+        '/list.php',
+        queryParameters: {'a': 'list'},
+        options: Options(extra: {'cachePolicy': CachePolicy.forceCache}),
+      );
       final meals = response.data['meals'] as List?;
       if (meals == null) return [];
       return meals.map((m) => m['strArea'] as String).toList();
@@ -136,25 +203,10 @@ class MealDbService {
     }
   }
 
-  /// 获取所有食材列表
-  Future<List<MealDbIngredient>> getIngredients() async {
-    try {
-      final response = await _dio.get('/list.php', queryParameters: {'i': 'list'});
-      final meals = response.data['meals'] as List?;
-      if (meals == null) return [];
-      return meals.map((json) => MealDbIngredient.fromJson(json)).toList();
-    } catch (e) {
-      debugPrint('Error getting ingredients: $e');
-      return [];
-    }
-  }
-
-  /// 获取一批随机食谱（用于首页展示）
-  /// 使用并行请求提高效率
+  /// 获取一批随机食谱
   Future<List<Meal>> getRandomMeals(int count) async {
     final List<Meal> meals = [];
     
-    // 创建请求列表，但限制并发数
     for (int i = 0; i < count; i += 3) {
       final batchSize = (count - i).clamp(0, 3);
       final futures = List.generate(batchSize, (_) => getRandomMeal());
@@ -175,6 +227,11 @@ class MealDbService {
     final meals = data['meals'] as List?;
     if (meals == null) return [];
     return meals.map((json) => Meal.fromJson(json)).toList();
+  }
+
+  /// Clear API cache
+  Future<void> clearCache() async {
+    await _cacheStore.clean();
   }
 }
 
@@ -207,7 +264,6 @@ class Meal {
   });
 
   factory Meal.fromJson(Map<String, dynamic> json) {
-    // 解析食材（API返回的是 ingredient1-20 和 measure1-20）
     final List<MealIngredient> ingredients = [];
     for (int i = 1; i <= 20; i++) {
       final ingredient = json['strIngredient$i'] as String?;
@@ -235,28 +291,22 @@ class Meal {
     );
   }
 
-  /// 获取标签列表
   List<String> get tagList {
     if (tags == null || tags!.isEmpty) return [];
     return tags!.split(',').map((t) => t.trim()).toList();
   }
 
-  /// 获取烹饪时间（API不返回，随机生成一个合理的）
   String get estimatedTime {
-    // 根据食材数量估算时间
     if (ingredients.length <= 5) return '15';
     if (ingredients.length <= 10) return '30';
     return '45';
   }
 
-  /// 获取卡路里（API不返回，随机生成一个合理的）
   String get estimatedCalories {
-    // 简单估算：基于食材数量
     final base = 200 + (ingredients.length * 50);
     return base.toString();
   }
 
-  /// 获取简短的描述（取instructions的前两句）
   String get shortDescription {
     final sentences = instructions.split(RegExp(r'[.!?]\s+'));
     if (sentences.isEmpty) return '';
@@ -265,7 +315,6 @@ class Meal {
   }
 }
 
-/// 食材项
 class MealIngredient {
   final String name;
   final String measure;
@@ -276,7 +325,6 @@ class MealIngredient {
   });
 }
 
-/// 分类模型
 class Category {
   final String id;
   final String name;
@@ -300,7 +348,6 @@ class Category {
   }
 }
 
-/// 食材模型 (来自TheMealDB)
 class MealDbIngredient {
   final String id;
   final String name;

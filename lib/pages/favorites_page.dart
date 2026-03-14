@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:snap_cook/l10n/generated/app_localizations.dart';
 import '../core/app_colors.dart';
 import '../core/recipes_provider.dart';
@@ -76,38 +77,23 @@ class FavoritesPage extends StatelessWidget {
                         ClipRRect(
                           borderRadius: const BorderRadius.horizontal(
                               left: Radius.circular(16)),
-                          child: Image.network(
-                            r.imageUrl,
+                          child: CachedNetworkImage(
+                            imageUrl: r.imageUrl,
                             width: 120,
                             height: 90,
                             fit: BoxFit.cover,
-                            errorBuilder: (context, error, stackTrace) {
-                              return Container(
-                                width: 120,
-                                height: 90,
-                                color: Colors.grey[200],
-                                child: const Icon(Icons.broken_image,
-                                    color: Colors.grey),
-                              );
-                            },
-                            loadingBuilder: (context, child, loadingProgress) {
-                              if (loadingProgress == null) return child;
-                              return Container(
-                                width: 120,
-                                height: 90,
-                                color: Colors.grey[100],
-                                child: const Center(
-                                  child: SizedBox(
-                                    width: 20,
-                                    height: 20,
-                                    child: CircularProgressIndicator(
-                                      strokeWidth: 2,
-                                      color: AppColors.primary,
-                                    ),
-                                  ),
-                                ),
-                              );
-                            },
+                            placeholder: (context, url) => Container(
+                              width: 120,
+                              height: 90,
+                              color: Colors.grey[200],
+                              child: const Center(child: CircularProgressIndicator()),
+                            ),
+                            errorWidget: (context, url, error) => Container(
+                              width: 120,
+                              height: 90,
+                              color: Colors.grey[200],
+                              child: const Icon(Icons.broken_image, color: Colors.grey),
+                            ),
                           ),
                         ),
                         const SizedBox(width: 12),

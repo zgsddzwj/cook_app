@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:snap_cook/l10n/generated/app_localizations.dart';
 import '../core/app_colors.dart';
 import '../core/recipes_provider.dart';
@@ -252,7 +253,7 @@ class _RecipesPageState extends State<RecipesPage> {
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.primary,
                         ),
-                        child: Text(l10n.retry),
+                        child: Text(l10n.retry, style: TextStyle(color: Colors.white)),
                       ),
                     ],
                   ),
@@ -275,11 +276,12 @@ class _RecipesPageState extends State<RecipesPage> {
                       ),
                       const SizedBox(height: 16),
                       ElevatedButton(
+                        
                         onPressed: _refreshRecipes,
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.primary,
                         ),
-                        child: Text(l10n.reload),
+                        child: Text(l10n.reload,style: TextStyle(color: Colors.white)),
                       ),
                     ],
                   ),
@@ -332,8 +334,8 @@ class _RecipesPageState extends State<RecipesPage> {
           label,
           style: TextStyle(
             color: isSelected ? Colors.white : AppColors.textPrimary,
-            fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-            fontSize: 13,
+            fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+            fontSize: 12,
           ),
         ),
         selected: isSelected,
@@ -347,14 +349,15 @@ class _RecipesPageState extends State<RecipesPage> {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20),
           side: BorderSide(
-            color: isSelected ? AppColors.primary : Colors.grey[200]!,
+            color: isSelected ? AppColors.primary : Colors.grey[300]!,
             width: 1,
           ),
         ),
         showCheckmark: false,
         elevation: isSelected ? 2 : 0,
-        pressElevation: 4,
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        pressElevation: 2,
+        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 6),
+        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
       ),
     );
   }
@@ -418,24 +421,24 @@ class _RecipesPageState extends State<RecipesPage> {
                   ClipRRect(
                     borderRadius:
                         const BorderRadius.vertical(top: Radius.circular(24)),
-                    child: Image.network(
-                      imageUrl,
+                    child: CachedNetworkImage(
+                      imageUrl: imageUrl,
                       height: 180,
                       width: double.infinity,
                       fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) {
-                        return Container(
-                          height: 180,
-                          width: double.infinity,
-                          color: Colors.grey[200],
-                          alignment: Alignment.center,
-                          child: Icon(
-                            Icons.image_outlined,
-                            size: 48,
-                            color: Colors.grey[400],
-                          ),
-                        );
-                      },
+                      placeholder: (context, url) => Container(
+                        height: 180,
+                        width: double.infinity,
+                        color: Colors.grey[200],
+                        child: const Center(child: CircularProgressIndicator()),
+                      ),
+                      errorWidget: (context, url, error) => Container(
+                        height: 180,
+                        width: double.infinity,
+                        color: Colors.grey[200],
+                        alignment: Alignment.center,
+                        child: const Icon(Icons.broken_image, color: Colors.grey),
+                      ),
                     ),
                   ),
                   Positioned(

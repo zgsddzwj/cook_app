@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:snap_cook/l10n/generated/app_localizations.dart';
 import '../core/app_colors.dart';
 import '../core/navigation_provider.dart';
@@ -199,20 +200,24 @@ class HomePage extends StatelessWidget {
                                 ClipRRect(
                                   borderRadius: const BorderRadius.vertical(
                                       top: Radius.circular(20)),
-                                  child: Image.network(
-                                    todayRecipe.imageUrl,
+                                  child: CachedNetworkImage(
+                                    imageUrl: todayRecipe.imageUrl,
                                     height: 200,
                                     width: double.infinity,
                                     fit: BoxFit.cover,
-                                    errorBuilder: (context, error, stackTrace) {
-                                      return Container(
-                                        height: 200,
-                                        width: double.infinity,
-                                        color: Colors.grey[200],
-                                        child: const Icon(Icons.broken_image,
-                                            size: 48, color: Colors.grey),
-                                      );
-                                    },
+                                    placeholder: (context, url) => Container(
+                                      height: 200,
+                                      width: double.infinity,
+                                      color: Colors.grey[200],
+                                      child: const Center(child: CircularProgressIndicator()),
+                                    ),
+                                    errorWidget: (context, url, error) => Container(
+                                      height: 200,
+                                      width: double.infinity,
+                                      color: Colors.grey[200],
+                                      child: const Icon(Icons.broken_image,
+                                          size: 48, color: Colors.grey),
+                                    ),
                                   ),
                                 ),
                                 Positioned(
