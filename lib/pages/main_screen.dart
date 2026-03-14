@@ -8,6 +8,7 @@ import 'profile_page.dart';
 import 'camera_page.dart';
 import '../core/app_colors.dart';
 import '../core/navigation_provider.dart';
+import '../core/app_update_service.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -24,6 +25,23 @@ class _MainScreenState extends State<MainScreen> {
     const RecipesPage(),
     const ProfilePage(),
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    // Check for app update after build completes
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _checkForUpdate();
+    });
+  }
+
+  Future<void> _checkForUpdate() async {
+    // Delay slightly to ensure app is fully loaded
+    await Future.delayed(const Duration(seconds: 2));
+    if (mounted) {
+      await checkAndShowUpdateDialog(context);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {

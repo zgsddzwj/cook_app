@@ -49,5 +49,12 @@
 <string>We need your camera permission to take photos of ingredients for intelligent recognition.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 <string>We need your photo library permission to select ingredient photos for intelligent recognition.</string>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>https</string>
+		<string>http</string>
+		<string>itms</string>
+		<string>itms-apps</string>
+	</array>
 </dict>
 </plist>
