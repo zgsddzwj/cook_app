@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../core/app_colors.dart';
 import '../core/navigation_provider.dart';
+import '../core/recipes_provider.dart';
 import 'recipe_detail_page.dart';
 
 class HomePage extends StatelessWidget {
@@ -10,6 +11,12 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final navProvider = Provider.of<NavigationProvider>(context, listen: false);
+    final recipesProvider = Provider.of<RecipesProvider>(context);
+    
+    // 获取今日推荐（第一个食谱）
+    final todayRecipe = recipesProvider.recipes.isNotEmpty 
+        ? recipesProvider.recipes.first 
+        : null;
 
     return Scaffold(
       appBar: AppBar(
@@ -141,115 +148,112 @@ class HomePage extends StatelessWidget {
             // Recipe Card
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: GestureDetector(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const RecipeDetailPage(
-                        id: '1',
-                        title: '奶油菠菜鸡胸肉',
-                        imageUrl:
-                            'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=500&auto=format&fit=crop&q=60',
-                        tags: ['生酮', '高蛋白'],
-                        time: '25',
-                        calories: '320',
-                        description: '利用冰箱里剩下的菠菜和奶油，做一道健康又美味的低碳水晚餐。',
-                        ingredients: [
-                          {'name': '鸡胸肉', 'amount': '500g'},
-                          {'name': '橄榄油', 'amount': '2 汤匙'},
-                          {'name': '大蒜', 'amount': '2 瓣'},
-                          {'name': '菠菜', 'amount': '200g'},
-                          {'name': '淡奶油', 'amount': '100ml'},
-                        ],
-                        steps: [
-                          '用盐和黑胡椒腌制鸡胸肉。',
-                          '平底锅中热油，中火加热。',
-                          '加入鸡胸肉，煎至两面金黄且熟透，每面约 6-7 分钟。',
-                          '将鸡胸肉盛出备用。',
-                          '在同一个锅中，炒香大蒜。',
-                          '加入菠菜炒至变软。',
-                          '倒入淡奶油，小火煮 2-3 分钟。',
-                          '将鸡胸肉放回锅中，即可享用。',
-                        ],
+              child: todayRecipe == null
+                  ? Container(
+                      height: 280,
+                      decoration: BoxDecoration(
+                        color: Colors.grey[100],
+                        borderRadius: BorderRadius.circular(20),
                       ),
-                    ),
-                  );
-                },
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(20),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.05),
-                        blurRadius: 10,
-                        offset: const Offset(0, 5),
+                      child: const Center(
+                        child: CircularProgressIndicator(color: AppColors.primary),
                       ),
-                    ],
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Stack(
-                        children: [
-                          ClipRRect(
-                            borderRadius: const BorderRadius.vertical(
-                                top: Radius.circular(20)),
-                            child: Image.network(
-                              'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=500&auto=format&fit=crop&q=60',
-                              height: 200,
-                              width: double.infinity,
-                              fit: BoxFit.cover,
-                              errorBuilder: (context, error, stackTrace) {
-                                return Container(
-                                  height: 200,
-                                  width: double.infinity,
-                                  color: Colors.grey[200],
-                                  child: const Icon(Icons.broken_image,
-                                      size: 48, color: Colors.grey),
-                                );
-                              },
+                    )
+                  : GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => RecipeDetailPage(
+                              id: todayRecipe.id,
+                              title: todayRecipe.title,
+                              imageUrl: todayRecipe.imageUrl,
+                              tags: todayRecipe.tags,
+                              time: todayRecipe.time,
+                              calories: todayRecipe.calories,
+                              description: todayRecipe.description,
+                              ingredients: todayRecipe.ingredients,
+                              steps: todayRecipe.steps,
                             ),
                           ),
-                          Positioned(
-                            left: 12,
-                            right: 12,
-                            bottom: 12,
-                            child: Wrap(
-                              spacing: 8,
-                              runSpacing: 8,
-                              children: [
-                                _buildTag('生酮'),
-                                _buildTag('高蛋白'),
-                              ],
+                        );
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(20),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.05),
+                              blurRadius: 10,
+                              offset: const Offset(0, 5),
                             ),
-                          ),
-                        ],
-                      ),
-                      const Padding(
-                        padding: EdgeInsets.all(16),
+                          ],
+                        ),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
-                              '奶油菠菜鸡胸肉',
-                              style: TextStyle(
-                                  fontSize: 18, fontWeight: FontWeight.bold),
+                            Stack(
+                              children: [
+                                ClipRRect(
+                                  borderRadius: const BorderRadius.vertical(
+                                      top: Radius.circular(20)),
+                                  child: Image.network(
+                                    todayRecipe.imageUrl,
+                                    height: 200,
+                                    width: double.infinity,
+                                    fit: BoxFit.cover,
+                                    errorBuilder: (context, error, stackTrace) {
+                                      return Container(
+                                        height: 200,
+                                        width: double.infinity,
+                                        color: Colors.grey[200],
+                                        child: const Icon(Icons.broken_image,
+                                            size: 48, color: Colors.grey),
+                                      );
+                                    },
+                                  ),
+                                ),
+                                Positioned(
+                                  left: 12,
+                                  right: 12,
+                                  bottom: 12,
+                                  child: Wrap(
+                                    spacing: 8,
+                                    runSpacing: 8,
+                                    children: todayRecipe.tags
+                                        .take(3)
+                                        .map((tag) => _buildTag(tag))
+                                        .toList(),
+                                  ),
+                                ),
+                              ],
                             ),
-                            SizedBox(height: 8),
-                            Text(
-                              '利用冰箱里剩下的菠菜和奶油，做一道健康又美味的低碳水晚餐。',
-                              style: TextStyle(
-                                  color: AppColors.textSecondary, fontSize: 14),
+                            Padding(
+                              padding: const EdgeInsets.all(16),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    todayRecipe.title,
+                                    style: const TextStyle(
+                                        fontSize: 18, fontWeight: FontWeight.bold),
+                                  ),
+                                  const SizedBox(height: 8),
+                                  Text(
+                                    todayRecipe.description,
+                                    style: const TextStyle(
+                                        color: AppColors.textSecondary, fontSize: 14),
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ],
+                              ),
                             ),
                           ],
                         ),
                       ),
-                    ],
-                  ),
-                ),
-              ),
+                    ),
             ),
 
             const SizedBox(height: 24),

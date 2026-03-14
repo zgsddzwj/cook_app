@@ -2,118 +2,217 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import '../models/recipe.dart';
+import 'meal_db_service.dart';
 
 class RecipesProvider extends ChangeNotifier {
-  final List<Recipe> _builtinRecipes = [
-    Recipe(
-      id: '1',
-      title: '奶油菠菜鸡胸肉',
-      description: '利用冰箱里剩下的菠菜和奶油，做一道健康又美味的低碳水晚餐。',
-      time: '25',
-      calories: '320',
-      imageUrl:
-          'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=500&auto=format&fit=crop&q=60',
-      tags: ['生酮', '高蛋白', '低碳水'],
-      isFavorite: true,
-      ingredients: [
-        {'name': '鸡胸肉', 'amount': '500g'},
-        {'name': '橄榄油', 'amount': '2 汤匙'},
-        {'name': '大蒜', 'amount': '2 瓣'},
-        {'name': '菠菜', 'amount': '200g'},
-        {'name': '淡奶油', 'amount': '100ml'},
-      ],
-      steps: [
-        '用盐和黑胡椒腌制鸡胸肉。',
-        '平底锅中热油，中火加热。',
-        '加入鸡胸肉，煎至两面金黄且熟透，每面约 6-7 分钟。',
-        '将鸡胸肉盛出备用。',
-        '在同一个锅中，炒香大蒜。',
-        '加入菠菜炒至变软。',
-        '倒入淡奶油，小火煮 2-3 分钟。',
-        '将鸡胸肉放回锅中，即可享用。',
-      ],
-    ),
-    Recipe(
-      id: '2',
-      title: '田园蔬菜沙拉',
-      description: '清爽解腻，只需简单的油醋汁调味即可。',
-      time: '10',
-      calories: '180',
-      imageUrl:
-          'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=500&auto=format&fit=crop&q=60',
-      tags: ['素食', '低卡', '快速简餐'],
-      isFavorite: false,
-      ingredients: [
-        {'name': '生菜', 'amount': '200g'},
-        {'name': '小番茄', 'amount': '10个'},
-        {'name': '黄瓜', 'amount': '1根'},
-        {'name': '橄榄油', 'amount': '1勺'},
-        {'name': '醋', 'amount': '1勺'},
-      ],
-      steps: [
-        '将蔬菜洗净切好。',
-        '混合橄榄油和醋制成油醋汁。',
-        '将所有材料混合均匀即可。',
-      ],
-    ),
-    Recipe(
-      id: '3',
-      title: '香煎三文鱼',
-      description: '富含优质蛋白和Omega-3，简单煎制即可美味。',
-      time: '15',
-      calories: '450',
-      imageUrl:
-          'https://images.unsplash.com/photo-1485921325833-c519f76c4927?w=500&auto=format&fit=crop&q=60',
-      tags: ['生酮', '高蛋白', '低碳水'],
-      isFavorite: false,
-      ingredients: [
-        {'name': '三文鱼', 'amount': '200g'},
-        {'name': '柠檬', 'amount': '半个'},
-        {'name': '迷迭香', 'amount': '1枝'},
-        {'name': '黑胡椒', 'amount': '适量'},
-      ],
-      steps: [
-        '三文鱼洗净擦干，撒上海盐和黑胡椒腌制10分钟。',
-        '平底锅烧热放少许油，放入三文鱼皮朝下煎 3 分钟。',
-        '翻面继续煎 2-3 分钟至熟。',
-        '挤上柠檬汁，放入迷迭香装饰。',
-      ],
-    ),
-    Recipe(
-      id: '4',
-      title: '牛油果全麦吐司',
-      description: '完美的早餐选择，营养均衡，开启活力一天。',
-      time: '5',
-      calories: '280',
-      imageUrl:
-          'https://images.unsplash.com/photo-1588137372308-15f75323ca8d?w=500&auto=format&fit=crop&q=60',
-      tags: ['素食', '快速简餐'],
-      isFavorite: true,
-      ingredients: [
-        {'name': '全麦吐司', 'amount': '2片'},
-        {'name': '牛油果', 'amount': '1个'},
-        {'name': '鸡蛋', 'amount': '1个'},
-        {'name': '黑胡椒', 'amount': '适量'},
-      ],
-      steps: [
-        '全麦吐司烤至酥脆。',
-        '牛油果捣成泥，涂抹在吐司上。',
-        '煎一个太阳蛋放在上面。',
-        '撒上黑胡椒调味。',
-      ],
-    ),
-  ];
-
+  final MealDbService _mealDbService = MealDbService();
+  
+  // API 获取的食谱
+  List<Recipe> _apiRecipes = [];
+  // 用户自定义食谱
   final List<Recipe> _customRecipes = [];
   static const String _storageKey = 'custom_recipes';
+  static const String _favoritesKey = 'favorite_recipe_ids';
+
+  // 加载状态
+  bool isLoading = false;
+  String? error;
 
   RecipesProvider() {
     _loadCustomRecipes();
+    // 启动时从 API 加载食谱
+    loadRecipesFromApi();
   }
 
-  List<Recipe> get recipes => [..._customRecipes, ..._builtinRecipes];
+  List<Recipe> get recipes => [..._customRecipes, ..._apiRecipes];
+  
   List<Recipe> get favoriteRecipes =>
       recipes.where((r) => r.isFavorite).toList();
+
+  /// 从 TheMealDB API 加载食谱
+  Future<void> loadRecipesFromApi() async {
+    isLoading = true;
+    error = null;
+    notifyListeners();
+
+    try {
+      // 获取多个随机食谱
+      final meals = await _mealDbService.getRandomMeals(20);
+      
+      // 同时获取一些按分类的食谱
+      final seafoodMeals = await _mealDbService.filterByCategory('Seafood');
+      final vegetarianMeals = await _mealDbService.filterByCategory('Vegetarian');
+      
+      // 合并并去重
+      final allMeals = <Meal>{};
+      allMeals.addAll(meals);
+      allMeals.addAll(seafoodMeals.take(10));
+      allMeals.addAll(vegetarianMeals.take(10));
+      
+      // 获取已收藏的食谱ID
+      final prefs = await SharedPreferences.getInstance();
+      final favoriteIds = prefs.getStringList(_favoritesKey) ?? [];
+      
+      // 转换为 Recipe 模型
+      _apiRecipes = allMeals.map((meal) => _convertMealToRecipe(meal, favoriteIds)).toList();
+      
+      isLoading = false;
+      notifyListeners();
+    } catch (e) {
+      error = '加载食谱失败: $e';
+      isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  /// 搜索食谱
+  Future<void> searchRecipes(String query) async {
+    if (query.isEmpty) {
+      await loadRecipesFromApi();
+      return;
+    }
+
+    isLoading = true;
+    error = null;
+    notifyListeners();
+
+    try {
+      final meals = await _mealDbService.searchMeals(query);
+      
+      final prefs = await SharedPreferences.getInstance();
+      final favoriteIds = prefs.getStringList(_favoritesKey) ?? [];
+      
+      _apiRecipes = meals.map((meal) => _convertMealToRecipe(meal, favoriteIds)).toList();
+      
+      isLoading = false;
+      notifyListeners();
+    } catch (e) {
+      error = '搜索失败: $e';
+      isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  /// 按食材筛选食谱
+  Future<void> filterByIngredient(String ingredient) async {
+    isLoading = true;
+    error = null;
+    notifyListeners();
+
+    try {
+      final meals = await _mealDbService.filterByIngredient(ingredient);
+      
+      // filter 接口返回的数据不完整，需要获取详情
+      final List<Meal> detailedMeals = [];
+      for (final meal in meals.take(10)) {
+        final detail = await _mealDbService.getMealById(meal.id);
+        if (detail != null) {
+          detailedMeals.add(detail);
+        }
+      }
+      
+      final prefs = await SharedPreferences.getInstance();
+      final favoriteIds = prefs.getStringList(_favoritesKey) ?? [];
+      
+      _apiRecipes = detailedMeals.map((meal) => _convertMealToRecipe(meal, favoriteIds)).toList();
+      
+      isLoading = false;
+      notifyListeners();
+    } catch (e) {
+      error = '筛选失败: $e';
+      isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  /// 将 Meal 转换为 Recipe
+  Recipe _convertMealToRecipe(Meal meal, List<String> favoriteIds) {
+    // 构建标签列表
+    final tags = <String>[];
+    if (meal.category.isNotEmpty && meal.category != 'Unknown') {
+      // 将英文分类映射为中文
+      tags.add(_translateCategory(meal.category));
+    }
+    if (meal.area.isNotEmpty && meal.area != 'Unknown') {
+      tags.add(meal.area);
+    }
+    tags.addAll(meal.tagList.take(3));
+
+    // 构建食材列表
+    final ingredients = meal.ingredients
+        .map((ing) => {
+              'name': ing.name,
+              'amount': ing.measure,
+            })
+        .toList();
+
+    // 构建步骤列表
+    final steps = meal.instructions
+        .split('\r\n')
+        .where((s) => s.trim().isNotEmpty)
+        .toList();
+
+    // 如果步骤为空或格式不对，尝试按数字分割
+    final finalSteps = steps.isEmpty || steps.length == 1
+        ? _splitInstructions(meal.instructions)
+        : steps;
+
+    return Recipe(
+      id: meal.id,
+      title: meal.name,
+      description: meal.shortDescription.isNotEmpty 
+          ? meal.shortDescription 
+          : '${meal.category}食谱，来自${meal.area}',
+      time: meal.estimatedTime,
+      calories: meal.estimatedCalories,
+      imageUrl: meal.thumbnail ?? 'https://via.placeholder.com/500x300?text=No+Image',
+      tags: tags,
+      ingredients: ingredients,
+      steps: finalSteps,
+      isFavorite: favoriteIds.contains(meal.id),
+    );
+  }
+
+  /// 将英文分类翻译为中文
+  String _translateCategory(String category) {
+    const translations = {
+      'Beef': '牛肉',
+      'Breakfast': '早餐',
+      'Chicken': '鸡肉',
+      'Dessert': '甜点',
+      'Goat': '羊肉',
+      'Lamb': '羊肉',
+      'Miscellaneous': '其他',
+      'Pasta': '意面',
+      'Pork': '猪肉',
+      'Seafood': '海鲜',
+      'Side': '配菜',
+      'Starter': '开胃菜',
+      'Vegan': '纯素食',
+      'Vegetarian': '素食',
+    };
+    return translations[category] ?? category;
+  }
+
+  /// 智能分割烹饪步骤
+  List<String> _splitInstructions(String instructions) {
+    if (instructions.isEmpty) return [];
+    
+    // 按换行分割
+    final lines = instructions
+        .split('\n')
+        .where((s) => s.trim().isNotEmpty)
+        .toList();
+    
+    if (lines.length > 1) return lines;
+    
+    // 如果只有一行，尝试按句号分割
+    return instructions
+        .split(RegExp(r'[.!?。！？]\s+'))
+        .where((s) => s.trim().length > 5)
+        .map((s) => s.trim() + (s.endsWith('.') ? '' : '.'))
+        .toList();
+  }
 
   Future<void> _loadCustomRecipes() async {
     try {
@@ -141,6 +240,19 @@ class RecipesProvider extends ChangeNotifier {
     }
   }
 
+  Future<void> _saveFavorites() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final favoriteIds = recipes
+          .where((r) => r.isFavorite)
+          .map((r) => r.id)
+          .toList();
+      await prefs.setStringList(_favoritesKey, favoriteIds);
+    } catch (e) {
+      debugPrint('Error saving favorites: $e');
+    }
+  }
+
   void toggleFavorite(String id) {
     // 检查是否是自定义食谱
     final customIndex = _customRecipes.indexWhere((r) => r.id == id);
@@ -148,14 +260,16 @@ class RecipesProvider extends ChangeNotifier {
       _customRecipes[customIndex].isFavorite =
           !_customRecipes[customIndex].isFavorite;
       _saveCustomRecipes();
+      _saveFavorites();
       notifyListeners();
       return;
     }
 
-    // 检查是否是内置食谱
-    final index = _builtinRecipes.indexWhere((r) => r.id == id);
-    if (index != -1) {
-      _builtinRecipes[index].isFavorite = !_builtinRecipes[index].isFavorite;
+    // 检查是否是API食谱
+    final apiIndex = _apiRecipes.indexWhere((r) => r.id == id);
+    if (apiIndex != -1) {
+      _apiRecipes[apiIndex].isFavorite = !_apiRecipes[apiIndex].isFavorite;
+      _saveFavorites();
       notifyListeners();
     }
   }
@@ -165,7 +279,6 @@ class RecipesProvider extends ChangeNotifier {
   }
 
   void addRecipe(Recipe recipe) {
-    // 检查是否已经存在
     if (!recipes.any((r) => r.id == recipe.id)) {
       _customRecipes.insert(0, recipe);
       _saveCustomRecipes();

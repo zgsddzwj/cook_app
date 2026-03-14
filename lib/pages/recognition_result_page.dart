@@ -297,8 +297,15 @@ class _RecognitionResultPageState extends State<RecognitionResultPage> {
                 ),
               );
             },
-            icon: const Icon(Icons.add),
-            label: const Text('手动去添加'),
+            icon: const Icon(
+              Icons.add,
+              color: Colors.white,
+              size: 20,
+            ),
+            label: const Text(
+              '手动去添加',
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
             style: ElevatedButton.styleFrom(
               backgroundColor: AppColors.primary,
               foregroundColor: Colors.white,

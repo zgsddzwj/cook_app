@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 
 class DietPreferencesProvider extends ChangeNotifier {
   final Map<String, bool> _selected = {
-    'keto': true,
-    'vegan': true,
-    'vegetarian': true,
-    'gluten_free': true,
-    'low_carb': true,
-    'dairy_free': true,
+    'keto': false,
+    'vegan': false,
+    'vegetarian': false,
+    'gluten_free': false,
+    'low_carb': false,
+    'dairy_free': false,
   };
 
   bool isSelected(String key) => _selected[key] ?? false;

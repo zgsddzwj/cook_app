@@ -245,9 +245,38 @@ class ProfilePage extends StatelessWidget {
           ),
           const SizedBox(height: 12),
           selectedPrefs.isEmpty
-              ? Text(l10n.comingSoon,
-                  style: const TextStyle(
-                      color: AppColors.textSecondary, fontSize: 14))
+              ? GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (_) => const DietPreferencesPage()),
+                    );
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    decoration: BoxDecoration(
+                      color: Colors.grey[100],
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: Colors.grey[300]!, width: 1, style: BorderStyle.solid),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(Icons.add_circle_outline, color: AppColors.primary, size: 18),
+                        const SizedBox(width: 8),
+                        const Text(
+                          '添加饮食偏好',
+                          style: TextStyle(
+                            color: AppColors.primary,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                )
               : Wrap(
                   spacing: 8,
                   runSpacing: 8,
