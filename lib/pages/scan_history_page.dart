@@ -123,7 +123,7 @@ class ScanHistoryPage extends StatelessWidget {
                                     borderRadius: BorderRadius.circular(4),
                                   ),
                                   child: const Text(
-                                    '已生成食谱',
+                                    'Recipes Generated',
                                     style: TextStyle(
                                       color: AppColors.primary,
                                       fontSize: 10,

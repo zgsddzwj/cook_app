@@ -24,7 +24,7 @@ class _CameraPageState extends State<CameraPage> {
 
   Future<void> _pickImage(ImageSource source) async {
     if (_images.length >= 9) {
-      Fluttertoast.showToast(msg: '最多支持9张图片');
+      Fluttertoast.showToast(msg: 'Maximum 9 images supported');
       return;
     }
 
@@ -289,7 +289,7 @@ class _CameraPageState extends State<CameraPage> {
                 elevation: 0,
               ),
               child: Text(
-                '开始智能识别 (${_images.length}/9)',
+                'Start Smart Recognition (${_images.length}/9)',
                 style: const TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
@@ -349,9 +349,9 @@ class _CameraPageState extends State<CameraPage> {
                     ),
                   ),
                   const SizedBox(height: 8),
-                  Text(
-                    '支持多次拍照或多图识别（最多9张）',
-                    style: const TextStyle(
+                  const Text(
+                    'Supports multiple photos (up to 9)',
+                    style: TextStyle(
                       fontSize: 14,
                       color: AppColors.textSecondary,
                     ),

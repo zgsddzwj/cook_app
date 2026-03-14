@@ -59,7 +59,7 @@ class _IngredientConfirmationPageState
       _ingredients.add(Ingredient(
         name: name.trim(),
         amount: amount.trim().isEmpty ? '1' : amount.trim(),
-        category: '其他',
+        category: 'Other',
       ));
     });
     _addController.clear();
@@ -98,8 +98,8 @@ class _IngredientConfirmationPageState
         final List<dynamic> recipesList = recipeData['recipes'] ?? [];
         if (recipesList.isEmpty) {
           throw RecipeGenerationException(
-            message: '未能生成有效食谱',
-            suggestion: '请尝试添加更多食材',
+            message: 'Failed to generate valid recipe',
+            suggestion: 'Please try adding more ingredients',
           );
         }
 
@@ -162,7 +162,7 @@ class _IngredientConfirmationPageState
             ),
           );
           Fluttertoast.showToast(
-            msg: '已为您生成 ${generatedRecipes.length} 道精选食谱！',
+            msg: 'Generated ${generatedRecipes.length} recipes for you!',
             toastLength: Toast.LENGTH_LONG,
             backgroundColor: AppColors.primary,
             gravity: ToastGravity.TOP,
@@ -172,7 +172,7 @@ class _IngredientConfirmationPageState
     } on RecipeGenerationException catch (e) {
       if (mounted) {
         Navigator.pop(context); // Close loading
-        _showErrorDialog('无法生成食谱', '${e.message}\n\n建议：${e.suggestion}');
+        _showErrorDialog('Cannot Generate Recipe', '${e.message}\n\nSuggestion: ${e.suggestion}');
       }
     } catch (e) {
       if (mounted) {
@@ -408,7 +408,7 @@ class _IngredientConfirmationPageState
             TextField(
               controller: amountController,
               decoration: const InputDecoration(
-                hintText: '数量 (如: 500g, 2个)',
+                hintText: 'Amount (e.g., 500g, 2 pcs)',
                 border: OutlineInputBorder(),
               ),
             ),
@@ -443,13 +443,13 @@ class _PreferencesBottomSheet extends StatefulWidget {
 }
 
 class _PreferencesBottomSheetState extends State<_PreferencesBottomSheet> {
-  String _time = '不限';
-  String _flavor = '清淡';
-  String _equipment = '不限';
+  String _time = 'Any';
+  String _flavor = 'Light';
+  String _equipment = 'Any';
 
-  final List<String> _times = ['15分钟内', '30分钟', '不限'];
-  final List<String> _flavors = ['清淡', '嗜辣', '减脂', '增肌'];
-  final List<String> _equipments = ['仅用微波炉', '仅用平底锅', '烤箱可用', '不限'];
+  final List<String> _times = ['Within 15 min', '30 min', 'Any'];
+  final List<String> _flavors = ['Light', 'Spicy', 'Low-fat', 'Muscle-building'];
+  final List<String> _equipments = ['Microwave only', 'Pan only', 'Oven available', 'Any'];
 
   @override
   Widget build(BuildContext context) {
@@ -573,12 +573,12 @@ class _LoadingDialog extends StatefulWidget {
 class _LoadingDialogState extends State<_LoadingDialog> {
   int _messageIndex = 0;
   final List<String> _messages = [
-    '正在思考最适合您的搭配...',
-    '正在为您编写烹饪步骤...',
-    '正在调配美味的调料建议...',
-    '正在计算营养成分...',
-    '大厨正在为您润色食谱...',
-    '即将为您呈现美味...',
+    'Thinking about the best combinations for you...',
+    'Writing cooking steps for you...',
+    'Preparing delicious seasoning suggestions...',
+    'Calculating nutritional information...',
+    'The chef is polishing your recipe...',
+    'Deliciousness is coming soon...',
   ];
   late Timer _timer;
 

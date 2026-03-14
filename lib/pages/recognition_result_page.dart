@@ -60,9 +60,9 @@ class _RecognitionResultPageState extends State<RecognitionResultPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          '识别结果',
-          style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+        Text(
+          l10n.identificationResult,
+          style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 16),
         SizedBox(
@@ -118,9 +118,9 @@ class _RecognitionResultPageState extends State<RecognitionResultPage> {
         children: [
           Icon(Icons.search_off_outlined, size: 64, color: Colors.grey[300]),
           const SizedBox(height: 16),
-          const Text(
-            '没有识别到食材',
-            style: TextStyle(
+          Text(
+            'No ingredients recognized',
+            style: const TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
               color: AppColors.textPrimary,
@@ -128,7 +128,7 @@ class _RecognitionResultPageState extends State<RecognitionResultPage> {
           ),
           const SizedBox(height: 8),
           const Text(
-            '您可以尝试手动添加，或去生成食谱',
+            'Try adding manually or generate recipes anyway',
             textAlign: TextAlign.center,
             style: TextStyle(color: AppColors.textSecondary, fontSize: 14),
           ),
@@ -222,7 +222,7 @@ class _RecognitionResultPageState extends State<RecognitionResultPage> {
                   .addIngredients(List.from(_recognizedIngredients));
 
               Fluttertoast.showToast(
-                msg: '已成功存入冰箱！',
+                msg: 'Added to pantry successfully!',
                 toastLength: Toast.LENGTH_SHORT,
                 gravity: ToastGravity.BOTTOM,
                 backgroundColor: AppColors.primary,
@@ -303,7 +303,7 @@ class _RecognitionResultPageState extends State<RecognitionResultPage> {
               size: 20,
             ),
             label: const Text(
-              '手动去添加',
+              'Add Manually',
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
             style: ElevatedButton.styleFrom(

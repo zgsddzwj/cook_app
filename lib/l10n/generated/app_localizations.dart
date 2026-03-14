@@ -6,7 +6,6 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/intl.dart' as intl;
 
 import 'app_localizations_en.dart';
-import 'app_localizations_zh.dart';
 
 // ignore_for_file: type=lint
 
@@ -91,734 +90,733 @@ abstract class AppLocalizations {
 
   /// A list of this localizations delegate's supported locales.
   static const List<Locale> supportedLocales = <Locale>[
-    Locale('en'),
-    Locale('zh')
+    Locale('en')
   ];
 
   /// No description provided for @appTitle.
   ///
-  /// In zh, this message translates to:
+  /// In en, this message translates to:
   /// **'SnapCook'**
   String get appTitle;
 
   /// No description provided for @home.
   ///
-  /// In zh, this message translates to:
-  /// **'首页'**
+  /// In en, this message translates to:
+  /// **'Home'**
   String get home;
 
   /// No description provided for @pantry.
   ///
-  /// In zh, this message translates to:
-  /// **'冰箱'**
+  /// In en, this message translates to:
+  /// **'Pantry'**
   String get pantry;
 
   /// No description provided for @recipes.
   ///
-  /// In zh, this message translates to:
-  /// **'食谱'**
+  /// In en, this message translates to:
+  /// **'Recipes'**
   String get recipes;
 
   /// No description provided for @me.
   ///
-  /// In zh, this message translates to:
-  /// **'我的'**
+  /// In en, this message translates to:
+  /// **'Me'**
   String get me;
 
   /// No description provided for @aiAssistant.
   ///
-  /// In zh, this message translates to:
-  /// **'AI 智能助手'**
+  /// In en, this message translates to:
+  /// **'AI Assistant'**
   String get aiAssistant;
 
   /// No description provided for @whatToEatToday.
   ///
-  /// In zh, this message translates to:
-  /// **'不知道今天吃什么？'**
+  /// In en, this message translates to:
+  /// **'Don\'t know what to eat?'**
   String get whatToEatToday;
 
   /// No description provided for @aiIntro.
   ///
-  /// In zh, this message translates to:
-  /// **'拍一张冰箱的照片，让 CookApp 为您推荐完美的食谱，减少浪费，享受烹饪。'**
+  /// In en, this message translates to:
+  /// **'Take a photo of your fridge, let CookApp recommend the perfect recipe, reduce waste, and enjoy cooking.'**
   String get aiIntro;
 
   /// No description provided for @startIdentifying.
   ///
-  /// In zh, this message translates to:
-  /// **'开始识别食材'**
+  /// In en, this message translates to:
+  /// **'Start Identifying'**
   String get startIdentifying;
 
   /// No description provided for @todayRecommendation.
   ///
-  /// In zh, this message translates to:
-  /// **'今日推荐'**
+  /// In en, this message translates to:
+  /// **'Today\'s Pick'**
   String get todayRecommendation;
 
   /// No description provided for @viewAll.
   ///
-  /// In zh, this message translates to:
-  /// **'查看全部'**
+  /// In en, this message translates to:
+  /// **'View All'**
   String get viewAll;
 
   /// No description provided for @expiringSoon.
   ///
-  /// In zh, this message translates to:
-  /// **'即将过期'**
+  /// In en, this message translates to:
+  /// **'Expiring Soon'**
   String get expiringSoon;
 
   /// No description provided for @managePantry.
   ///
-  /// In zh, this message translates to:
-  /// **'管理冰箱'**
+  /// In en, this message translates to:
+  /// **'Manage Pantry'**
   String get managePantry;
 
   /// No description provided for @viewAllPantry.
   ///
-  /// In zh, this message translates to:
-  /// **'查看全部库存'**
+  /// In en, this message translates to:
+  /// **'View All Inventory'**
   String get viewAllPantry;
 
   /// No description provided for @inventoryList.
   ///
-  /// In zh, this message translates to:
-  /// **'库存列表'**
+  /// In en, this message translates to:
+  /// **'Inventory List'**
   String get inventoryList;
 
   /// No description provided for @sort.
   ///
-  /// In zh, this message translates to:
-  /// **'排序'**
+  /// In en, this message translates to:
+  /// **'Sort'**
   String get sort;
 
   /// No description provided for @pantryEmpty.
   ///
-  /// In zh, this message translates to:
-  /// **'冰箱空空如也'**
+  /// In en, this message translates to:
+  /// **'Your fridge is empty'**
   String get pantryEmpty;
 
   /// No description provided for @remainingDays.
   ///
-  /// In zh, this message translates to:
-  /// **'仅剩 {days} 天'**
+  /// In en, this message translates to:
+  /// **'{days} days left'**
   String remainingDays(String days);
 
   /// No description provided for @expiresInDays.
   ///
-  /// In zh, this message translates to:
-  /// **'{days} 天后过期'**
+  /// In en, this message translates to:
+  /// **'Expires in {days} days'**
   String expiresInDays(String days);
 
   /// No description provided for @recommendForYou.
   ///
-  /// In zh, this message translates to:
-  /// **'为您推荐'**
+  /// In en, this message translates to:
+  /// **'Recommended'**
   String get recommendForYou;
 
   /// No description provided for @recommendBasedOnPantry.
   ///
-  /// In zh, this message translates to:
-  /// **'基于您冰箱里的食材生成的食谱'**
+  /// In en, this message translates to:
+  /// **'Recipes based on your fridge'**
   String get recommendBasedOnPantry;
 
   /// No description provided for @searchRecipes.
   ///
-  /// In zh, this message translates to:
-  /// **'搜索食谱...'**
+  /// In en, this message translates to:
+  /// **'Search recipes...'**
   String get searchRecipes;
 
   /// No description provided for @filterAll.
   ///
-  /// In zh, this message translates to:
-  /// **'全部'**
+  /// In en, this message translates to:
+  /// **'All'**
   String get filterAll;
 
   /// No description provided for @filterKeto.
   ///
-  /// In zh, this message translates to:
-  /// **'生酮'**
+  /// In en, this message translates to:
+  /// **'Keto'**
   String get filterKeto;
 
   /// No description provided for @filterVeggie.
   ///
-  /// In zh, this message translates to:
-  /// **'素食'**
+  /// In en, this message translates to:
+  /// **'Veggie'**
   String get filterVeggie;
 
   /// No description provided for @filterLowCal.
   ///
-  /// In zh, this message translates to:
-  /// **'低卡'**
+  /// In en, this message translates to:
+  /// **'Low-Cal'**
   String get filterLowCal;
 
   /// No description provided for @cookingTime.
   ///
-  /// In zh, this message translates to:
-  /// **'{time} 分钟'**
+  /// In en, this message translates to:
+  /// **'{time} min'**
   String cookingTime(Object time);
 
   /// No description provided for @calories.
   ///
-  /// In zh, this message translates to:
-  /// **'{kcal} 千卡'**
+  /// In en, this message translates to:
+  /// **'{kcal} kcal'**
   String calories(Object kcal);
 
   /// No description provided for @smartIdentification.
   ///
-  /// In zh, this message translates to:
-  /// **'智能食材识别'**
+  /// In en, this message translates to:
+  /// **'Smart Identification'**
   String get smartIdentification;
 
   /// No description provided for @cameraIntro.
   ///
-  /// In zh, this message translates to:
-  /// **'拍摄您的冰箱内部或上传照片，AI 将自动识别食材。'**
+  /// In en, this message translates to:
+  /// **'Take a photo or upload, AI will automatically identify ingredients.'**
   String get cameraIntro;
 
   /// No description provided for @clickToUpload.
   ///
-  /// In zh, this message translates to:
-  /// **'点击拍摄或上传照片'**
+  /// In en, this message translates to:
+  /// **'Click to take photo or upload'**
   String get clickToUpload;
 
   /// No description provided for @supportFormats.
   ///
-  /// In zh, this message translates to:
-  /// **'支持 JPG, PNG 格式'**
+  /// In en, this message translates to:
+  /// **'Supports JPG, PNG'**
   String get supportFormats;
 
   /// No description provided for @chooseFromAlbum.
   ///
-  /// In zh, this message translates to:
-  /// **'从相册选择'**
+  /// In en, this message translates to:
+  /// **'Choose from Album'**
   String get chooseFromAlbum;
 
   /// No description provided for @recognizing.
   ///
-  /// In zh, this message translates to:
-  /// **'大模型正在深度识别中...'**
+  /// In en, this message translates to:
+  /// **'AI is identifying...'**
   String get recognizing;
 
   /// No description provided for @countingIngredients.
   ///
-  /// In zh, this message translates to:
-  /// **'正在为您清点每一份食材'**
+  /// In en, this message translates to:
+  /// **'Checking every ingredient for you'**
   String get countingIngredients;
 
   /// No description provided for @identificationResult.
   ///
-  /// In zh, this message translates to:
-  /// **'识别结果'**
+  /// In en, this message translates to:
+  /// **'Result'**
   String get identificationResult;
 
   /// No description provided for @reUpload.
   ///
-  /// In zh, this message translates to:
-  /// **'重新上传'**
+  /// In en, this message translates to:
+  /// **'Re-upload'**
   String get reUpload;
 
   /// No description provided for @addToPantry.
   ///
-  /// In zh, this message translates to:
-  /// **'一键存入冰箱'**
+  /// In en, this message translates to:
+  /// **'Add to Fridge'**
   String get addToPantry;
 
   /// No description provided for @addedToPantrySuccess.
   ///
-  /// In zh, this message translates to:
-  /// **'已成功存入冰箱！'**
+  /// In en, this message translates to:
+  /// **'Added successfully!'**
   String get addedToPantrySuccess;
 
   /// No description provided for @recipeCount.
   ///
-  /// In zh, this message translates to:
-  /// **'菜谱 {count}'**
+  /// In en, this message translates to:
+  /// **'Recipes {count}'**
   String recipeCount(Object count);
 
   /// No description provided for @workCount.
   ///
-  /// In zh, this message translates to:
-  /// **'作品 {count}'**
+  /// In en, this message translates to:
+  /// **'Works {count}'**
   String workCount(Object count);
 
   /// No description provided for @memberBanner.
   ///
-  /// In zh, this message translates to:
-  /// **'开通下厨房会员'**
+  /// In en, this message translates to:
+  /// **'Join Membership'**
   String get memberBanner;
 
   /// No description provided for @memberPrice.
   ///
-  /// In zh, this message translates to:
-  /// **'最低 0.3 元/天'**
+  /// In en, this message translates to:
+  /// **'As low as \$0.05/day'**
   String get memberPrice;
 
   /// No description provided for @createRecipeAngel.
   ///
-  /// In zh, this message translates to:
-  /// **'创建菜谱的人是厨房里的天使'**
+  /// In en, this message translates to:
+  /// **'Recipe creators are angels in the kitchen'**
   String get createRecipeAngel;
 
   /// No description provided for @startCreateFirstRecipe.
   ///
-  /// In zh, this message translates to:
-  /// **'开始创建第一道菜谱'**
+  /// In en, this message translates to:
+  /// **'Create your first recipe'**
   String get startCreateFirstRecipe;
 
   /// No description provided for @pantryLocation.
   ///
-  /// In zh, this message translates to:
-  /// **'其他 • 2018 加入 • IP 属地：北京'**
+  /// In en, this message translates to:
+  /// **'Other • Joined 2018 • IP: Beijing'**
   String get pantryLocation;
 
   /// No description provided for @pantryBio.
   ///
-  /// In zh, this message translates to:
-  /// **'添加个人简介，让厨友更了解你'**
+  /// In en, this message translates to:
+  /// **'Add a bio to let others know you'**
   String get pantryBio;
 
   /// No description provided for @follow.
   ///
-  /// In zh, this message translates to:
-  /// **'关注'**
+  /// In en, this message translates to:
+  /// **'Following'**
   String get follow;
 
   /// No description provided for @fans.
   ///
-  /// In zh, this message translates to:
-  /// **'粉丝'**
+  /// In en, this message translates to:
+  /// **'Followers'**
   String get fans;
 
   /// No description provided for @ingredients.
   ///
-  /// In zh, this message translates to:
-  /// **'食材清单'**
+  /// In en, this message translates to:
+  /// **'Ingredients'**
   String get ingredients;
 
   /// No description provided for @instructions.
   ///
-  /// In zh, this message translates to:
-  /// **'烹饪步骤'**
+  /// In en, this message translates to:
+  /// **'Instructions'**
   String get instructions;
 
   /// No description provided for @username.
   ///
-  /// In zh, this message translates to:
-  /// **'用户名'**
+  /// In en, this message translates to:
+  /// **'Username'**
   String get username;
 
   /// No description provided for @email.
   ///
-  /// In zh, this message translates to:
-  /// **'邮箱'**
+  /// In en, this message translates to:
+  /// **'Email'**
   String get email;
 
   /// No description provided for @editProfile.
   ///
-  /// In zh, this message translates to:
-  /// **'编辑个人资料'**
+  /// In en, this message translates to:
+  /// **'Edit Profile'**
   String get editProfile;
 
   /// No description provided for @dietPreferences.
   ///
-  /// In zh, this message translates to:
-  /// **'饮食偏好'**
+  /// In en, this message translates to:
+  /// **'Diet Preferences'**
   String get dietPreferences;
 
   /// No description provided for @editPreferences.
   ///
-  /// In zh, this message translates to:
-  /// **'编辑偏好'**
+  /// In en, this message translates to:
+  /// **'Edit Preferences'**
   String get editPreferences;
 
   /// No description provided for @myActivity.
   ///
-  /// In zh, this message translates to:
-  /// **'我的活动'**
+  /// In en, this message translates to:
+  /// **'My Activity'**
   String get myActivity;
 
   /// No description provided for @savedRecipes.
   ///
-  /// In zh, this message translates to:
-  /// **'收藏食谱'**
+  /// In en, this message translates to:
+  /// **'Saved Recipes'**
   String get savedRecipes;
 
   /// No description provided for @scanHistory.
   ///
-  /// In zh, this message translates to:
-  /// **'识别历史'**
+  /// In en, this message translates to:
+  /// **'Scan History'**
   String get scanHistory;
 
   /// No description provided for @myIngredients.
   ///
-  /// In zh, this message translates to:
-  /// **'我的食材'**
+  /// In en, this message translates to:
+  /// **'My Ingredients'**
   String get myIngredients;
 
   /// No description provided for @features.
   ///
-  /// In zh, this message translates to:
-  /// **'特色功能'**
+  /// In en, this message translates to:
+  /// **'Features'**
   String get features;
 
   /// No description provided for @weeklyMealPlan.
   ///
-  /// In zh, this message translates to:
-  /// **'每周饮食计划'**
+  /// In en, this message translates to:
+  /// **'Weekly Meal Plan'**
   String get weeklyMealPlan;
 
   /// No description provided for @shoppingList.
   ///
-  /// In zh, this message translates to:
-  /// **'购物清单'**
+  /// In en, this message translates to:
+  /// **'Shopping List'**
   String get shoppingList;
 
   /// No description provided for @aiChef.
   ///
-  /// In zh, this message translates to:
-  /// **'AI 私厨'**
+  /// In en, this message translates to:
+  /// **'AI Chef'**
   String get aiChef;
 
   /// No description provided for @settings.
   ///
-  /// In zh, this message translates to:
-  /// **'设置'**
+  /// In en, this message translates to:
+  /// **'Settings'**
   String get settings;
 
   /// No description provided for @notifications.
   ///
-  /// In zh, this message translates to:
-  /// **'通知'**
+  /// In en, this message translates to:
+  /// **'Notifications'**
   String get notifications;
 
   /// No description provided for @units.
   ///
-  /// In zh, this message translates to:
-  /// **'单位'**
+  /// In en, this message translates to:
+  /// **'Units'**
   String get units;
 
   /// No description provided for @language.
   ///
-  /// In zh, this message translates to:
-  /// **'语言'**
+  /// In en, this message translates to:
+  /// **'Language'**
   String get language;
 
   /// No description provided for @privacyPolicy.
   ///
-  /// In zh, this message translates to:
-  /// **'隐私政策'**
+  /// In en, this message translates to:
+  /// **'Privacy Policy'**
   String get privacyPolicy;
 
   /// No description provided for @about.
   ///
-  /// In zh, this message translates to:
-  /// **'关于'**
+  /// In en, this message translates to:
+  /// **'About'**
   String get about;
 
   /// No description provided for @logout.
   ///
-  /// In zh, this message translates to:
-  /// **'退出登录'**
+  /// In en, this message translates to:
+  /// **'Logout'**
   String get logout;
 
   /// No description provided for @keto.
   ///
-  /// In zh, this message translates to:
-  /// **'生酮'**
+  /// In en, this message translates to:
+  /// **'Keto'**
   String get keto;
 
   /// No description provided for @vegan.
   ///
-  /// In zh, this message translates to:
-  /// **'纯素食'**
+  /// In en, this message translates to:
+  /// **'Vegan'**
   String get vegan;
 
   /// No description provided for @vegetarian.
   ///
-  /// In zh, this message translates to:
-  /// **'蛋奶素'**
+  /// In en, this message translates to:
+  /// **'Vegetarian'**
   String get vegetarian;
 
   /// No description provided for @glutenFree.
   ///
-  /// In zh, this message translates to:
-  /// **'无麸质'**
+  /// In en, this message translates to:
+  /// **'Gluten-Free'**
   String get glutenFree;
 
   /// No description provided for @lowCarb.
   ///
-  /// In zh, this message translates to:
-  /// **'低碳水'**
+  /// In en, this message translates to:
+  /// **'Low Carb'**
   String get lowCarb;
 
   /// No description provided for @dairyFree.
   ///
-  /// In zh, this message translates to:
-  /// **'无乳制品'**
+  /// In en, this message translates to:
+  /// **'Dairy-Free'**
   String get dairyFree;
 
   /// No description provided for @nutritionInfo.
   ///
-  /// In zh, this message translates to:
-  /// **'营养成分'**
+  /// In en, this message translates to:
+  /// **'Nutrition Info'**
   String get nutritionInfo;
 
   /// No description provided for @storageTips.
   ///
-  /// In zh, this message translates to:
-  /// **'存储建议'**
+  /// In en, this message translates to:
+  /// **'Storage Tips'**
   String get storageTips;
 
   /// No description provided for @relatedRecipes.
   ///
-  /// In zh, this message translates to:
-  /// **'相关食谱'**
+  /// In en, this message translates to:
+  /// **'Related Recipes'**
   String get relatedRecipes;
 
   /// No description provided for @protein.
   ///
-  /// In zh, this message translates to:
-  /// **'蛋白质'**
+  /// In en, this message translates to:
+  /// **'Protein'**
   String get protein;
 
   /// No description provided for @carbs.
   ///
-  /// In zh, this message translates to:
-  /// **'碳水'**
+  /// In en, this message translates to:
+  /// **'Carbs'**
   String get carbs;
 
   /// No description provided for @fat.
   ///
-  /// In zh, this message translates to:
-  /// **'脂肪'**
+  /// In en, this message translates to:
+  /// **'Fat'**
   String get fat;
 
   /// No description provided for @caloriesPer100g.
   ///
-  /// In zh, this message translates to:
-  /// **'每 100g 热量'**
+  /// In en, this message translates to:
+  /// **'Calories per 100g'**
   String get caloriesPer100g;
 
   /// No description provided for @fridgeLife.
   ///
-  /// In zh, this message translates to:
-  /// **'冷藏建议'**
+  /// In en, this message translates to:
+  /// **'Fridge Life'**
   String get fridgeLife;
 
   /// No description provided for @pantryLife.
   ///
-  /// In zh, this message translates to:
-  /// **'常温建议'**
+  /// In en, this message translates to:
+  /// **'Pantry Life'**
   String get pantryLife;
 
   /// No description provided for @confirmIngredients.
   ///
-  /// In zh, this message translates to:
-  /// **'确认食材'**
+  /// In en, this message translates to:
+  /// **'Confirm Ingredients'**
   String get confirmIngredients;
 
   /// No description provided for @recognizedIngredients.
   ///
-  /// In zh, this message translates to:
-  /// **'识别出的食材'**
+  /// In en, this message translates to:
+  /// **'Recognized Ingredients'**
   String get recognizedIngredients;
 
   /// No description provided for @addManually.
   ///
-  /// In zh, this message translates to:
-  /// **'手动添加'**
+  /// In en, this message translates to:
+  /// **'Add Manually'**
   String get addManually;
 
   /// No description provided for @generateRecipe.
   ///
-  /// In zh, this message translates to:
-  /// **'✨ 生成食谱'**
+  /// In en, this message translates to:
+  /// **'✨ Generate Recipe'**
   String get generateRecipe;
 
   /// No description provided for @addIngredient.
   ///
-  /// In zh, this message translates to:
-  /// **'添加食材'**
+  /// In en, this message translates to:
+  /// **'Add Ingredient'**
   String get addIngredient;
 
   /// No description provided for @ingredientNameHint.
   ///
-  /// In zh, this message translates to:
-  /// **'输入食材名称'**
+  /// In en, this message translates to:
+  /// **'Enter ingredient name'**
   String get ingredientNameHint;
 
   /// No description provided for @cancel.
   ///
-  /// In zh, this message translates to:
-  /// **'取消'**
+  /// In en, this message translates to:
+  /// **'Cancel'**
   String get cancel;
 
   /// No description provided for @confirm.
   ///
-  /// In zh, this message translates to:
-  /// **'确定'**
+  /// In en, this message translates to:
+  /// **'Confirm'**
   String get confirm;
 
   /// No description provided for @preferences.
   ///
-  /// In zh, this message translates to:
-  /// **'偏好设置'**
+  /// In en, this message translates to:
+  /// **'Preferences'**
   String get preferences;
 
   /// No description provided for @cookingTimePref.
   ///
-  /// In zh, this message translates to:
-  /// **'烹饪时间'**
+  /// In en, this message translates to:
+  /// **'Cooking Time'**
   String get cookingTimePref;
 
   /// No description provided for @flavorPref.
   ///
-  /// In zh, this message translates to:
-  /// **'口味偏好'**
+  /// In en, this message translates to:
+  /// **'Flavor Profile'**
   String get flavorPref;
 
   /// No description provided for @equipmentPref.
   ///
-  /// In zh, this message translates to:
-  /// **'厨具限制'**
+  /// In en, this message translates to:
+  /// **'Kitchenware'**
   String get equipmentPref;
 
   /// No description provided for @startAICreation.
   ///
-  /// In zh, this message translates to:
-  /// **'开始 AI 创作'**
+  /// In en, this message translates to:
+  /// **'Start AI Creation'**
   String get startAICreation;
 
   /// No description provided for @noRecipesFound.
   ///
-  /// In zh, this message translates to:
-  /// **'没有找到相关食谱'**
+  /// In en, this message translates to:
+  /// **'No relevant recipes found'**
   String get noRecipesFound;
 
   /// No description provided for @noScanHistory.
   ///
-  /// In zh, this message translates to:
-  /// **'暂无识别记录'**
+  /// In en, this message translates to:
+  /// **'No scan history yet'**
   String get noScanHistory;
 
   /// No description provided for @save.
   ///
-  /// In zh, this message translates to:
-  /// **'保存'**
+  /// In en, this message translates to:
+  /// **'Save'**
   String get save;
 
   /// No description provided for @comingSoon.
   ///
-  /// In zh, this message translates to:
-  /// **'即将上线...'**
+  /// In en, this message translates to:
+  /// **'Coming Soon...'**
   String get comingSoon;
 
   /// No description provided for @error.
   ///
-  /// In zh, this message translates to:
-  /// **'选择或识别图片失败'**
+  /// In en, this message translates to:
+  /// **'Failed to pick or recognize image'**
   String get error;
 
   /// No description provided for @sortByCategory.
   ///
-  /// In zh, this message translates to:
-  /// **'按品类排序'**
+  /// In en, this message translates to:
+  /// **'Sort by Category'**
   String get sortByCategory;
 
   /// No description provided for @sortByExpiryDate.
   ///
-  /// In zh, this message translates to:
-  /// **'按过期时间排序'**
+  /// In en, this message translates to:
+  /// **'Sort by Expiry Date'**
   String get sortByExpiryDate;
 
   /// No description provided for @sortByQuantity.
   ///
-  /// In zh, this message translates to:
-  /// **'按数量排序'**
+  /// In en, this message translates to:
+  /// **'Sort by Quantity'**
   String get sortByQuantity;
 
   /// No description provided for @noFavoriteRecipes.
   ///
-  /// In zh, this message translates to:
-  /// **'暂无收藏食谱'**
+  /// In en, this message translates to:
+  /// **'No favorite recipes yet'**
   String get noFavoriteRecipes;
 
   /// No description provided for @addDietPreferences.
   ///
-  /// In zh, this message translates to:
-  /// **'添加饮食偏好'**
+  /// In en, this message translates to:
+  /// **'Add Diet Preferences'**
   String get addDietPreferences;
 
   /// No description provided for @generateRecipes.
   ///
-  /// In zh, this message translates to:
-  /// **'去生成食谱'**
+  /// In en, this message translates to:
+  /// **'Generate Recipes'**
   String get generateRecipes;
 
   /// No description provided for @retakePhoto.
   ///
-  /// In zh, this message translates to:
-  /// **'返回重拍'**
+  /// In en, this message translates to:
+  /// **'Retake Photo'**
   String get retakePhoto;
 
   /// No description provided for @generatedRecipesForYou.
   ///
-  /// In zh, this message translates to:
-  /// **'为你生成的食谱'**
+  /// In en, this message translates to:
+  /// **'Generated Recipes for You'**
   String get generatedRecipesForYou;
 
   /// No description provided for @appTagline.
   ///
-  /// In zh, this message translates to:
-  /// **'让你的冰箱更聪明，让烹饪更轻松'**
+  /// In en, this message translates to:
+  /// **'Make your fridge smarter, cooking easier'**
   String get appTagline;
 
   /// No description provided for @retry.
   ///
-  /// In zh, this message translates to:
-  /// **'重试'**
+  /// In en, this message translates to:
+  /// **'Retry'**
   String get retry;
 
   /// No description provided for @reload.
   ///
-  /// In zh, this message translates to:
-  /// **'重新加载'**
+  /// In en, this message translates to:
+  /// **'Reload'**
   String get reload;
 
   /// No description provided for @continueAdding.
   ///
-  /// In zh, this message translates to:
-  /// **'继续添加'**
+  /// In en, this message translates to:
+  /// **'Continue Adding'**
   String get continueAdding;
 
   /// No description provided for @clearAndRetake.
   ///
-  /// In zh, this message translates to:
-  /// **'清空重拍'**
+  /// In en, this message translates to:
+  /// **'Clear & Retake'**
   String get clearAndRetake;
 
   /// No description provided for @takePhoto.
   ///
-  /// In zh, this message translates to:
-  /// **'拍照'**
+  /// In en, this message translates to:
+  /// **'Take Photo'**
   String get takePhoto;
 
   /// No description provided for @generateRecipeFailed.
   ///
-  /// In zh, this message translates to:
-  /// **'生成食谱失败: {error}'**
+  /// In en, this message translates to:
+  /// **'Failed to generate recipe: {error}'**
   String generateRecipeFailed(String error);
 
   /// No description provided for @iGotIt.
   ///
-  /// In zh, this message translates to:
-  /// **'我知道了'**
+  /// In en, this message translates to:
+  /// **'I Got It'**
   String get iGotIt;
 
   /// No description provided for @viewMore.
   ///
-  /// In zh, this message translates to:
-  /// **'查看更多'**
+  /// In en, this message translates to:
+  /// **'View More'**
   String get viewMore;
 }
 
@@ -831,7 +829,7 @@ class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> 
   }
 
   @override
-  bool isSupported(Locale locale) => <String>['en', 'zh'].contains(locale.languageCode);
+  bool isSupported(Locale locale) => <String>['en'].contains(locale.languageCode);
 
   @override
   bool shouldReload(_AppLocalizationsDelegate old) => false;
@@ -843,7 +841,6 @@ AppLocalizations lookupAppLocalizations(Locale locale) {
   // Lookup logic when only language code is specified.
   switch (locale.languageCode) {
     case 'en': return AppLocalizationsEn();
-    case 'zh': return AppLocalizationsZh();
   }
 
   throw FlutterError(

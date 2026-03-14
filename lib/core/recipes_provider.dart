@@ -66,7 +66,7 @@ class RecipesProvider extends ChangeNotifier {
       allMeals.addAll(vegetarianMeals.take(5));
       
       if (allMeals.isEmpty) {
-        error = '暂无食谱数据，请检查网络连接后重试';
+        error = 'No recipe data available. Please check your network connection and try again.';
         isLoading = false;
         notifyListeners();
         return;
@@ -82,7 +82,7 @@ class RecipesProvider extends ChangeNotifier {
       isLoading = false;
       notifyListeners();
     } catch (e) {
-      error = '加载食谱失败: $e';
+      error = 'Failed to load recipes: $e';
       isLoading = false;
       notifyListeners();
     }
@@ -110,7 +110,7 @@ class RecipesProvider extends ChangeNotifier {
       isLoading = false;
       notifyListeners();
     } catch (e) {
-      error = '搜索失败: $e';
+      error = 'Search failed: $e';
       isLoading = false;
       notifyListeners();
     }
@@ -142,7 +142,7 @@ class RecipesProvider extends ChangeNotifier {
       isLoading = false;
       notifyListeners();
     } catch (e) {
-      error = '筛选失败: $e';
+      error = 'Filter failed: $e';
       isLoading = false;
       notifyListeners();
     }
@@ -196,25 +196,9 @@ class RecipesProvider extends ChangeNotifier {
     );
   }
 
-  /// 将英文分类翻译为中文
+  /// Keep category names in English for US users
   String _translateCategory(String category) {
-    const translations = {
-      'Beef': '牛肉',
-      'Breakfast': '早餐',
-      'Chicken': '鸡肉',
-      'Dessert': '甜点',
-      'Goat': '羊肉',
-      'Lamb': '羊肉',
-      'Miscellaneous': '其他',
-      'Pasta': '意面',
-      'Pork': '猪肉',
-      'Seafood': '海鲜',
-      'Side': '配菜',
-      'Starter': '开胃菜',
-      'Vegan': '纯素食',
-      'Vegetarian': '素食',
-    };
-    return translations[category] ?? category;
+    return category;
   }
 
   /// 智能分割烹饪步骤

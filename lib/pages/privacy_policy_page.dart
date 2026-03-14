@@ -20,30 +20,30 @@ class PrivacyPolicyPage extends StatelessWidget {
           _Card(
             title: l10n.privacyPolicy,
             child: const Text(
-              '我们尊重并保护你的个人信息与隐私安全。\n\n'
-              '1. 我们可能收集的信息\n'
-              '• 账号信息：如用户名、邮箱（如你主动填写）。\n'
-              '• 设备信息：用于提升稳定性与兼容性（如设备型号、系统版本）。\n'
-              '• 使用数据：用于改进功能体验（如页面访问、功能点击）。\n\n'
-              '2. 我们如何使用信息\n'
-              '• 提供与优化核心功能（食谱推荐、食材管理、收藏等）。\n'
-              '• 排查故障与提升性能。\n'
-              '• 在获得授权的情况下提供个性化体验。\n\n'
-              '3. 信息共享\n'
-              '我们不会出售你的个人信息。仅在法律法规要求、或为提供服务所必需（如第三方基础服务）时，可能共享最小必要信息。\n\n'
-              '4. 你的权利\n'
-              '你可以随时查看、修改或删除你的个人信息（如应用内支持）。\n\n'
-              '5. 联系我们\n'
-              '如你对隐私政策有任何疑问，请通过应用内反馈与我们联系。',
+              'We respect and protect your personal information and privacy.\n\n'
+              '1. Information We May Collect\n'
+              '• Account Info: Username, email (if provided).\n'
+              '• Device Info: For stability and compatibility (device model, OS version).\n'
+              '• Usage Data: For improving features (page visits, clicks).\n\n'
+              '2. How We Use Information\n'
+              '• Provide and optimize core features (recipe recommendations, pantry management, favorites).\n'
+              '• Troubleshoot and improve performance.\n'
+              '• Personalize experience with your consent.\n\n'
+              '3. Information Sharing\n'
+              'We do not sell your personal information. We only share minimal necessary information when required by law or essential for service provision.\n\n'
+              '4. Your Rights\n'
+              'You can view, modify, or delete your personal information at any time via in-app support.\n\n'
+              '5. Contact Us\n'
+              'If you have questions about this privacy policy, contact us via in-app feedback.',
               style: TextStyle(color: AppColors.textSecondary, height: 1.5),
             ),
           ),
           const SizedBox(height: 12),
           _Card(
-            title: '权限说明',
+            title: 'Permissions',
             child: const Text(
-              '相机/相册：用于拍照或选择图片进行食材识别。\n'
-              '网络：用于获取图片资源与在线服务。\n',
+              'Camera/Gallery: For taking photos or selecting images to identify ingredients.\n'
+              'Network: For accessing image resources and online services.\n',
               style: TextStyle(color: AppColors.textSecondary, height: 1.5),
             ),
           ),
@@ -85,4 +85,3 @@ class _Card extends StatelessWidget {
     );
   }
 }
-

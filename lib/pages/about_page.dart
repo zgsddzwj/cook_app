@@ -56,28 +56,28 @@ class AboutPage extends StatelessWidget {
           ),
           const SizedBox(height: 12),
           _ItemCard(
-            title: '功能简介',
+            title: 'Features',
             child: const Text(
-              '• 智能识别食材：拍照或上传图片，自动识别食材。\n'
-              '• 管理冰箱库存：记录食材与保质期，减少浪费。\n'
-              '• 食谱推荐：基于现有食材，为你推荐可做的食谱。\n'
-              '• 收藏与记录：收藏喜欢的食谱，查看识别历史。',
+              '• Smart Ingredient Recognition: Take photos to identify ingredients automatically.\n'
+              '• Pantry Management: Track ingredients and expiry dates to reduce waste.\n'
+              '• Recipe Recommendations: Get recipes based on what you have.\n'
+              '• Favorites & History: Save recipes and view scan history.',
               style: TextStyle(color: AppColors.textSecondary, height: 1.5),
             ),
           ),
           const SizedBox(height: 12),
           _ItemCard(
-            title: '版本信息',
+            title: 'Version',
             child: const Text(
-              '当前版本：1.0.0+1',
+              'Current Version: 1.0.0+1',
               style: TextStyle(color: AppColors.textSecondary, height: 1.5),
             ),
           ),
           const SizedBox(height: 12),
           _ItemCard(
-            title: '联系我们',
+            title: 'Contact Us',
             child: const Text(
-              '如需帮助或反馈问题：\nfeedback@snapcook.app',
+              'For help or feedback:\nfeedback@snapcook.app',
               style: TextStyle(color: AppColors.textSecondary, height: 1.5),
             ),
           ),

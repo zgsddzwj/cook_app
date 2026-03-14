@@ -64,7 +64,7 @@ class LLMService {
 
     try {
       final List<Map<String, dynamic>> contentItems = [
-        {'text': '识别这些图片中的所有食材。'}
+        {'text': 'Identify all ingredients in these images. Return in English only.'}
       ];
 
       for (String imagePath in imagePaths) {
@@ -91,7 +91,7 @@ class LLMService {
                 'content': [
                   {
                     'text':
-                        '你是一个专业的厨房助手。请识别图片中的食材，并以JSON格式返回。结构必须为: {"ingredients": [{"name": "食材名", "amount": "数量/重量", "category": "分类"}]}。分类仅限: 蔬菜类, 肉类, 蛋奶类, 水果类, 调料, 其他。只返回JSON，不要有其他解释。'
+                        'You are a professional kitchen assistant. Identify ingredients in the images and return in JSON format. Structure must be: {"ingredients": [{"name": "ingredient name in English", "amount": "quantity/weight", "category": "category"}]}. Categories allowed: Vegetables, Meat, Dairy, Fruits, Seasoning, Other. Return JSON only, no explanation.'
                   }
                 ]
               },
@@ -146,9 +146,9 @@ class LLMService {
     }
 
     final ingredientsList = ingredients.map((i) => i.name).join(', ');
-    final timePref = prefs['time'] ?? '不限';
-    final flavorPref = prefs['flavor'] ?? '清淡';
-    final equipmentPref = prefs['equipment'] ?? '不限';
+    final timePref = prefs['time'] ?? 'Any';
+    final flavorPref = prefs['flavor'] ?? 'Light';
+    final equipmentPref = prefs['equipment'] ?? 'Any';
 
     try {
       final response = await _dio.post(
@@ -166,12 +166,12 @@ class LLMService {
               {
                 'role': 'system',
                 'content':
-                    '你是一个专业的厨师。请根据用户提供的食材和偏好生成食谱。灵活处理：1. 不必强求在每一道菜中用完所有食材，优先考虑食材的搭配逻辑和美味程度。2. 如果食材种类丰富，可以生成多道菜肴（如：一荤一素，或主菜加配菜），以 "recipes" 列表形式返回。3. 如果食材较少，生成一道最合适的精品菜即可。必须以JSON格式返回，结构如下：{"recipes": [{"title": "食谱名称", "description": "简短描述", "time": "预计时间(分钟)", "calories": "预计热量(kcal)", "tags": ["标签1", "标签2"], "ingredients": [{"name": "食材名", "amount": "数量"}], "steps": ["步骤1", "步骤2"]}]}。如果提供的食材太少、不合理或无法组合成任何合理菜肴，请务必返回以下JSON：{"error": "理由", "suggestion": "给用户的建议"}。只返回JSON，不要有其他解释文字。'
+                    'You are a professional chef. Generate recipes based on provided ingredients and preferences. Guidelines: 1. Do not force using all ingredients in one dish - prioritize pairing logic and taste. 2. If ingredients are abundant, generate multiple dishes (main + side) in a "recipes" array. 3. If few ingredients, create one quality dish. Must return JSON format: {"recipes": [{"title": "Recipe Name in English", "description": "Brief description in English", "time": "Estimated time (minutes)", "calories": "Estimated calories (kcal)", "tags": ["Tag1", "Tag2"], "ingredients": [{"name": "Ingredient name in English", "amount": "Quantity"}], "steps": ["Step 1 in English", "Step 2 in English"]}]}. If ingredients are too few or cannot form a reasonable dish, return: {"error": "Reason in English", "suggestion": "Suggestion in English"}. Return JSON only, no explanation. ALL CONTENT MUST BE IN ENGLISH.'
               },
               {
                 'role': 'user',
                 'content':
-                    '食材：$ingredientsList。偏好：烹饪时间 $timePref，口味 $flavorPref，厨具 $equipmentPref。'
+                    'Ingredients: $ingredientsList. Preferences: Cooking time $timePref, Flavor $flavorPref, Equipment $equipmentPref.'
               }
             ]
           },
@@ -202,8 +202,8 @@ class LLMService {
         // 检查是否有错误信息
         if (result.containsKey('error')) {
           throw RecipeGenerationException(
-            message: result['error'] ?? '无法生成食谱',
-            suggestion: result['suggestion'] ?? '请尝试添加更多食材',
+            message: result['error'] ?? 'Failed to generate recipe',
+            suggestion: result['suggestion'] ?? 'Please try adding more ingredients',
           );
         }
 

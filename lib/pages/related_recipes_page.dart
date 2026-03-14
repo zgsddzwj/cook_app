@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:snap_cook/l10n/generated/app_localizations.dart';
 import '../core/app_colors.dart';
 import '../models/ingredient.dart';
 import '../models/recipe.dart';
@@ -16,21 +17,22 @@ class RelatedRecipesPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
-        title: Text('${ingredient.name}的相关食谱'),
+        title: Text('${ingredient.name} - ${l10n.relatedRecipes}'),
       ),
       body: recipes.isEmpty
-          ? const Center(
+          ? Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.restaurant_menu, size: 64, color: Colors.grey),
-                  SizedBox(height: 16),
+                  const Icon(Icons.restaurant_menu, size: 64, color: Colors.grey),
+                  const SizedBox(height: 16),
                   Text(
-                    '暂无相关食谱',
-                    style: TextStyle(color: AppColors.textSecondary, fontSize: 16),
+                    l10n.noRecipesFound,
+                    style: const TextStyle(color: AppColors.textSecondary, fontSize: 16),
                   ),
                 ],
               ),
@@ -40,13 +42,13 @@ class RelatedRecipesPage extends StatelessWidget {
               itemCount: recipes.length,
               itemBuilder: (context, index) {
                 final recipe = recipes[index];
-                return _buildRecipeCard(context, recipe);
+                return _buildRecipeCard(context, recipe, l10n);
               },
             ),
     );
   }
 
-  Widget _buildRecipeCard(BuildContext context, Recipe recipe) {
+  Widget _buildRecipeCard(BuildContext context, Recipe recipe, AppLocalizations l10n) {
     return GestureDetector(
       onTap: () {
         Navigator.push(
@@ -129,14 +131,14 @@ class RelatedRecipesPage extends StatelessWidget {
                         const Icon(Icons.schedule, size: 14, color: AppColors.textSecondary),
                         const SizedBox(width: 4),
                         Text(
-                          '${recipe.time}分钟',
+                          l10n.cookingTime(recipe.time),
                           style: const TextStyle(fontSize: 12, color: AppColors.textSecondary),
                         ),
                         const SizedBox(width: 12),
                         const Icon(Icons.local_fire_department, size: 14, color: AppColors.textSecondary),
                         const SizedBox(width: 4),
                         Text(
-                          '${recipe.calories}千卡',
+                          l10n.calories(recipe.calories),
                           style: const TextStyle(fontSize: 12, color: AppColors.textSecondary),
                         ),
                       ],

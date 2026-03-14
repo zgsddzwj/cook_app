@@ -97,7 +97,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
             TextField(
               controller: _nicknameController,
               decoration: const InputDecoration(
-                labelText: '昵称',
+                labelText: 'Nickname',
                 border: OutlineInputBorder(),
               ),
             ),
@@ -105,7 +105,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
             TextField(
               controller: _emailController,
               decoration: const InputDecoration(
-                labelText: '邮箱',
+                labelText: 'Email',
                 border: OutlineInputBorder(),
               ),
               keyboardType: TextInputType.emailAddress,
