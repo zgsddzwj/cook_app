@@ -252,7 +252,7 @@ class _RecipesPageState extends State<RecipesPage> {
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.primary,
                         ),
-                        child: const Text('重试'),
+                        child: Text(l10n.retry),
                       ),
                     ],
                   ),
@@ -269,7 +269,7 @@ class _RecipesPageState extends State<RecipesPage> {
                           size: 64, color: Colors.grey[300]),
                       const SizedBox(height: 16),
                       Text(
-                        '没有找到相关食谱',
+                        l10n.noRecipesFound,
                         style: TextStyle(
                             color: Colors.grey[600], fontSize: 16),
                       ),
@@ -279,7 +279,7 @@ class _RecipesPageState extends State<RecipesPage> {
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.primary,
                         ),
-                        child: const Text('重新加载'),
+                        child: Text(l10n.reload),
                       ),
                     ],
                   ),

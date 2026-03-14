@@ -340,4 +340,48 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get sortByQuantity => '按数量排序';
+
+  @override
+  String get noFavoriteRecipes => '暂无收藏食谱';
+
+  @override
+  String get addDietPreferences => '添加饮食偏好';
+
+  @override
+  String get generateRecipes => '去生成食谱';
+
+  @override
+  String get retakePhoto => '返回重拍';
+
+  @override
+  String get generatedRecipesForYou => '为你生成的食谱';
+
+  @override
+  String get appTagline => '让你的冰箱更聪明，让烹饪更轻松';
+
+  @override
+  String get retry => '重试';
+
+  @override
+  String get reload => '重新加载';
+
+  @override
+  String get continueAdding => '继续添加';
+
+  @override
+  String get clearAndRetake => '清空重拍';
+
+  @override
+  String get takePhoto => '拍照';
+
+  @override
+  String generateRecipeFailed(String error) {
+    return '生成食谱失败: $error';
+  }
+
+  @override
+  String get iGotIt => '我知道了';
+
+  @override
+  String get viewMore => '查看更多';
 }

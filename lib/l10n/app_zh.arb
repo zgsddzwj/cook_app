@@ -120,5 +120,28 @@
   "error": "选择或识别图片失败",
   "sortByCategory": "按品类排序",
   "sortByExpiryDate": "按过期时间排序",
-  "sortByQuantity": "按数量排序"
+  "sortByQuantity": "按数量排序",
+  "noFavoriteRecipes": "暂无收藏食谱",
+  "addDietPreferences": "添加饮食偏好",
+  "generateRecipes": "去生成食谱",
+  "retakePhoto": "返回重拍",
+  "generatedRecipesForYou": "为你生成的食谱",
+  "appTagline": "让你的冰箱更聪明，让烹饪更轻松",
+  "retry": "重试",
+  "reload": "重新加载",
+  "continueAdding": "继续添加",
+  "clearAndRetake": "清空重拍",
+  "takePhoto": "拍照",
+  "chooseFromAlbum": "从相册选择",
+  "generateRecipeFailed": "生成食谱失败: {error}",
+  "@generateRecipeFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "iGotIt": "我知道了",
+  "managePantry": "管理冰箱",
+  "viewMore": "查看更多"
 }

@@ -120,5 +120,28 @@
   "error": "Failed to pick or recognize image",
   "sortByCategory": "Sort by Category",
   "sortByExpiryDate": "Sort by Expiry Date",
-  "sortByQuantity": "Sort by Quantity"
+  "sortByQuantity": "Sort by Quantity",
+  "noFavoriteRecipes": "No favorite recipes yet",
+  "addDietPreferences": "Add Diet Preferences",
+  "generateRecipes": "Generate Recipes",
+  "retakePhoto": "Retake Photo",
+  "generatedRecipesForYou": "Generated Recipes for You",
+  "appTagline": "Make your fridge smarter, cooking easier",
+  "retry": "Retry",
+  "reload": "Reload",
+  "continueAdding": "Continue Adding",
+  "clearAndRetake": "Clear & Retake",
+  "takePhoto": "Take Photo",
+  "chooseFromAlbum": "Choose from Album",
+  "generateRecipeFailed": "Failed to generate recipe: {error}",
+  "@generateRecipeFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "iGotIt": "I Got It",
+  "managePantry": "Manage Pantry",
+  "viewMore": "View More"
 }

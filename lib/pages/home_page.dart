@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:snap_cook/l10n/generated/app_localizations.dart';
 import '../core/app_colors.dart';
 import '../core/navigation_provider.dart';
 import '../core/recipes_provider.dart';
@@ -111,11 +112,11 @@ class HomePage extends StatelessWidget {
                         padding: const EdgeInsets.symmetric(
                             horizontal: 24, vertical: 12),
                       ),
-                      child: const Row(
+                      child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Text('开始识别食材',
-                              style: TextStyle(fontWeight: FontWeight.bold)),
+                          Text(AppLocalizations.of(context)!.startIdentifying,
+                              style: const TextStyle(fontWeight: FontWeight.bold)),
                           SizedBox(width: 8),
                           Icon(Icons.arrow_forward),
                         ],
@@ -132,14 +133,14 @@ class HomePage extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text(
-                    '今日推荐',
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  Text(
+                    AppLocalizations.of(context)!.todayRecommendation,
+                    style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                   ),
                   TextButton(
                     onPressed: () => navProvider.setSelectedIndex(3),
-                    child: const Text('查看全部',
-                        style: TextStyle(color: AppColors.primary)),
+                    child: Text(AppLocalizations.of(context)!.viewAll,
+                        style: const TextStyle(color: AppColors.primary)),
                   ),
                 ],
               ),
@@ -264,21 +265,21 @@ class HomePage extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Row(
+                  Row(
                     children: [
-                      Icon(Icons.warning_amber_rounded, color: Colors.orange),
-                      SizedBox(width: 8),
+                      const Icon(Icons.warning_amber_rounded, color: Colors.orange),
+                      const SizedBox(width: 8),
                       Text(
-                        '即将过期',
-                        style: TextStyle(
+                        AppLocalizations.of(context)!.expiringSoon,
+                        style: const TextStyle(
                             fontSize: 20, fontWeight: FontWeight.bold),
                       ),
                     ],
                   ),
                   TextButton(
                     onPressed: () => navProvider.setSelectedIndex(1),
-                    child: const Text('管理冰箱',
-                        style: TextStyle(color: AppColors.textSecondary)),
+                    child: Text(AppLocalizations.of(context)!.managePantry,
+                        style: const TextStyle(color: AppColors.textSecondary)),
                   ),
                 ],
               ),
@@ -294,9 +295,9 @@ class HomePage extends StatelessWidget {
                 ),
                 child: Column(
                   children: [
-                    _buildExpiringItem('全脂牛奶', '1 L', '仅剩 2 天', Colors.orange),
+                    _buildExpiringItem('Milk', '1 L', AppLocalizations.of(context)!.remainingDays('2'), Colors.orange),
                     const Divider(height: 24),
-                    _buildExpiringItem('有机菠菜', '300 g', '仅剩 1 天', Colors.red),
+                    _buildExpiringItem('Spinach', '300 g', AppLocalizations.of(context)!.remainingDays('1'), Colors.red),
                     const SizedBox(height: 16),
                     SizedBox(
                       width: double.infinity,
@@ -307,8 +308,8 @@ class HomePage extends StatelessWidget {
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10)),
                         ),
-                        child: const Text('查看全部库存',
-                            style: TextStyle(color: AppColors.primary)),
+                        child: Text(AppLocalizations.of(context)!.viewAllPantry,
+                            style: const TextStyle(color: AppColors.primary)),
                       ),
                     ),
                   ],

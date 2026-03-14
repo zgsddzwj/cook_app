@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:snap_cook/l10n/generated/app_localizations.dart';
 import 'dart:io';
 import '../core/app_colors.dart';
 import '../core/user_provider.dart';
@@ -45,9 +46,10 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       appBar: AppBar(
-        title: const Text('编辑个人资料'),
+        title: Text(l10n.editProfile),
         actions: [
           TextButton(
             onPressed: () {
@@ -58,7 +60,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
               );
               Navigator.pop(context);
             },
-            child: const Text('保存', style: TextStyle(color: AppColors.primary, fontWeight: FontWeight.bold)),
+            child: Text(l10n.save, style: const TextStyle(color: AppColors.primary, fontWeight: FontWeight.bold)),
           ),
         ],
       ),

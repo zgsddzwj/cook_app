@@ -225,14 +225,14 @@ class _CameraPageState extends State<CameraPage> {
                           color: Colors.grey[50],
                           borderRadius: BorderRadius.circular(16),
                         ),
-                        child: const Column(
+                        child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Icon(Icons.add_a_photo_outlined,
+                            const Icon(Icons.add_a_photo_outlined,
                                 color: AppColors.primary, size: 32),
-                            SizedBox(height: 8),
-                            Text('继续添加',
-                                style: TextStyle(
+                            const SizedBox(height: 8),
+                            Text(l10n.continueAdding,
+                                style: const TextStyle(
                                     color: AppColors.textSecondary,
                                     fontSize: 14)),
                           ],
@@ -300,7 +300,7 @@ class _CameraPageState extends State<CameraPage> {
           const SizedBox(height: 16),
           TextButton(
             onPressed: () => setState(() => _images = []),
-            child: const Text('清空重拍',
+            child: Text(l10n.clearAndRetake,
                 style: TextStyle(color: AppColors.textSecondary)),
           ),
         ],
@@ -393,6 +393,7 @@ class _CameraPageState extends State<CameraPage> {
   }
 
   void _showPickerOptions(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     showModalBottomSheet(
       context: context,
       shape: const RoundedRectangleBorder(
@@ -404,7 +405,7 @@ class _CameraPageState extends State<CameraPage> {
           children: [
             ListTile(
               leading: const Icon(Icons.camera_alt_outlined),
-              title: const Text('拍照'),
+              title: Text(l10n.takePhoto),
               onTap: () {
                 Navigator.pop(context);
                 _pickImage(ImageSource.camera);
@@ -412,7 +413,7 @@ class _CameraPageState extends State<CameraPage> {
             ),
             ListTile(
               leading: const Icon(Icons.photo_library_outlined),
-              title: const Text('从相册选择'),
+              title: Text(l10n.chooseFromAlbum),
               onTap: () {
                 Navigator.pop(context);
                 _pickImage(ImageSource.gallery);

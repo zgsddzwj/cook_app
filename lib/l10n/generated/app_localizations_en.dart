@@ -45,7 +45,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get expiringSoon => 'Expiring Soon';
 
   @override
-  String get managePantry => 'Manage Fridge';
+  String get managePantry => 'Manage Pantry';
 
   @override
   String get viewAllPantry => 'View All Inventory';
@@ -113,7 +113,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get supportFormats => 'Supports JPG, PNG';
 
   @override
-  String get chooseFromAlbum => 'Choose from album';
+  String get chooseFromAlbum => 'Choose from Album';
 
   @override
   String get recognizing => 'AI is identifying...';
@@ -340,4 +340,48 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get sortByQuantity => 'Sort by Quantity';
+
+  @override
+  String get noFavoriteRecipes => 'No favorite recipes yet';
+
+  @override
+  String get addDietPreferences => 'Add Diet Preferences';
+
+  @override
+  String get generateRecipes => 'Generate Recipes';
+
+  @override
+  String get retakePhoto => 'Retake Photo';
+
+  @override
+  String get generatedRecipesForYou => 'Generated Recipes for You';
+
+  @override
+  String get appTagline => 'Make your fridge smarter, cooking easier';
+
+  @override
+  String get retry => 'Retry';
+
+  @override
+  String get reload => 'Reload';
+
+  @override
+  String get continueAdding => 'Continue Adding';
+
+  @override
+  String get clearAndRetake => 'Clear & Retake';
+
+  @override
+  String get takePhoto => 'Take Photo';
+
+  @override
+  String generateRecipeFailed(String error) {
+    return 'Failed to generate recipe: $error';
+  }
+
+  @override
+  String get iGotIt => 'I Got It';
+
+  @override
+  String get viewMore => 'View More';
 }

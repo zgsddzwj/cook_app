@@ -242,8 +242,8 @@ class _RecognitionResultPageState extends State<RecognitionResultPage> {
                   borderRadius: BorderRadius.circular(16)),
               elevation: 0,
             ),
-            child: const Text('一键存入冰箱',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            child: Text(l10n.addToPantry,
+                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
           ),
         ),
         const SizedBox(height: 16),
@@ -268,8 +268,8 @@ class _RecognitionResultPageState extends State<RecognitionResultPage> {
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(16)),
             ),
-            child: const Text('去生成食谱',
-                style: TextStyle(
+            child: Text(l10n.generateRecipes,
+                style: const TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
                     color: AppColors.primary)),
@@ -329,8 +329,8 @@ class _RecognitionResultPageState extends State<RecognitionResultPage> {
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(16)),
             ),
-            child: const Text('返回重拍',
-                style: TextStyle(
+            child: Text(l10n.retakePhoto,
+                style: const TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
                     color: AppColors.primary)),

@@ -265,9 +265,9 @@ class ProfilePage extends StatelessWidget {
                       children: [
                         const Icon(Icons.add_circle_outline, color: AppColors.primary, size: 18),
                         const SizedBox(width: 8),
-                        const Text(
-                          '添加饮食偏好',
-                          style: TextStyle(
+                        Text(
+                          l10n.addDietPreferences,
+                          style: const TextStyle(
                             color: AppColors.primary,
                             fontSize: 14,
                             fontWeight: FontWeight.w500,

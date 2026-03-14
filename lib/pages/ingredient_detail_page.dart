@@ -145,7 +145,7 @@ class _IngredientDetailPageState extends State<IngredientDetailPage> {
         _relatedRecipes = recipes;
         _isLoading = false;
         if (recipes.isEmpty) {
-          _error = '暂无包含 ${widget.ingredient.name} 的食谱';
+          _error = AppLocalizations.of(context)!.noRecipesFound;
         }
       });
     } catch (e) {
@@ -286,7 +286,7 @@ class _IngredientDetailPageState extends State<IngredientDetailPage> {
         children: [
           _buildInfoColumn(l10n.pantry, widget.ingredient.category),
           Container(width: 1, height: 40, color: Colors.grey.shade100),
-          _buildInfoColumn('当前数量', widget.ingredient.amount),
+          _buildInfoColumn(AppLocalizations.of(context)!.myIngredients, widget.ingredient.amount),
         ],
       ),
     );
@@ -385,7 +385,7 @@ class _IngredientDetailPageState extends State<IngredientDetailPage> {
             children: [
               _buildStorageRow(Icons.ac_unit, l10n.fridgeLife, '3-5 天'),
               const Divider(height: 24),
-              _buildStorageRow(Icons.kitchen, '冷冻建议', '6-9 个月'),
+              _buildStorageRow(Icons.kitchen, AppLocalizations.of(context)!.pantryLife, '6-9 months'),
             ],
           ),
         ),
@@ -432,7 +432,7 @@ class _IngredientDetailPageState extends State<IngredientDetailPage> {
                     ),
                   );
                 },
-                child: const Text('查看更多', style: TextStyle(color: AppColors.primary)),
+                child: Text(AppLocalizations.of(context)!.viewMore, style: const TextStyle(color: AppColors.primary)),
               ),
           ],
         ),
@@ -456,7 +456,7 @@ class _IngredientDetailPageState extends State<IngredientDetailPage> {
                 const Icon(Icons.restaurant_menu, color: Colors.grey, size: 32),
                 const SizedBox(height: 8),
                 Text(
-                  _error ?? '暂无相关食谱',
+                  _error ?? AppLocalizations.of(context)!.noRecipesFound,
                   style: const TextStyle(color: AppColors.textSecondary),
                   textAlign: TextAlign.center,
                 ),
@@ -464,7 +464,7 @@ class _IngredientDetailPageState extends State<IngredientDetailPage> {
                 TextButton.icon(
                   onPressed: _loadRelatedRecipes,
                   icon: const Icon(Icons.refresh, size: 16),
-                  label: const Text('重新加载'),
+                  label: Text(AppLocalizations.of(context)!.reload),
                 ),
               ],
             ),
@@ -494,18 +494,18 @@ class _IngredientDetailPageState extends State<IngredientDetailPage> {
                       color: Colors.grey[100],
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    child: const Row(
+                    child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          '查看更多食谱',
-                          style: TextStyle(
+                          AppLocalizations.of(context)!.viewMore,
+                          style: const TextStyle(
                             color: AppColors.primary,
                             fontWeight: FontWeight.w500,
                           ),
                         ),
-                        SizedBox(width: 4),
-                        Icon(Icons.arrow_forward_ios, size: 14, color: AppColors.primary),
+                        const SizedBox(width: 4),
+                        const Icon(Icons.arrow_forward_ios, size: 14, color: AppColors.primary),
                       ],
                     ),
                   ),

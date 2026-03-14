@@ -736,6 +736,90 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'按数量排序'**
   String get sortByQuantity;
+
+  /// No description provided for @noFavoriteRecipes.
+  ///
+  /// In zh, this message translates to:
+  /// **'暂无收藏食谱'**
+  String get noFavoriteRecipes;
+
+  /// No description provided for @addDietPreferences.
+  ///
+  /// In zh, this message translates to:
+  /// **'添加饮食偏好'**
+  String get addDietPreferences;
+
+  /// No description provided for @generateRecipes.
+  ///
+  /// In zh, this message translates to:
+  /// **'去生成食谱'**
+  String get generateRecipes;
+
+  /// No description provided for @retakePhoto.
+  ///
+  /// In zh, this message translates to:
+  /// **'返回重拍'**
+  String get retakePhoto;
+
+  /// No description provided for @generatedRecipesForYou.
+  ///
+  /// In zh, this message translates to:
+  /// **'为你生成的食谱'**
+  String get generatedRecipesForYou;
+
+  /// No description provided for @appTagline.
+  ///
+  /// In zh, this message translates to:
+  /// **'让你的冰箱更聪明，让烹饪更轻松'**
+  String get appTagline;
+
+  /// No description provided for @retry.
+  ///
+  /// In zh, this message translates to:
+  /// **'重试'**
+  String get retry;
+
+  /// No description provided for @reload.
+  ///
+  /// In zh, this message translates to:
+  /// **'重新加载'**
+  String get reload;
+
+  /// No description provided for @continueAdding.
+  ///
+  /// In zh, this message translates to:
+  /// **'继续添加'**
+  String get continueAdding;
+
+  /// No description provided for @clearAndRetake.
+  ///
+  /// In zh, this message translates to:
+  /// **'清空重拍'**
+  String get clearAndRetake;
+
+  /// No description provided for @takePhoto.
+  ///
+  /// In zh, this message translates to:
+  /// **'拍照'**
+  String get takePhoto;
+
+  /// No description provided for @generateRecipeFailed.
+  ///
+  /// In zh, this message translates to:
+  /// **'生成食谱失败: {error}'**
+  String generateRecipeFailed(String error);
+
+  /// No description provided for @iGotIt.
+  ///
+  /// In zh, this message translates to:
+  /// **'我知道了'**
+  String get iGotIt;
+
+  /// No description provided for @viewMore.
+  ///
+  /// In zh, this message translates to:
+  /// **'查看更多'**
+  String get viewMore;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

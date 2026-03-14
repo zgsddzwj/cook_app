@@ -44,10 +44,10 @@ class AboutPage extends StatelessWidget {
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    children: const [
-                      Text('SnapCook', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
-                      SizedBox(height: 4),
-                      Text('让你的冰箱更聪明，让烹饪更轻松', style: TextStyle(color: AppColors.textSecondary, fontSize: 12)),
+                    children: [
+                      const Text('SnapCook', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+                      const SizedBox(height: 4),
+                      Text(l10n.appTagline, style: const TextStyle(color: AppColors.textSecondary, fontSize: 12)),
                     ],
                   ),
                 ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:snap_cook/l10n/generated/app_localizations.dart';
 import '../models/recipe.dart';
 import '../core/app_colors.dart';
 import 'recipe_detail_page.dart';
@@ -13,7 +14,7 @@ class GeneratedRecipesPage extends StatelessWidget {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
-        title: const Text('为你生成的食谱'),
+        title: Text(AppLocalizations.of(context)!.generatedRecipesForYou),
         backgroundColor: Colors.white,
         foregroundColor: AppColors.textPrimary,
         elevation: 0,

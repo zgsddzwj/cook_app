@@ -177,8 +177,9 @@ class _IngredientConfirmationPageState
     } catch (e) {
       if (mounted) {
         Navigator.pop(context); // Close loading
+        final errorMsg = AppLocalizations.of(context)?.generateRecipeFailed(e.toString()) ?? 'Failed to generate recipe: $e';
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('生成食谱失败: $e')),
+          SnackBar(content: Text(errorMsg)),
         );
       }
     }
@@ -200,8 +201,10 @@ class _IngredientConfirmationPageState
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child:
-                const Text('我知道了', style: TextStyle(color: AppColors.primary)),
+            child: Text(
+              AppLocalizations.of(context)?.iGotIt ?? 'I Got It',
+              style: const TextStyle(color: AppColors.primary),
+            ),
           ),
         ],
       ),
