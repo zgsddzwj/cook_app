@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:snap_cook/l10n/generated/app_localizations.dart';
 import '../core/app_colors.dart';
+import '../core/recipes_provider.dart';
 import '../models/ingredient.dart';
 import '../models/recipe.dart';
 import 'recipe_detail_page.dart';
@@ -49,6 +51,8 @@ class RelatedRecipesPage extends StatelessWidget {
   }
 
   Widget _buildRecipeCard(BuildContext context, Recipe recipe, AppLocalizations l10n) {
+    final recipesProvider = Provider.of<RecipesProvider>(context, listen: false);
+    
     return GestureDetector(
       onTap: () {
         Navigator.push(
@@ -144,6 +148,22 @@ class RelatedRecipesPage extends StatelessWidget {
                       ],
                     ),
                   ],
+                ),
+              ),
+            ),
+            // Favorite button
+            GestureDetector(
+              onTap: () {
+                recipesProvider.toggleFavorite(recipe.id);
+                // Force rebuild to update icon
+                (context as Element).markNeedsBuild();
+              },
+              child: Container(
+                padding: const EdgeInsets.all(12),
+                child: Icon(
+                  recipesProvider.isFavorite(recipe.id) ? Icons.favorite : Icons.favorite_border,
+                  color: recipesProvider.isFavorite(recipe.id) ? Colors.red : Colors.grey,
+                  size: 24,
                 ),
               ),
             ),

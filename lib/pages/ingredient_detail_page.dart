@@ -481,6 +481,8 @@ class _IngredientDetailPageState extends State<IngredientDetailPage> {
   }
 
   Widget _buildRecipeCard(BuildContext context, Recipe recipe) {
+    final recipesProvider = Provider.of<RecipesProvider>(context, listen: false);
+    
     return GestureDetector(
       onTap: () {
         Navigator.push(
@@ -563,19 +565,35 @@ class _IngredientDetailPageState extends State<IngredientDetailPage> {
                         const Icon(Icons.schedule, size: 14, color: AppColors.textSecondary),
                         const SizedBox(width: 4),
                         Text(
-                          '${recipe.time}分钟',
+                          '${recipe.time}min',
                           style: const TextStyle(fontSize: 12, color: AppColors.textSecondary),
                         ),
                         const SizedBox(width: 12),
                         const Icon(Icons.local_fire_department, size: 14, color: AppColors.textSecondary),
                         const SizedBox(width: 4),
                         Text(
-                          '${recipe.calories}千卡',
+                          '${recipe.calories}kcal',
                           style: const TextStyle(fontSize: 12, color: AppColors.textSecondary),
                         ),
                       ],
                     ),
                   ],
+                ),
+              ),
+            ),
+            // Favorite button
+            GestureDetector(
+              onTap: () {
+                recipesProvider.toggleFavorite(recipe.id);
+                // Force rebuild to update icon
+                (context as Element).markNeedsBuild();
+              },
+              child: Container(
+                padding: const EdgeInsets.all(12),
+                child: Icon(
+                  recipesProvider.isFavorite(recipe.id) ? Icons.favorite : Icons.favorite_border,
+                  color: recipesProvider.isFavorite(recipe.id) ? Colors.red : Colors.grey,
+                  size: 24,
                 ),
               ),
             ),
