@@ -347,7 +347,7 @@ class _IngredientDetailPageState extends State<IngredientDetailPage> {
           ),
           child: Column(
             children: [
-              _buildStorageRow(Icons.ac_unit, l10n.fridgeLife, '3-5 天'),
+              _buildStorageRow(Icons.ac_unit, l10n.fridgeLife, '3-5 Days'),
               const Divider(height: 24),
               _buildStorageRow(Icons.kitchen, AppLocalizations.of(context)!.pantryLife, '6-9 months'),
             ],

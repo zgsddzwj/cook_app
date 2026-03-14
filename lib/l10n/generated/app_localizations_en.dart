@@ -30,7 +30,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get whatToEatToday => 'Don\'t know what to eat?';
 
   @override
-  String get aiIntro => 'Take a photo of your fridge, let CookApp recommend the perfect recipe, reduce waste, and enjoy cooking.';
+  String get aiIntro => 'Take a photo of your fridge, let SnapCook recommend the perfect recipe, reduce waste, and enjoy cooking.';
 
   @override
   String get startIdentifying => 'Start Identifying';

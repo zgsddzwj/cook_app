@@ -138,7 +138,7 @@ abstract class AppLocalizations {
   /// No description provided for @aiIntro.
   ///
   /// In en, this message translates to:
-  /// **'Take a photo of your fridge, let CookApp recommend the perfect recipe, reduce waste, and enjoy cooking.'**
+  /// **'Take a photo of your fridge, let SnapCook recommend the perfect recipe, reduce waste, and enjoy cooking.'**
   String get aiIntro;
 
   /// No description provided for @startIdentifying.

@@ -25,18 +25,18 @@ void main() async {
         ChangeNotifierProvider(create: (_) => ScanHistoryProvider()),
         ChangeNotifierProvider(create: (_) => UserProvider()),
       ],
-      child: const CookApp(),
+      child: const SnapCook(),
     ),
   );
 }
 
-class CookApp extends StatelessWidget {
-  const CookApp({super.key});
+class SnapCook extends StatelessWidget {
+  const SnapCook({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'CookApp',
+      title: 'SnapCook',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,
       localizationsDelegates: const [

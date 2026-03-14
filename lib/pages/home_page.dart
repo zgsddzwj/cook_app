@@ -26,7 +26,7 @@ class HomePage extends StatelessWidget {
             Icon(Icons.restaurant_outlined, color: AppColors.primary, size: 30),
             SizedBox(width: 8),
             Text(
-              'CookApp',
+              'SnapCook',
               style: TextStyle(
                 color: AppColors.primary,
                 fontWeight: FontWeight.bold,
