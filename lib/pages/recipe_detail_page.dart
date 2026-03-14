@@ -40,30 +40,47 @@ class RecipeDetailPage extends StatelessWidget {
           SliverAppBar(
             expandedHeight: 300,
             pinned: true,
+            leading: const SizedBox.shrink(), // Remove default leading
             flexibleSpace: FlexibleSpaceBar(
-              background: Image.network(
-                imageUrl,
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) {
-                  return Container(
-                    color: Colors.grey[200],
-                    child: const Icon(Icons.broken_image,
-                        size: 64, color: Colors.grey),
-                  );
-                },
+              background: Stack(
+                fit: StackFit.expand,
+                children: [
+                  // Recipe image
+                  Image.network(
+                    imageUrl,
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) {
+                      return Container(
+                        color: Colors.grey[200],
+                        child: const Icon(Icons.broken_image,
+                            size: 64, color: Colors.grey),
+                      );
+                    },
+                  ),
+                  // Back button with background
+                  Positioned(
+                    top: MediaQuery.of(context).padding.top + 8,
+                    left: 16,
+                    child: _CircularButton(
+                      icon: Icons.arrow_back,
+                      onPressed: () => Navigator.pop(context),
+                    ),
+                  ),
+                  // Favorite button with background
+                  Positioned(
+                    top: MediaQuery.of(context).padding.top + 8,
+                    right: 16,
+                    child: _CircularButton(
+                      icon: isFavorite ? Icons.favorite : Icons.favorite_border,
+                      iconColor: isFavorite ? Colors.red : Colors.white,
+                      onPressed: () {
+                        recipesProvider.toggleFavorite(id);
+                      },
+                    ),
+                  ),
+                ],
               ),
             ),
-            actions: [
-              IconButton(
-                icon: Icon(
-                  isFavorite ? Icons.favorite : Icons.favorite_border,
-                  color: isFavorite ? Colors.red : Colors.white,
-                ),
-                onPressed: () {
-                  recipesProvider.toggleFavorite(id);
-                },
-              ),
-            ],
           ),
           SliverPadding(
             padding: const EdgeInsets.all(20),
@@ -204,6 +221,43 @@ class RecipeDetailPage extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+/// Circular button with semi-transparent background
+class _CircularButton extends StatelessWidget {
+  final IconData icon;
+  final VoidCallback onPressed;
+  final Color? iconColor;
+
+  const _CircularButton({
+    required this.icon,
+    required this.onPressed,
+    this.iconColor,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: Colors.black.withOpacity(0.4),
+      shape: const CircleBorder(),
+      child: InkWell(
+        customBorder: const CircleBorder(),
+        onTap: onPressed,
+        child: Container(
+          width: 44,
+          height: 44,
+          decoration: const BoxDecoration(
+            shape: BoxShape.circle,
+          ),
+          child: Icon(
+            icon,
+            color: iconColor ?? Colors.white,
+            size: 24,
+          ),
+        ),
       ),
     );
   }
