@@ -46,6 +46,7 @@ class CookApp extends StatelessWidget {
         GlobalCupertinoLocalizations.delegate,
       ],
       supportedLocales: AppLocalizations.supportedLocales,
+      locale: const Locale('en'), // Force English as default
       home: const MainScreen(),
     );
   }
