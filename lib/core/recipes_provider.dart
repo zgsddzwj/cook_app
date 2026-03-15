@@ -3,9 +3,11 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import '../models/recipe.dart';
 import 'meal_db_service.dart';
+import 'api_service.dart';
 
 class RecipesProvider extends ChangeNotifier {
   final MealDbService _mealDbService = MealDbService();
+  final ApiService _apiService = ApiService();
   
   // API 获取的食谱
   List<Recipe> _apiRecipes = [];
@@ -29,36 +31,33 @@ class RecipesProvider extends ChangeNotifier {
   List<Recipe> get favoriteRecipes =>
       recipes.where((r) => r.isFavorite).toList();
 
-  /// 从 TheMealDB API 加载食谱
+  /// 从后端 API 加载热门食谱
   Future<void> loadRecipesFromApi() async {
     isLoading = true;
     error = null;
     notifyListeners();
 
     try {
-      // Only use getRandomMeals which returns complete data
-      // filterByCategory/filterByArea return incomplete data (id, name, thumbnail only)
-      List<Meal> randomMeals = [];
+      // Try to load from our backend first
+      List<Recipe> popularRecipes = await _apiService.getPopularRecipes(limit: 15);
       
-      try {
-        randomMeals = await _mealDbService.getRandomMeals(15);
-      } catch (e) {
-        debugPrint('Error loading random meals: $e');
+      if (popularRecipes.isEmpty) {
+        // Fallback to TheMealDB if backend returns nothing
+        List<Meal> randomMeals = await _mealDbService.getRandomMeals(15);
+        
+        final prefs = await SharedPreferences.getInstance();
+        final favoriteIds = prefs.getStringList(_favoritesKey) ?? [];
+        
+        _apiRecipes = randomMeals.map((meal) => _convertMealToRecipe(meal, favoriteIds)).toList();
+      } else {
+        final prefs = await SharedPreferences.getInstance();
+        final favoriteIds = prefs.getStringList(_favoritesKey) ?? [];
+        
+        // Update isFavorite status
+        _apiRecipes = popularRecipes.map((recipe) {
+          return recipe.copyWith(isFavorite: favoriteIds.contains(recipe.id));
+        }).toList();
       }
-      
-      if (randomMeals.isEmpty) {
-        error = 'No recipe data available. Please check your network connection and try again.';
-        isLoading = false;
-        notifyListeners();
-        return;
-      }
-      
-      // 获取已收藏的食谱ID
-      final prefs = await SharedPreferences.getInstance();
-      final favoriteIds = prefs.getStringList(_favoritesKey) ?? [];
-      
-      // 转换为 Recipe 模型
-      _apiRecipes = randomMeals.map((meal) => _convertMealToRecipe(meal, favoriteIds)).toList();
       
       isLoading = false;
       notifyListeners();

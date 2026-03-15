@@ -4,8 +4,8 @@ import 'package:provider/provider.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:snap_cook/l10n/generated/app_localizations.dart';
 import 'core/app_theme.dart';
+import 'core/api_service.dart';
 import 'core/recognition_service.dart';
-import 'models/ingredient.dart' as models;
 import 'pages/main_screen.dart';
 import 'core/pantry_provider.dart';
 import 'core/navigation_provider.dart';
@@ -17,12 +17,15 @@ import 'core/user_provider.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: ".env");
-  
+
+  // Initialize API service
+  final apiService = ApiService();
+
   // Initialize recognition service
   await RecognitionService.initialize();
-  // Configure cloud recognizer (CloseAI)
-  RecognitionService.cloudRecognizer = models.LLMService.recognizeIngredients;
-  
+  // Configure cloud recognizer to use our backend API
+  RecognitionService.cloudRecognizer = apiService.recognizeIngredients;
+
   runApp(
     MultiProvider(
       providers: [

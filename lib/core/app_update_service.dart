@@ -4,6 +4,7 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../l10n/generated/app_localizations.dart';
+import 'api_service.dart';
 
 /// App update check service
 /// Supports force update and optional update
@@ -38,44 +39,31 @@ class AppUpdateService {
   /// Returns null if no update needed, otherwise returns update info
   static Future<UpdateInfo?> checkForUpdate() async {
     try {
-      // TODO: Replace with your actual API endpoint
-      // Example: final response = await Dio().get('https://your-api.com/app-version');
-      
-      // Mock data for demonstration - replace with real API call
       final currentVersion = await getCurrentVersion();
+      final platform = Platform.isIOS ? 'ios' : 'android';
       
-      // Simulate API response
-      // In production, fetch from your backend:
-      // {
-      //   "version": "1.1.0",
-      //   "buildNumber": "2",
-      //   "forceUpdate": false,
-      //   "updateUrl": "https://apps.apple.com/app/xxx" or "https://play.google.com/store/apps/details?id=xxx",
-      //   "title": "New Version Available",
-      //   "message": "Please update to get new features"
-      // }
+      final updateData = await ApiService().checkVersion(platform, currentVersion);
       
-      // For demo purposes, we'll check if user has skipped this version
-      final prefs = await SharedPreferences.getInstance();
-      final skippedVersion = prefs.getString(_prefsKeySkippedVersion);
-      
-      // Mock: Assume server returns version 1.1.0 as latest
-      const latestVersion = '1.1.0';
-      
-      if (_shouldUpdate(currentVersion, latestVersion)) {
-        if (skippedVersion == latestVersion) {
-          return null; // User skipped this version
-        }
+      if (updateData != null) {
+        final latestVersion = updateData['latest_version'];
+        final forceUpdate = updateData['force_update'] ?? false;
         
-        return UpdateInfo(
-          version: latestVersion,
-          forceUpdate: false, // Set to true for force update
-          updateUrl: Platform.isIOS 
-            ? 'https://apps.apple.com/app/snapcook'
-            : 'https://play.google.com/store/apps/details?id=com.snapcook.app',
-          title: 'New Version Available',
-          message: 'Version $latestVersion is now available. Update to get the latest features and improvements!',
-        );
+        if (_shouldUpdate(currentVersion, latestVersion)) {
+          final prefs = await SharedPreferences.getInstance();
+          final skippedVersion = prefs.getString(_prefsKeySkippedVersion);
+          
+          if (!forceUpdate && skippedVersion == latestVersion) {
+            return null; // User skipped this version
+          }
+          
+          return UpdateInfo(
+            version: latestVersion,
+            forceUpdate: forceUpdate,
+            updateUrl: updateData['update_url'],
+            title: updateData['title'] ?? 'New Version Available',
+            message: updateData['message'] ?? 'Version $latestVersion is now available.',
+          );
+        }
       }
       
       return null;

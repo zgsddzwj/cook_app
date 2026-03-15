@@ -1,6 +1,6 @@
 import 'dart:io';
-import 'dart:typed_data';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:tflite_flutter/tflite_flutter.dart';
 import 'package:image/image.dart' as img;
 import '../models/ingredient.dart';
@@ -19,15 +19,13 @@ class LocalMLService {
 
     try {
       // Load TFLite model from assets
-      _interpreter = await Interpreter.fromAsset('assets/models/mobilenet_v3.tflite');
-      
+      _interpreter =
+          await Interpreter.fromAsset('assets/models/mobilenet_v3.tflite');
+
       // Load labels
-      final labelData = await DefaultAssetBundle.of(
-        // ignore: invalid_use_of_visible_for_testing_member
-        WidgetsBinding.instance.rootElement!.context
-      ).loadString('assets/models/labels.txt');
+      final labelData = await rootBundle.loadString('assets/models/labels.txt');
       _labels = labelData.split('\n');
-      
+
       _isInitialized = true;
       debugPrint('Local ML Service initialized successfully');
     } catch (e) {
@@ -40,7 +38,8 @@ class LocalMLService {
   static bool get isReady => _isInitialized && _interpreter != null;
 
   /// Recognize ingredients from local images
-  static Future<List<Ingredient>> recognizeIngredients(List<String> imagePaths) async {
+  static Future<List<Ingredient>> recognizeIngredients(
+      List<String> imagePaths) async {
     if (!isReady) {
       await initialize();
     }
@@ -73,7 +72,7 @@ class LocalMLService {
     final File imageFile = File(imagePath);
     final Uint8List imageBytes = await imageFile.readAsBytes();
     final img.Image? image = img.decodeImage(imageBytes);
-    
+
     if (image == null) throw Exception('Failed to decode image');
 
     // Resize to 224x224 (MobileNet input size)
@@ -104,14 +103,15 @@ class LocalMLService {
 
     // Get top 3 predictions
     final predictions = _getTopPredictions(output[0], topK: 3);
-    
+
     return predictions.map((p) => p.label).toList();
   }
 
   /// Get top K predictions
-  static List<Prediction> _getTopPredictions(List<double> scores, {int topK = 3}) {
+  static List<Prediction> _getTopPredictions(List<double> scores,
+      {int topK = 3}) {
     final List<Prediction> predictions = [];
-    
+
     for (int i = 0; i < scores.length; i++) {
       predictions.add(Prediction(
         index: i,
@@ -128,7 +128,7 @@ class LocalMLService {
   static Ingredient _createIngredient(String label) {
     // Map ML labels to ingredient categories
     final String lowerLabel = label.toLowerCase();
-    
+
     String category = 'Other';
     if (_vegetables.any((v) => lowerLabel.contains(v))) {
       category = 'Vegetables';
@@ -156,25 +156,77 @@ class LocalMLService {
 
   // Common food keywords for category mapping
   static const List<String> _vegetables = [
-    'carrot', 'broccoli', 'lettuce', 'tomato', 'potato', 'onion', 'garlic',
-    'spinach', 'cucumber', 'pepper', 'cabbage', 'cauliflower', 'celery',
-    'eggplant', 'zucchini', 'asparagus', 'mushroom', 'corn', 'pea', 'bean'
+    'carrot',
+    'broccoli',
+    'lettuce',
+    'tomato',
+    'potato',
+    'onion',
+    'garlic',
+    'spinach',
+    'cucumber',
+    'pepper',
+    'cabbage',
+    'cauliflower',
+    'celery',
+    'eggplant',
+    'zucchini',
+    'asparagus',
+    'mushroom',
+    'corn',
+    'pea',
+    'bean'
   ];
 
   static const List<String> _fruits = [
-    'apple', 'banana', 'orange', 'lemon', 'lime', 'grape', 'strawberry',
-    'blueberry', 'raspberry', 'watermelon', 'pineapple', 'mango', 'peach',
-    'pear', 'cherry', 'kiwi', 'melon', 'coconut'
+    'apple',
+    'banana',
+    'orange',
+    'lemon',
+    'lime',
+    'grape',
+    'strawberry',
+    'blueberry',
+    'raspberry',
+    'watermelon',
+    'pineapple',
+    'mango',
+    'peach',
+    'pear',
+    'cherry',
+    'kiwi',
+    'melon',
+    'coconut'
   ];
 
   static const List<String> _meats = [
-    'beef', 'chicken', 'pork', 'lamb', 'steak', 'meat', 'sausage',
-    'bacon', 'ham', 'turkey', 'duck', 'fish', 'salmon', 'tuna',
-    'shrimp', 'prawn', 'crab', 'lobster'
+    'beef',
+    'chicken',
+    'pork',
+    'lamb',
+    'steak',
+    'meat',
+    'sausage',
+    'bacon',
+    'ham',
+    'turkey',
+    'duck',
+    'fish',
+    'salmon',
+    'tuna',
+    'shrimp',
+    'prawn',
+    'crab',
+    'lobster'
   ];
 
   static const List<String> _dairy = [
-    'cheese', 'milk', 'butter', 'cream', 'yogurt', 'egg'
+    'cheese',
+    'milk',
+    'butter',
+    'cream',
+    'yogurt',
+    'egg'
   ];
 }
 
@@ -198,13 +250,13 @@ extension StringExtension on String {
 /// Downloads model from server on first launch
 class MLModelDownloader {
   static const String _modelVersionKey = 'ml_model_version';
-  
+
   /// Check if model needs download/update
   static Future<bool> needsUpdate() async {
     // TODO: Check with server for model updates
     return false;
   }
-  
+
   /// Download model from server
   static Future<void> downloadModel() async {
     // TODO: Implement model download
