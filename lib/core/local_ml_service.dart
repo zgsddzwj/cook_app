@@ -15,6 +15,7 @@ class LocalMLService {
 
   /// Initialize the model
   static Future<void> initialize() async {
+    // Ensuring the TFLite interpreter and labels are loaded correctly
     if (_isInitialized) return;
 
     try {
