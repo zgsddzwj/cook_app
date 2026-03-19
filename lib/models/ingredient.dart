@@ -1,5 +1,6 @@
 import '../core/api_service.dart';
 
+/// Represents a single food ingredient with its properties
 class Ingredient {
   final String name;
   final String amount;
