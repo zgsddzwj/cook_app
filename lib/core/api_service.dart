@@ -13,6 +13,7 @@ class ApiService {
   bool _initialized = false;
 
   ApiService._internal() {
+    // Initializing the API service with default configuration
     _init();
   }
 
