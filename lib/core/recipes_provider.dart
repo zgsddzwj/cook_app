@@ -8,7 +8,7 @@ import 'api_service.dart';
 class RecipesProvider extends ChangeNotifier {
   final MealDbService _mealDbService = MealDbService();
   final ApiService _apiService = ApiService();
-  
+
   // API 获取的食谱
   List<Recipe> _apiRecipes = [];
   // 用户自定义食谱
@@ -27,38 +27,42 @@ class RecipesProvider extends ChangeNotifier {
   }
 
   List<Recipe> get recipes => [..._customRecipes, ..._apiRecipes];
-  
+
   List<Recipe> get favoriteRecipes =>
       recipes.where((r) => r.isFavorite).toList();
 
   /// 从后端 API 加载热门食谱
   Future<void> loadRecipesFromApi() async {
+    debugPrint('Loading recipes from API...');
     isLoading = true;
     error = null;
     notifyListeners();
 
     try {
       // Try to load from our backend first
-      List<Recipe> popularRecipes = await _apiService.getPopularRecipes(limit: 15);
-      
+      List<Recipe> popularRecipes =
+          await _apiService.getPopularRecipes(limit: 15);
+
       if (popularRecipes.isEmpty) {
         // Fallback to TheMealDB if backend returns nothing
         List<Meal> randomMeals = await _mealDbService.getRandomMeals(15);
-        
+
         final prefs = await SharedPreferences.getInstance();
         final favoriteIds = prefs.getStringList(_favoritesKey) ?? [];
-        
-        _apiRecipes = randomMeals.map((meal) => _convertMealToRecipe(meal, favoriteIds)).toList();
+
+        _apiRecipes = randomMeals
+            .map((meal) => _convertMealToRecipe(meal, favoriteIds))
+            .toList();
       } else {
         final prefs = await SharedPreferences.getInstance();
         final favoriteIds = prefs.getStringList(_favoritesKey) ?? [];
-        
+
         // Update isFavorite status
         _apiRecipes = popularRecipes.map((recipe) {
           return recipe.copyWith(isFavorite: favoriteIds.contains(recipe.id));
         }).toList();
       }
-      
+
       isLoading = false;
       notifyListeners();
     } catch (e) {
@@ -81,12 +85,13 @@ class RecipesProvider extends ChangeNotifier {
 
     try {
       final meals = await _mealDbService.searchMeals(query);
-      
+
       final prefs = await SharedPreferences.getInstance();
       final favoriteIds = prefs.getStringList(_favoritesKey) ?? [];
-      
-      _apiRecipes = meals.map((meal) => _convertMealToRecipe(meal, favoriteIds)).toList();
-      
+
+      _apiRecipes =
+          meals.map((meal) => _convertMealToRecipe(meal, favoriteIds)).toList();
+
       isLoading = false;
       notifyListeners();
     } catch (e) {
@@ -104,7 +109,7 @@ class RecipesProvider extends ChangeNotifier {
 
     try {
       final meals = await _mealDbService.filterByIngredient(ingredient);
-      
+
       // filter 接口返回的数据不完整，需要获取详情
       final List<Meal> detailedMeals = [];
       for (final meal in meals.take(10)) {
@@ -113,12 +118,14 @@ class RecipesProvider extends ChangeNotifier {
           detailedMeals.add(detail);
         }
       }
-      
+
       final prefs = await SharedPreferences.getInstance();
       final favoriteIds = prefs.getStringList(_favoritesKey) ?? [];
-      
-      _apiRecipes = detailedMeals.map((meal) => _convertMealToRecipe(meal, favoriteIds)).toList();
-      
+
+      _apiRecipes = detailedMeals
+          .map((meal) => _convertMealToRecipe(meal, favoriteIds))
+          .toList();
+
       isLoading = false;
       notifyListeners();
     } catch (e) {
@@ -177,7 +184,8 @@ class RecipesProvider extends ChangeNotifier {
       description: description,
       time: meal.estimatedTime,
       calories: meal.estimatedCalories,
-      imageUrl: meal.thumbnail ?? 'https://via.placeholder.com/500x300?text=No+Image',
+      imageUrl:
+          meal.thumbnail ?? 'https://via.placeholder.com/500x300?text=No+Image',
       tags: tags.isNotEmpty ? tags : ['Recipe'],
       ingredients: ingredients.isNotEmpty ? ingredients : [],
       steps: finalSteps.isNotEmpty ? finalSteps : ['No instructions available'],
@@ -193,15 +201,13 @@ class RecipesProvider extends ChangeNotifier {
   /// 智能分割烹饪步骤
   List<String> _splitInstructions(String instructions) {
     if (instructions.isEmpty) return [];
-    
+
     // 按换行分割
-    final lines = instructions
-        .split('\n')
-        .where((s) => s.trim().isNotEmpty)
-        .toList();
-    
+    final lines =
+        instructions.split('\n').where((s) => s.trim().isNotEmpty).toList();
+
     if (lines.length > 1) return lines;
-    
+
     // 如果只有一行，尝试按句号分割
     return instructions
         .split(RegExp(r'[.!?。！？]\s+'))
@@ -239,10 +245,8 @@ class RecipesProvider extends ChangeNotifier {
   Future<void> _saveFavorites() async {
     try {
       final prefs = await SharedPreferences.getInstance();
-      final favoriteIds = recipes
-          .where((r) => r.isFavorite)
-          .map((r) => r.id)
-          .toList();
+      final favoriteIds =
+          recipes.where((r) => r.isFavorite).map((r) => r.id).toList();
       await prefs.setStringList(_favoritesKey, favoriteIds);
     } catch (e) {
       debugPrint('Error saving favorites: $e');
