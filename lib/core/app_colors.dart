@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+/// Centralized color palette for the application to ensure UI consistency
 class AppColors {
   static const Color primary = Color(0xFF27AE60);
   static const Color background = Color(0xFFF8F9FA);
