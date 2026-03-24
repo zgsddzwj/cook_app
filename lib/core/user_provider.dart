@@ -7,7 +7,7 @@ class UserProvider extends ChangeNotifier {
 
   // 默认头像 URL，选择一个和厨房/美食相关的
   final String _defaultAvatarUrl =
-      'https://images.unsplash.com/photo-1577219491135-ce391730fb2c?w=200&auto=format&fit=crop&q=60';
+      'https://images.unsplash.com/photo-1466637574441-749b8f19452f?w=200&auto=format&fit=crop&q=60';
 
   String get nickname => _nickname;
   String get email => _email;
