@@ -86,6 +86,13 @@ class ScanHistoryProvider extends ChangeNotifier {
     }
   }
 
+  /// Clear all scan history entries
+  Future<void> clearHistory() async {
+    _entries.clear();
+    await _saveHistory();
+    notifyListeners();
+  }
+
   void addEntry({
     required String imagePath,
     required Uint8List thumbnailBytes,
