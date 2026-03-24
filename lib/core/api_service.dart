@@ -12,6 +12,9 @@ class ApiService {
   late final Dio _dio;
   bool _initialized = false;
 
+  /// Default cooking time for recipes if not specified by the AI
+  static const String defaultCookingTime = '20';
+
   ApiService._internal() {
     // Initializing the API service with default configuration
     _init();
