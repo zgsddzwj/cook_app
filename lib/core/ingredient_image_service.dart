@@ -1,6 +1,7 @@
 import '../models/ingredient.dart';
 
 /// Ingredient image service using Unsplash high-quality photos
+/// This service provides relevant imagery for ingredients and categories
 class IngredientImageService {
   /// Map of ingredient keywords to Unsplash image URLs
   static const Map<String, String> _ingredientImages = {
